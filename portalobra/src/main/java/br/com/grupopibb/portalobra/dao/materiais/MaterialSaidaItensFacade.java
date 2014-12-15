@@ -149,9 +149,9 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
 //params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoEspecificacao
 
     private void paramsPaginacao(Map<String, Object> params, final CentroCusto centro, final String numeroDoc, final Date dataInicial, final Date dataFinal, final Long insumoCod, final String insumoEspecificacao) {
-        params.put("empresaCod", centro.getEmpresa());
-        params.put("filialCod", centro.getFilial());
-        params.put("centroCod", centro.getCodigo());
+        params.put("empresaCod", centro != null ? centro.getEmpresaCod() : "");
+        params.put("filialCod", centro != null ? centro.getFilialCod() : "");
+        params.put("centroCod", centro != null ? centro.getCodigo() : "");
         params.put("numeroDoc", numeroDoc);
         params.put("dataInicial", dataInicial);
         params.put("dataFinal", dataFinal);

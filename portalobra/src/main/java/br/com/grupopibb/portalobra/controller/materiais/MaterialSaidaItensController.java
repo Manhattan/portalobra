@@ -45,6 +45,7 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
     private String numeroDoc;
     private Long insumoCod;
     private String especificacao;
+    private Integer registrosPorPagina = 20;
 //-------------------------------
 
     /**
@@ -70,7 +71,7 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
     @Override
     public EntityPagination getPagination() {
         if (pagination == null) {
-            pagination = new EntityPagination(15) {
+            pagination = new EntityPagination(registrosPorPagina) {
                 @Override
                 public int getItemsCount() {
                     return getFacade().countParam(centroSelecionado, numeroDoc, dataInicial, dataFinal, insumoCod, especificacao).intValue();
@@ -120,7 +121,7 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
         return super.clean();
     }
 
-    public void pesquisa() {
+    public void pesquisar() {
         recreateTable();
     }
 
@@ -130,7 +131,7 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
      */
     private void initDataInicial() {
         if (dataInicial == null) {
-            dataInicial = DateUtils.incrementar(new Date(), -3, Calendar.MONTH);
+            dataInicial = new Date();
         }
     }
 
@@ -215,6 +216,14 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
 
     public String getEspecificacao() {
         return especificacao;
+    }
+
+    public Integer getRegistrosPorPagina() {
+        return registrosPorPagina;
+    }
+
+    public void setRegistrosPorPagina(Integer registrosPorPagina) {
+        this.registrosPorPagina = registrosPorPagina;
     }
 
     public void setEspecificacao(String especificacao) {

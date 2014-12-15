@@ -18,6 +18,7 @@
                     <p:menuitem value="#{msg.insumos}" icon="ui-icon-cart" actionListener="#{insumoController.desconsiderarLinkOrcamento()}" oncomplete="dlgConsultaInsumo.show()" />
                     <p:menuitem value="#{msg.fornecedores}" icon="ui-icon-person" oncomplete="dlgConsultaCredor.show()" />
                     <p:menuitem value="#{msg.estoqueMateriais}" icon="ui-icon-pin-s"  oncomplete="#{materiaisEstoqueController.initCentroSelecionado(loginController.centroSelecionado)}" action="materiais_estoque" />
+                    <p:menuitem value="#{msg.saidaMateriais}" icon="ui-icon-circle-arrow-s"  oncomplete="#{materialSaidaItensController.initCentroSelecionado(loginController.centroSelecionado)}" action="material_saida_itens" />
                 </p:submenu>
 
                 <p:submenu label="#{msg.seguranca}" icon="ui-icon-locked" rendered="#{loginController.renderMenuSeguranca}" >
@@ -32,10 +33,10 @@
                 </p:submenu>
 
                 <p:submenu label="#{msg.ajuda}" icon="ui-icon-help">
-                    <p:menuitem value="#{msg.descricaoProcessos}" oncomplete="dlgAjuda.show()" update=":dialogForm" actionListener="#{followUpSolicitacoesController.createCurrent(null, 'dlgAjuda')}"/>
-                    <p:menuitem value="#{msg.reportarProblema}" url="#{msg.helpdeskLink}" target="_blank" />
-                    <p:menuitem value="#{msg.comoUtilizar}" disabled="true" />
-                    <p:menuitem value="#{msg.manualCompras}" url="#{msg.manualComprasLink}" target="_blank" />
+                    <p:menuitem value="#{msg.descricaoProcessos}" id="descProc" oncomplete="dlgAjuda.show()" update=":dialogForm" actionListener="#{followUpSolicitacoesController.createCurrent(null, 'dlgAjuda')}"/>
+                    <p:menuitem value="#{msg.reportarProblema}" id="repProb" url="#{msg.helpdeskLink}" target="_blank" />
+                    <p:menuitem value="#{msg.comoUtilizar}" id="comUti" disabled="true" />
+                    <p:menuitem value="#{msg.manualCompras}" id="manCom" url="#{msg.manualComprasLink}" target="_blank" />
                 </p:submenu>
 
                 <p:menuitem oncomplete="#{credorController.initCentroSelecionario(loginController.centroSelecionado)} dlgCentroCusto.show()" update=":panelCentroCusto" value="#{loginController.centroSelecionado.nomeCompleto}" style="margin-left: 30%; width: 300px; font-size: small" />

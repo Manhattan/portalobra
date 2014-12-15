@@ -1,0 +1,100 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                template="../templates/layout.xhtml"
+                >
+    <ui:param name="titulomenu" value="#{msg.movimentacoesSaidaItens}" />
+    <ui:define name="content" >
+        <h:panelGroup rendered="#{loginController.statusLogin == 0 or materialSaidaItensController.centroSelecionado == null or loginController.funcionario.login == null}">
+            <ui:include src="../semPermissao.xhtml" />
+        </h:panelGroup>
+
+        <p:dialog widgetVar="dlgNovoInsumo" visible="false" />
+
+        <h:panelGroup id="panelMain" rendered="#{loginController.statusLogin == 1  and materialSaidaItensController.centroSelecionado != null and loginController.funcionario.login != null}">
+            <h:form id="formMain">
+                <h:panelGrid columns="5">
+                    <h:outputText value="#{msg.periodoSaidas}:" style="font-weight: bold" />
+                    <h:outputText value="#{msg.numeroDoc}:" style="font-weight: bold" />
+                    <h:outputText value="#{msg.insumo}:" style="font-weight: bold" />
+                    <h:outputText value="#{msg.especificacao}:" style="font-weight: bold" />
+                    <h:outputText value="" />
+                    <h:panelGroup>
+                        <p:calendar  value="#{materialSaidaItensController.dataInicial}" size="11" maxlength="10"  id="dataInicialMatSaiI" onkeypress="AtalhoData(event, this);"
+                                     title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                     navigator="true" immediate="true"
+                                     timeZone="#{initParam['timezone']}" >
+                        </p:calendar>
+                        <h:outputText value="a" style="margin-left: 4px; margin-right: 4px" />
+                        <p:calendar value="#{materialSaidaItensController.dataFinal}" size="11" maxlength="10"  id="dataFinalMatSaiI" onkeypress="AtalhoData(event, this);"
+                                    title="#{msg.dataFinal}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                    navigator="true" immediate="true" style="margin-right: 5px"
+                                    timeZone="#{initParam['timezone']}" >
+                        </p:calendar>
+                    </h:panelGroup>
+
+                    <p:inputText value="#{materialSaidaItensController.numeroDoc}" style="width: 80px" />
+                    <p:inputText value="#{materialSaidaItensController.insumoCod}" style="width: 80px" />
+                    <p:inputText value="#{materialSaidaController.especificacao}" style="width: 160px"/>
+                    <p:commandButton value="#{msg.executar}" actionListener="#{materialSaidaItensController.pesquisar()}" update=":formMain:panelTableMatSaiIPaginador" />
+
+                </h:panelGrid>
+                <h:panelGroup id="panelTableMatSaiIPaginador" style="margin-right: 0px; width: auto">
+                    <table class="referencesmall" style="margin: 0px; width: auto">
+                        <tr class="cabecalhoDiscreto">
+                            <th align='center' style="padding: 3px">#{msg.numeroDoc}</th>
+                            <th align='center' style="padding: 3px">#{msg.data}</th>
+                            <th align='center' style="padding: 3px">#{msg.insumo} </th>
+                            <th align='center' style="padding: 3px">#{msg.especificacao}</th>
+                            <th align='center' style="padding: 3px">#{msg.unidade}</th>
+                            <th align='center' style="padding: 3px">#{msg.quantidade}</th>
+                            <th align='center' style="padding: 3px">#{msg.usuario}</th>
+                        </tr>
+                        <ui:repeat value="#{materialSaidaItensController.items}" var="item" varStatus="s">
+                            <tr>
+                                <td align='center'>
+                                    <h:outputText value="#{item.materialSaida.numeroDocumento}" />
+                                </td>
+                                <td>
+                                    <h:outputText value="#{item.dataSaida}" style="margin: 0px 15px 0px 15px" >
+                                        <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </td>
+                                <td align='center'>
+                                    <h:outputText value="#{item.insumo.codigo}"/>
+                                </td>
+                                <td>
+                                    <h:outputText value="#{item.insumo.especificacao}"/>
+                                </td>
+                                <td align='center'>
+                                    <h:outputText value="#{item.insumo.unidade}" />
+                                </td>
+                                <td align='right' style="padding-right: 5px">
+                                    <h:outputText value="#{item.quantidade}">
+                                        <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" />
+                                    </h:outputText>
+                                </td>
+                                <td>
+                                    <h:outputText value="#{item.materialSaida.usuarioInsercao}" />
+                                </td>
+                            </tr>
+                        </ui:repeat>
+                    </table>
+                    <arq:paginator id="paginadorMatSaiI" regsPerPage="true" regsPerPageAction="#{materialSaidaItensController.pesquisar()}" regsPerPageAttribute="#{materialSaidaItensController.registrosPorPagina}" entityBean="#{materialSaidaItensController}" formName=":formMain:panelTableMatSaiIPaginador" renderedNew="false"/>
+                
+                </h:panelGroup>
+                <p:commandButton value="#{msg.imprimir}" icon="ui-icon-print" iconPos="left">
+                    <p:printer target=":formMain:panelTableMatSaiIPaginador" />
+                </p:commandButton>
+            </h:form>
+            <h:panelGroup id="panelCentroCusto" >
+                <arq:centroCusto formName=":panelMain" entityBean="#{materialSaidaItensController}" listCentros="#{loginController.funcionario.centros}" pageRender="material_saida_itens" />
+            </h:panelGroup>
+            <h:panelGroup id="dialogForm" />
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

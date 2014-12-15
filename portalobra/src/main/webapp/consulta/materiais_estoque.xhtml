@@ -9,12 +9,13 @@
                 >
     <ui:param name="titulomenu" value="#{msg.estoqueMateriais}" />
     <ui:define name="content" >
-        <h:panelGroup rendered="#{loginController.statusLogin == 0 or materiaisEstoqueController.centroSelecionado == null or followUpSolicitacoesController.funcionario.login == null}">
+        <h:panelGroup rendered="#{loginController.statusLogin == 0 or materiaisEstoqueController.centroSelecionado == null or loginController.funcionario.login == null}">
             <ui:include src="../semPermissao.xhtml" />
         </h:panelGroup>
+
         <p:dialog widgetVar="dlgNovoInsumo" visible="false" />
 
-        <h:panelGroup id="panelMain" rendered="#{loginController.statusLogin == 1 and materiaisEstoqueController.centroSelecionado != null and followUpSolicitacoesController.funcionario.login != null}">
+        <h:panelGroup id="panelMain" rendered="#{loginController.statusLogin == 1 and materiaisEstoqueController.centroSelecionado != null and loginController.funcionario.login != null }">
             <h:form id="formMain">
                 <p:panel >
                     <h:outputText value="#{msg.estoqueMateriais}" style="font-weight: bold" />
@@ -139,7 +140,9 @@
                     </p:panel>
 
                 </h:panelGroup>
-
+                <p:commandButton value="#{msg.imprimir}" icon="ui-icon-print" iconPos="left">
+                    <p:printer target=":formMain:materiaisConsultaTable" />
+                </p:commandButton>
             </h:form>
             <!-- ************************* AQUI FICA A TELA QUE TROCA O CENTRO DE CUSTO ******************************************* /-->
             <h:panelGroup id="panelCentroCusto" >

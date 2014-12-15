@@ -43,6 +43,11 @@
             <redirect />
         </navigation-case>
         <navigation-case>
+            <from-outcome>material_saida_itens</from-outcome>
+            <to-view-id>/consulta/material_saida_itens.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
             <from-outcome>ar_page</from-outcome>
             <to-view-id>/ar/page.xhtml</to-view-id>
             <redirect />
