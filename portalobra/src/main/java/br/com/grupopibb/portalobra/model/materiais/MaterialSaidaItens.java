@@ -29,6 +29,25 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "MateriaisSaida_Itens")
 @NamedQueries({
+    @NamedQuery(name = "MaterialSaidaItens.selectRange",
+            query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi "
+            + " WHERE ( msi.empresaCod = :empresaCod ) "
+            + " AND ( msi.centroCod = :centroCod ) "
+            + " AND ( msi.filialCod = :filialCod ) "
+            + " AND ( :numeroDoc2 = 'todos' OR msi.materialSaida.numeroDocumento = :numeroDoc ) "
+            + " AND ( msi.dataSaida BETWEEN :dataInicial AND :dataFinal ) "
+            + " AND ( :insumoCod2 = 'todos' OR msi.insumo.codigo = :insumoCod ) "
+            + " AND ( :insumoEspecificacao2 = 'todos' OR msi.insumo.especificacao = :insumoEspecificacao ) "
+            + " ORDER BY msi.dataSaida DESC"),
+    @NamedQuery(name = "MaterialSaidaItens.countRange",
+            query = " SELECT COUNT(DISTINCT msi) FROM MaterialSaidaItens msi "
+            + " WHERE ( msi.empresaCod = :empresaCod ) "
+            + " AND ( msi.centroCod = :centroCod ) "
+            + " AND ( msi.filialCod = :filialCod ) "
+            + " AND ( :numeroDoc2 = 'todos' OR msi.materialSaida.numeroDocumento = :numeroDoc ) "
+            + " AND ( msi.dataSaida BETWEEN :dataInicial AND :dataFinal ) "
+            + " AND ( :insumoCod2 = 'todos' OR msi.insumo.codigo = :insumoCod ) "
+            + " AND ( :insumoEspecificacao2 = 'todos' OR msi.insumo.especificacao = :insumoEspecificacao ) "),
     @NamedQuery(name = "MaterialSaidaItens.find",
             query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi "
             + " WHERE msi.insumo.codigo = :insumoCod "
@@ -37,7 +56,7 @@ import javax.persistence.Transient;
             + " AND msi.filialCod = :filialCod "
             + " AND msi.dataSaida BETWEEN :dataInicial AND :dataFinal"),
     @NamedQuery(name = "MaterialSaidaItens.findSaidaNumeroByInsumo",
-            query = " SELECT DISTINCT (mi.materialSaida.numeroSaida) FROM MaterialSaidaItens mi"
+            query = " SELECT DISTINCT (m.numeroSaida) FROM MaterialSaidaItens mi join mi.materialSaida m"
             + " WHERE (:insumoCod2 = 'todos' OR mi.insumo.codigo = :insumoCod) "
             + " AND (:insumoEspecificacao2 = 'todos' OR mi.insumo.especificacao LIKE :insumoEspecificacao) "
             + " AND (mi.empresaCod = :empresaCod) "
@@ -52,10 +71,10 @@ import javax.persistence.Transient;
             + " AND (mi.filialCod = :filialCod) "),
     @NamedQuery(name = "MaterialSaidaItens.findTransferencias",
             query = " SELECT DISTINCT mi FROM MaterialSaidaItens mi join mi.materialSaida ms "
-        + " WHERE ms.centro = :centroOrigem "
-        + " AND mi.dataSaida = :dataSaida "
-        + " AND mi.materialSaida.numeroDocumento = :numeroDocumento "
-        + " AND mi.materialSaida.centroDestino = :centroDestino ")
+            + " WHERE ms.centro = :centroOrigem "
+            + " AND mi.dataSaida = :dataSaida "
+            + " AND ms.numeroDocumento = :numeroDocumento "
+            + " AND ms.centroDestino = :centroDestino ")
 })
 public class MaterialSaidaItens implements EntityInterface<MaterialSaidaItens> {
 
@@ -105,7 +124,7 @@ public class MaterialSaidaItens implements EntityInterface<MaterialSaidaItens> {
     /*
      */
     @Temporal(TemporalType.DATE)
-    @Column(name = "Saida_Data") 
+    @Column(name = "Saida_Data")
     private Date dataSaida;
     /*
      */
@@ -151,8 +170,8 @@ public class MaterialSaidaItens implements EntityInterface<MaterialSaidaItens> {
     public boolean isMarcado() {
         return marcado;
     }
-    
-    public void setMarcado(boolean marcado){
+
+    public void setMarcado(boolean marcado) {
         this.marcado = marcado;
     }
 

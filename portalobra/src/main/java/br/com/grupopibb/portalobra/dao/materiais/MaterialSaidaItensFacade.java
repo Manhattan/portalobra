@@ -64,7 +64,7 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
      */
     public List<MaterialSaidaItens> findParam(final String empresaCod, final String filialCod, final String centroCod, final Long insumoCod, final Date dataMesRef) {
         Map<String, Object> params = getMapParams();
-        paramsPaginacao(params, empresaCod, filialCod, centroCod, insumoCod, dataMesRef);
+        paramsPaginacao1(params, empresaCod, filialCod, centroCod, insumoCod, dataMesRef);
         return listPesqParam("MaterialSaidaItens.find", params);
     }
 
@@ -120,9 +120,22 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
         Map<String, Object> params = getMapParams();
         paramsTransferencias(params, centroOrigem, centroDestino, numeroDocumento, dataMovimentacao);
         List<MaterialSaidaItens> lista = listPesqParam("MaterialSaidaItens.findTransferencias", params);
-        
+
         return lista;
-        
+
+    }
+
+    public List<MaterialSaidaItens> findRangeParam(final CentroCusto centro, final String numeroDoc, final Date dataInicial,
+            final Date dataFinal, final Long insumoCod, final String insumoEspecificacao, final int[] range) {
+        Map<String, Object> params = getMapParams();
+        paramsPaginacao(params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoEspecificacao);
+        return listPesqParamRange("MaterialSaidaItens.selectRange", params, range[1] - range[0], range[0]);
+    }
+
+    public Long countParam(final CentroCusto centro, final String numeroDoc, final Date dataInicial, final Date dataFinal, final Long insumoCod, final String insumoEspecificacao) {
+        Map<String, Object> params = getMapParams();
+        paramsPaginacao(params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoEspecificacao);
+        return pesqCount("MaterialSaidaItens.countRange", params);
     }
 
     private void paramsValorSaidas(Map<String, Object> params, final Long insumoCod, final String empresaCod, final String filialCod, final String centroCod) {
@@ -133,8 +146,24 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
         params.put("dataInicial", DateUtils.setDay(new Date(), 1));
         params.put("dataFinal", new Date());
     }
+//params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoEspecificacao
 
-    private void paramsPaginacao(Map<String, Object> params, final String empresaCod, final String filialCod, final String centroCod, final Long insumoCod, final Date dataMesRef) {
+    private void paramsPaginacao(Map<String, Object> params, final CentroCusto centro, final String numeroDoc, final Date dataInicial, final Date dataFinal, final Long insumoCod, final String insumoEspecificacao) {
+        params.put("empresaCod", centro.getEmpresa());
+        params.put("filialCod", centro.getFilial());
+        params.put("centroCod", centro.getCodigo());
+        params.put("numeroDoc", numeroDoc);
+        params.put("dataInicial", dataInicial);
+        params.put("dataFinal", dataFinal);
+        params.put("insumoCod", insumoCod);
+        params.put("insumoEspecificacao", insumoEspecificacao);
+
+        params.put("numeroDoc2", StringUtils.isBlank(numeroDoc) ? "todos" : "filtro");
+        params.put("insumoCod2", insumoCod == null ? "todos" : "filtro");
+        params.put("insumoEspecificacao2", StringUtils.isBlank(insumoEspecificacao) ? "todos" : "filtro");
+    }
+
+    private void paramsPaginacao1(Map<String, Object> params, final String empresaCod, final String filialCod, final String centroCod, final Long insumoCod, final Date dataMesRef) {
         params.put("empresaCod", empresaCod);
         params.put("filialCod", filialCod);
         params.put("centroCod", centroCod);
@@ -147,7 +176,7 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
         params.put("insumoCod", insumoCod);
         params.put("insumoEspecificacao", StringBeanUtils.acertaNomeParaLike(insumoEspecificacao, StringBeanUtils.LIKE_MIDDLE));
         params.put("empresaCod", empresaCod);
-        params.put("filialCod", filialCod); 
+        params.put("filialCod", filialCod);
         params.put("centroCod", centroCod);
         params.put("insumoCod2", insumoCod == null ? "todos" : "filtro");
         params.put("insumoEspecificacao2", StringUtils.isBlank(insumoEspecificacao) ? "todos" : "filtro");
@@ -159,4 +188,4 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
         params.put("numeroDocumento", numeroDocumento);
         params.put("dataSaida", DateUtils.zerarHora(dataMovimentacao));
     }
-} 
+}
