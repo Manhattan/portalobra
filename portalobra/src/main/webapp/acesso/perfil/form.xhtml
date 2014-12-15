@@ -1,0 +1,128 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                >
+    <f:subview id="svwCadPerfil">
+        <h:panelGroup id="pngCadPerfil" rendered="#{perfilAcessoController.current != null}" style='margin-right: 0px; width: auto'>
+            <h:outputText value="#{msg.perfil}" style="font-weight: bolder" />
+            <hr />
+            <h:form id="frmCadPerfil">
+                <table>
+                    <tr>
+                        <td valign='top'>
+                            <p:outputLabel value="#{msg.nome}:" style="font-weight: bold" />
+                            <br/>
+                            <p:inputText value="#{perfilAcessoController.current.nome}" size="50" maxlength="50" style="padding: 5px; font-size: 110%" />
+                            <p/>
+                            <p:outputLabel value="#{msg.descricao}:" style="font-weight: bold" />
+                            <br/>
+                            <p:inputTextarea value="#{perfilAcessoController.current.descricao}" maxlength="200" cols="50" style="margin-bottom: 10px; margin-right: 10px; padding: 5px; font-size: 110%" />
+                            <br/>
+                            <p:commandButton id="btnCadPerfilCancel" value="#{msg.cancelar}" update=":panelMain" action="#{perfilAcessoController.clean()}" immediate="true" style="width: 95px;" icon="ui-icon-cancel" />
+                            <p:commandButton id="btnCadPerfilConfirm" value="#{msg.ok}" update=":panelMain" action="#{perfilAcessoController.createOrEdit()}" icon="ui-icon-circle-check" style="width: 95px;" />
+
+                        </td>
+                        <td style="font-size: 110%">
+                            <h:panelGrid columns="7" style="text-align: center;" columnClasses="accessSmallB, accessSmallB, accessSmallB, accessSmallB, accessSmallB, accessSmallB, accessSmallB">
+                                <h:outputText value="" />
+                                <h:outputText value="#{msg.incluir}" style="font-weight: bold"/>
+                                <h:outputText value="#{msg.alterar}" style="font-weight: bold"/>
+                                <h:outputText value="#{msg.excluir}" style="font-weight: bold"/>
+                                <h:outputText value="#{msg.visualizar}" style="font-weight: bold"/>
+                                <h:outputText value="#{msg.concluir}" style="font-weight: bold"/>
+                                <h:outputText value="#{msg.autorizar}" style="font-weight: bold"/>
+
+                                <h:outputText value="#{msg.solicitacaoCompra}" style="font-weight: bold; float: left"/>
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.incluiSolicitacao}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.alteraSolicitacao}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.removeSolicitacao}" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.concluiSolicitacao}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.autorizaSolicitacao}" />
+
+                                <h:outputText value="#{msg.entradaMateriais}" style="font-weight: bold; float: left"/>
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.incluiEntradaMaterial}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.alteraEntradaMaterial}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.removeEntradaMaterial}" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+
+                                <h:outputText value="#{msg.saidaMateriais}" style="font-weight: bold; float: left"/>
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.incluiSaidaMaterial}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.alteraSaidaMaterial}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.removeSaidaMaterial}" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+
+                                <h:outputText value="#{msg.avisoRecebimento}" style="font-weight: bold; float: left"/>
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.incluiAR}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.alteraAR}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.removeAR}" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+
+                                <h:outputText value="#{msg.fundoFixo}" style="font-weight: bold; float: left"/>
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.incluiFundoFixo}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.alteraFundoFixo}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.removeFundoFixo}" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+
+                                <h:outputText value="#{msg.rhCadastroGeral}" style="font-weight: bold; float: left"/>
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.incluiRhCadastroGeral}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.alteraRhCadastroGeral}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.removeRhCadastroGeral}" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+
+                                <h:outputText value="#{msg.rhOcorrencia}" style="font-weight: bold; float: left"/>
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.incluiRhOcorrencia}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.alteraRhOcorrencia}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.removeRhOcorrencia}" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+
+                                <h:outputText value="#{msg.usuario}" style="font-weight: bold; float: left"/>
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.incluiUsuario}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.alteraUsuario}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.removeUsuario}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.verUsuario}" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+
+                                <h:outputText value="#{msg.usuariosConectados}" style="font-weight: bold; float: left"/>
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true"  />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true"  />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true"  />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.verUsuariosConectados}" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+
+                                <h:outputText value="#{msg.perfilAcesso}" style="font-weight: bold; float: left"/>
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.incluiPerfilAcesso}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.alteraPerfilAcesso}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.removePerfilAcesso}" />
+                                <h:selectBooleanCheckbox value="#{perfilAcessoController.current.verPerfilAcesso}"  />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{false}" disabled="true" />
+                            </h:panelGrid>
+                        </td>
+                    </tr>
+                </table>
+
+
+            </h:form>
+        </h:panelGroup>
+    </f:subview>
+</ui:composition>

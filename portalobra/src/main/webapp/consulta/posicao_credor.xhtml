@@ -1,0 +1,352 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                >
+    <f:subview id="svwPosCred">
+        <p:dialog id="dlgPosCred" header="#{msg.posicaoCredor}" widgetVar="dlgPosCred" style="position: absolute; float: top" position="left" closeOnEscape="true" resizable="false" >
+            <h:form id="frmPosCred">
+                <h:panelGrid columns="5" style="text-align: left">
+                    <h:outputText value="#{msg.empresa}:" style="font-weight: bold" />
+                    <h:outputText value="#{msg.nucleo}:" style="font-weight: bold" />
+                    <h:outputText value="#{msg.dataInicial}:" style="font-weight: bold" />
+                    <h:outputText value="#{msg.fornecedor}:" style="font-weight: bold" />
+                    <br/>
+
+                    <p:selectOneMenu value="#{posicaoCredorController.empresa}" filter="true" filterMatchMode="contains">
+                        <f:selectItem itemLabel="" itemValue="#{null}" />
+                        <f:selectItems value="#{funcionarioController.empresaSelect}" />
+                        <f:converter converterId="empresaConverter" />
+                    </p:selectOneMenu>
+
+                    <p:selectOneMenu value="#{posicaoCredorController.nucleoNegocio}">
+                        <f:selectItem itemLabel="" itemValue="#{null}" />
+                        <f:selectItems value="#{posicaoCredorController.nucleoSelect}" />
+                        <f:converter converterId="nucleoConverter" />
+                    </p:selectOneMenu>
+
+                    <p:calendar  value="#{posicaoCredorController.data}" required="true" size="11" maxlength="10"  id="dataInicial" onkeypress="AtalhoData(event, this)"
+                                 title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                 navigator="true" immediate="true"
+                                 timeZone="#{initParam['timezone']}" >
+                    </p:calendar>
+
+                    <h:outputText value="#{posicaoCredorController.credor.razaoSocial}" />
+
+                    <p:commandButton value="#{msg.executar}" actionListener="#{posicaoCredorController.pesquisar()}" update=":menuApp:svwPosCred:frmPosCred" />
+
+                </h:panelGrid>
+
+                <p:tabView style="width: 100%">
+                    <p:tab title="#{msg.dadosPrincipais}">
+                            <!-- DADOS PRINCIPAIS/!-->
+                            <table class="referencesmall" style="width: 100%">
+                                <tr>
+                                    <th>
+                                        #{msg.vencimento}
+                                    </th>
+                                    <th>
+                                        #{msg.atrasoR}
+                                    </th>
+                                    <th>
+                                        #{msg.documento}
+                                    </th>
+                                    <th>
+                                        #{msg.parcela}
+                                    </th>
+                                    <th>
+                                        #{msg.valorNominal}
+                                    </th>
+                                    <th>
+                                        #{msg.acrescimos}
+                                    </th>
+                                    <th>
+                                        #{msg.descontos}
+                                    </th>
+                                    <th>
+                                        #{msg.encargos}
+                                    </th>
+                                    <th>
+                                        #{msg.descontoAdi}
+                                    </th>
+                                    <th>
+                                        #{msg.multa}
+                                    </th>
+                                    <th>
+                                        #{msg.valorLiquido}
+                                    </th>
+                                    <th>
+                                        #{msg.dataPagamentoAbrev}
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td colspan="12" style="font-weight: bold; background: #d5d5d5">
+                                        #{msg.parcelasEmAberto}
+                                    </td>
+                                </tr>
+                                <ui:repeat value="#{posicaoCredorController.parcelas}" var="parc">
+                                    <tr>
+                                        <td>
+                                            <h:outputText value="#{parc.vencimento}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{initParam['timezone']}" locale="pt_BR" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            #{parc.atrasoR}
+                                        </td>
+                                        <td>
+                                            #{parc.documento}
+                                        </td>
+                                        <td>
+                                            #{parc.parcela}
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{parc.valorNominal}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" currencyCode="BRL" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{parc.acrescimos}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" currencyCode="BRL" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{parc.descontos}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" currencyCode="BRL" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{parc.encargos}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" currencyCode="BRL" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{parc.descontoAdi}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" currencyCode="BRL" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{parc.multa}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" currencyCode="BRL" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{parc.valorLiquido}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" currencyCode="BRL" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{parc.dataPagto}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{initParam['timezone']}" locale="pt_BR" />
+                                            </h:outputText>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                                <tr>
+                                    <td colspan="12" style="font-weight: bold; background: #d5d5d5">
+                                        #{msg.previsoes}
+                                    </td>
+                                </tr>
+                                <ui:repeat value="#{posicaoCredorController.previsoes}" var="prev">
+                                    <tr>
+                                        <td>
+                                            <h:outputText value="#{prev.vencimento}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{initParam['timezone']}" locale="pt_BR" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            #{prev.atrasoR}
+                                        </td>
+                                        <td>
+                                            #{prev.documento}
+                                        </td>
+                                        <td>
+                                            #{prev.parcela}
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{prev.valorNominal}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" currencyCode="BRL" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{prev.acrescimos}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" currencyCode="BRL" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{prev.descontos}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" currencyCode="BRL" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{prev.encargos}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" currencyCode="BRL" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{prev.descontoAdi}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" currencyCode="BRL" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{prev.multa}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" currencyCode="BRL" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{prev.valorLiquido}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" currencyCode="BRL" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{prev.dataPagto}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{initParam['timezone']}" locale="pt_BR" />
+                                            </h:outputText>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                            </table>
+                            <p />
+                    </p:tab>
+
+                    <p:tab title="#{msg.outrosDados}">
+                            <!-- OUTROS DADOS /!-->
+                            <table class="referencesmall">
+                                <tr>
+                                    <th>
+                                        #{msg.docTipo}
+                                    </th>
+                                    <th>
+                                        #{msg.numeroDoc}
+                                    </th>
+                                    <th>
+                                        #{msg.dataLiberacao}
+                                    </th>
+                                    <th>
+                                        #{msg.fichaNum}
+                                    </th>
+                                    <th>
+                                        #{msg.natureza}
+                                    </th>
+                                    <th title="#{msg.atraso}">
+                                        #{msg.atr}
+                                    </th>
+                                    <th>
+                                        #{msg.vencimentoOrig}
+                                    </th>
+                                    <th title="#{msg.empresa}">
+                                        #{msg.emp}
+                                    </th>
+                                    <th title="#{msg.filial}">
+                                        #{msg.fil}
+                                    </th>
+                                    <th title="#{msg.nucleo}">
+                                        #{msg.nuc}
+                                    </th>
+                                    <th>
+                                        #{msg.centroNome}
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td colspan="12" style="font-weight: bold; background: #d5d5d5">
+                                        #{msg.parcelasEmAberto}
+                                    </td>
+                                </tr>
+                                <ui:repeat value="#{posicaoCredorController.parcelas}" var="parc">
+                                    <tr>
+                                        <td>
+                                            #{parc.tipoDoc}
+                                        </td>
+                                        <td>
+                                            #{parc.numeroDoc}
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{parc.dataLiberacao}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{initParam['timezone']}" locale="pt_BR" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            #{parc.numeroFicha}
+                                        </td>
+                                        <td align='left'>
+                                            #{parc.natureza}
+                                        </td>
+                                        <td>
+                                            #{parc.atraso}
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{parc.vencimentoOriginal}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{initParam['timezone']}" locale="pt_BR" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            #{parc.empresa}
+                                        </td>
+                                        <td>
+                                            #{parc.filial}
+                                        </td>
+                                        <td>
+                                            #{parc.nucleo}
+                                        </td>
+                                        <td>
+                                            #{parc.centroNome}
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                                <tr>
+                                    <td colspan="12" style="font-weight: bold; background: #d5d5d5">
+                                        #{msg.previsoes}
+                                    </td>
+                                </tr>
+                                <ui:repeat value="#{posicaoCredorController.previsoes}" var="prev">
+                                    <tr>
+                                        <td>
+                                            #{prev.tipoDoc}
+                                        </td>
+                                        <td>
+                                            #{prev.numeroDoc}
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{prev.dataLiberacao}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{initParam['timezone']}" locale="pt_BR" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            #{prev.numeroFicha}
+                                        </td>
+                                        <td align='left'>
+                                            #{prev.natureza}
+                                        </td>
+                                        <td>
+                                            #{prev.atraso}
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{prev.vencimentoOriginal}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{initParam['timezone']}" locale="pt_BR" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            #{prev.empresa}
+                                        </td>
+                                        <td>
+                                            #{prev.filial}
+                                        </td>
+                                        <td>
+                                            #{prev.nucleo}
+                                        </td>
+                                        <td>
+                                            #{prev.centroNome}
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                            </table>
+                    </p:tab>
+                </p:tabView>
+
+            </h:form>
+        </p:dialog>
+    </f:subview>
+</ui:composition>

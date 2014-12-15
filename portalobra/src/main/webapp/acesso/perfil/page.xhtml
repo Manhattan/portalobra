@@ -1,0 +1,79 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                template="../../templates/layout.xhtml"
+                >
+    <ui:param name="titulomenu" value="#{msg.perfisAcesso}" />
+    <ui:define name="content" >
+        <h:panelGroup rendered="#{loginController.statusLogin == 0 or loginController.funcionario == null or loginController.funcionario.login == null or !loginController.verPerfil}">
+            <ui:include src="../../semPermissao.xhtml" />
+        </h:panelGroup>
+        <p:dialog widgetVar="dlgNovoInsumo" visible="false" />
+        <h:panelGroup id="panelMain" rendered="#{loginController.verPerfil}">
+            <h:panelGroup>
+                <ui:include src="form.xhtml" />
+            </h:panelGroup>
+
+            <h:form id="formMain">
+                <p:commandButton value="#{msg.novo}" rendered="#{loginController.incluiPerfil}" 
+                                 action="#{perfilAcessoController.prepareCreate()}" update=":panelMain" 
+                                 icon="ui-icon-circle-plus" iconPos="left"/>
+                <table class="referencesmall" style="width: 100%; font-size: 110%">
+                    <tr>
+                        <th align='center' style="width: 7%"></th>
+                        <th align='center' style="width: 10%">
+                            #{msg.codigo}
+                        </th>
+                        <th style="width: 30%">
+                            #{msg.nome}
+                        </th>
+                        <th style="width: 50%">
+                            #{msg.descricao}
+                        </th>
+                    </tr>
+                    <ui:repeat value="#{perfilAcessoController.items}"  var="item" varStatus="x">
+                        <tr>
+                            <td>
+                                <p:commandButton id="btnDeletePerfil" title="#{msg.remover}" icon="ui-icon-close" 
+                                                 iconPos="left" value="" styleClass="button-only-icon" update=":panelMain"  
+                                                 action="#{perfilAcessoController.destroy()}" 
+                                                 rendered="#{loginController.removePerfil}">
+                                    <p:confirm header="#{msg.excluirPerfilAcesso}" message="#{msg.confirmaExclusaoPerfilAcesso}" icon="ui-icon-alert" />
+                                </p:commandButton>
+
+                                <p:commandButton id="btnEditPerfil" title="#{msg.editar}" icon="ui-icon-pencil" 
+                                                 iconPos="left" value="" styleClass="button-only-icon" update=":panelMain"  
+                                                 action="#{perfilAcessoController.prepareEdit()}" 
+                                                 rendered="#{loginController.alteraPerfil}"/>
+
+                                <p:confirmDialog closeOnEscape="true" global="true" >
+                                    <p:commandButton value="#{msg.sim}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="#{msg.nao}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                            </td>
+                            <td align='center'>
+                                #{item.codigo}
+                            </td>
+                            <td>
+                                #{item.nome}
+                            </td>
+                            <td>
+                                #{item.descricao}
+                            </td>
+                        </tr>
+                    </ui:repeat>
+                </table>
+                <arq:paginator id="paginadorPerfil" entityBean="#{perfilAcessoController}" formName=":formMain" renderedNew="false"/>
+            </h:form>
+            <h:panelGroup id="dialogForm" />
+            <!-- ************************* AQUI FICA A TELA QUE TROCA O CENTRO DE CUSTO ******************************************* /-->
+            <h:panelGroup id="panelCentroCusto" >
+                <arq:centroCusto formName=":formMain" entityBean="#{perfilAcessoController}" listCentros="#{loginController.funcionario.centros}" pageRender="perfil" />
+            </h:panelGroup>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,208 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                template="../templates/layout.xhtml"
+                >
+    <ui:param name="titulomenu" value="#{msg.estoqueMateriais}" />
+    <ui:define name="content" >
+        <h:panelGroup rendered="#{loginController.statusLogin == 0 or materiaisEstoqueController.centroSelecionado == null or followUpSolicitacoesController.funcionario.login == null}">
+            <ui:include src="../semPermissao.xhtml" />
+        </h:panelGroup>
+        <p:dialog widgetVar="dlgNovoInsumo" visible="false" />
+
+        <h:panelGroup id="panelMain" rendered="#{loginController.statusLogin == 1 and materiaisEstoqueController.centroSelecionado != null and followUpSolicitacoesController.funcionario.login != null}">
+            <h:form id="formMain">
+                <p:panel >
+                    <h:outputText value="#{msg.estoqueMateriais}" style="font-weight: bold" />
+                </p:panel>
+                <p:panelGrid columns="7" styleClass="noFormatColumn">
+                    <h:panelGroup>
+                        <h:outputText value="#{msg.mesAno}:" style="float: left; font-weight: bold" /><br/>
+                        <p:calendar  value="#{materiaisEstoqueController.mesAno}" size="15" maxlength="20"  id="mesAno" 
+                                     title="#{msg.mesAno}" pattern="MMMM/yyyy" maxdate="utilsController.getDate()" pagedate="utilsController.getDate()" locale="pt"  mode="popup"
+                                     navigator="true" immediate="true" 
+                                     timeZone="#{initParam['timezone']}" >
+                        </p:calendar>
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <h:outputText value="#{msg.insumo}:" style="float: left; font-weight: bold" /><br/>
+                        <p:inputText value="#{materiaisEstoqueController.insumoCod}" />
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <h:outputText value="#{msg.valorTotal}:" style="float: left; font-weight: bold" /><br/>
+                        <p:inputText value="#{materiaisEstoqueController.valorTotal}" readonly="true" size="#{materiaisEstoqueController.valorTotal.length()}" />
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{!materiaisEstoqueController.modoSimples}">
+                        <h:outputText value="#{msg.classe}:" style="font-weight: bold" />
+                        <br/>
+                        <p:selectOneMenu id="filtroClasseInsumos" filter="true" filterMatchMode="contains" value="#{materiaisEstoqueController.filtroClasseInsumo}" >
+                            <f:selectItem value="#{null}" itemLabel="" />
+                            <f:selectItems value="#{materiaisEstoqueController.insumoClasseSelect}" />
+                            <p:ajax update="filtroGrupoInsumos, filtroCaracterizacaoInsumos" immediate="true" />
+                            <f:converter converterId="classeInsumosConverter" />
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{!materiaisEstoqueController.modoSimples}">
+                        <h:outputText value="#{msg.grupo}:" style="font-weight: bold" />
+                        <br/>
+                        <p:selectOneMenu id="filtroGrupoInsumos" filter="true" filterMatchMode="contains" value="#{materiaisEstoqueController.filtroGrupoInsumo}" style="margin-right: 5px">
+                            <f:selectItem value="#{null}" itemLabel="" />                                
+                            <f:selectItems value="#{materiaisEstoqueController.insumoGrupoSelect}" />
+                            <f:ajax render="filtroCaracterizacaoInsumos" immediate="true" />
+                            <f:converter converterId="grupoInsumosConverter" />
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{!materiaisEstoqueController.modoSimples}">
+                        <h:outputText value="#{msg.caracterizacao}:" style="font-weight: bold" />
+                        <br/>
+                        <p:selectOneMenu id="filtroCaracterizacaoInsumos" filter="true" filterMatchMode="contains" value="#{materiaisEstoqueController.filtroCaracInsumo}" style="margin-right: 5px">
+                            <f:selectItem value="#{null}" itemLabel="" />
+                            <f:selectItems value="#{materiaisEstoqueController.insumoCaracterizacaoSelect}" />
+                            <f:ajax render="filtroCaracterizacaoInsumos" immediate="true" />
+                            <f:converter converterId="caracterizacaoInsumosConverter" />
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <p:commandButton actionListener="#{materiaisEstoqueController.pesquisar()}" icon="ui-icon-search" update=":formMain" value="#{msg.executar}" style="float: left; margin-top: 16px" />
+                        <h:selectBooleanCheckbox id="chkConsMatMdSimp" value="#{materiaisEstoqueController.modoSimples}" style="margin-top: 22px; margin-left: 10px">
+                            <p:ajax update=":formMain" />
+                        </h:selectBooleanCheckbox>
+                        <h:outputLabel value="#{msg.modoSimples}" for="chkConsMatMdSimp" style="font-weight: bold" />
+                    </h:panelGroup>
+                </p:panelGrid>
+                <p:separator rendered="#{!materiaisEstoqueController.modoSimples}" />
+
+
+                <h:panelGroup id="materiaisConsultaTable">
+                    <table class="referencesmall">
+                        <thead>
+                            <tr align='center'>
+                                <th>#{msg.material}</th>
+                                <th>#{msg.especificacao}</th>
+                                <th>#{msg.unidade}</th>
+                                <h:panelGroup rendered="#{!materiaisEstoqueController.modoSimples}">
+                                    <th>#{msg.caracterizacao}</th>
+                                    <th>#{msg.grupo}</th>
+                                    <th>#{msg.classe}</th>
+                                </h:panelGroup>
+                                <th>#{msg.quantidade}</th>
+                                <th style="min-width: 50px">
+                                    #{msg.valor}
+                                    <p:commandLink value="#{msg.maiorMenorSimbol}" style="color: white" actionListener="#{materiaisEstoqueController.alterOrderByValor()}" update=":formMain:materiaisConsultaTable" />
+                                </th>
+                                <th>#{msg.precoUnitarioAbrev}</th>
+                                <th style="width: 60px">#{msg.inventario}</th>
+                            </tr>
+                        </thead>
+                        <ui:repeat value="#{materiaisEstoqueController.items}" var="item" varStatus="x">
+                            <tr>
+                                <td>#{item.insumoCod}</td>
+                                <td align='left'>#{item.insumo.especificacao}</td>
+                                <td align='center'>#{item.insumo.unidade.codigo}</td>
+                                <h:panelGroup rendered="#{!materiaisEstoqueController.modoSimples}">
+                                    <td>#{item.insumo.caracterizacaoInsumo.titulo}</td>
+                                    <td>#{item.insumo.caracterizacaoInsumo.grupoInsumos.titulo}</td>
+                                    <td>#{item.insumo.caracterizacaoInsumo.grupoInsumos.classeInsumos.titulo}</td>
+                                </h:panelGroup>
+                                <td align='right'>
+                                    <h:commandButton value="#{item.estoqueQuantidadeFmt}" class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" style="text-align: right;" actionListener="#{materiaisEstoqueController.mountKardex(item)}" >
+                                        <p:ajax oncomplete="dlgKardex.show()" update=":dialogForm" />
+                                    </h:commandButton>
+                                </td>
+                                <td align='right'>
+                                    <h:outputText value="#{item.estoqueValor}" style="padding-left: 5px; padding-right: 5px">
+                                        <f:convertNumber type="number" minFractionDigits="2" maxFractionDigits="2" />
+                                    </h:outputText>
+                                </td>
+                                <td align='right'>
+                                    <h:outputText value="#{item.precoUnitario}" style="padding-left: 5px; padding-right: 5px">
+                                        <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="2" />
+                                    </h:outputText>
+                                </td>
+                                <td></td>
+                            </tr>
+                        </ui:repeat>
+                    </table>
+
+                    <p:panel id="paginadorConsultaMateriaisPanel" style="border: none">
+                        <arq:paginator id="paginadorConsultaMateriais" entityBean="#{materiaisEstoqueController}"  formName=":formMain:materiaisConsultaTable" regsPerPage="true" regsPerPageAction="#{materiaisEstoqueController.recreateTable()}" regsPerPageAttribute="#{materiaisEstoqueController.registrosPorPagina}"  renderedNew="false"/>
+                    </p:panel>
+
+                </h:panelGroup>
+
+            </h:form>
+            <!-- ************************* AQUI FICA A TELA QUE TROCA O CENTRO DE CUSTO ******************************************* /-->
+            <h:panelGroup id="panelCentroCusto" >
+                <arq:centroCusto formName=":panelMain" entityBean="#{materiaisEstoqueController}" listCentros="#{loginController.funcionario.centros}" pageRender="materiais_estoque" />
+            </h:panelGroup>
+
+            <h:panelGroup id="dialogForm">
+                <p:dialog header="#{msg.extratoMateriais}" closeOnEscape="true" widgetVar="dlgKardex" resizable="false">
+                    <h:form>
+                        <h:outputText value="Insumo: #{materiaisEstoqueController.current.insumo}" style="font-weight: bold" />
+                        <table class="dialogtable">
+                            <tr>
+                                <th>#{msg.data}</th>
+                                <th>#{msg.classe}</th>
+                                <th>#{msg.tipo}</th>
+                                <th>#{msg.docTipo}</th>
+                                <th>#{msg.docNumero}</th>
+                                <th>#{msg.numero}</th>
+                                <th>#{msg.item}</th>
+                                <th>#{msg.quantidade}</th>
+                            </tr>
+                            <tr>
+                                <td>#{materiaisEstoqueController.dataSaldoInicial}</td>
+                                <td>SI</td>
+                                <td></td>
+                                <td>A</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="valored">#{materiaisEstoqueController.current.saldoInicial}</td>
+                            </tr>
+                            <ui:repeat value="#{materiaisEstoqueController.current.materialEntradasESaidas}" var="mat" varStatus="e">
+                                <tr>
+                                    <td>
+                                        <h:outputText value="#{mat.data}">
+                                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </td>
+                                    <td>#{mat.classe}</td>
+                                    <td>#{mat.tipoMovimento}</td>
+                                    <td>#{mat.tipoDocumento}</td>
+                                    <td>#{mat.numeroDocumento}</td>
+                                    <td>#{mat.numero}</td>
+                                    <td>#{mat.itemItem}</td>
+                                    <td class="valored">#{mat.quantidade}</td>
+                                </tr>
+                            </ui:repeat>
+
+                            <tr>
+                                <td>#{materiaisEstoqueController.dataSaldoFinal}</td>
+                                <td>SF</td>
+                                <td></td>
+                                <td>Z</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="valored">#{materiaisEstoqueController.current.saldoFinal}</td>
+                            </tr>
+                        </table>
+                    </h:form>
+                </p:dialog>
+                <p:dialog widgetVar="dlgNovoInsumo" visible="false" />
+            </h:panelGroup>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

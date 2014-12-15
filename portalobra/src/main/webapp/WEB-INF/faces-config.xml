@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+    version="2.0">
+
+    <application>
+        <resource-bundle>
+            <base-name>config/i18n/Messages</base-name>
+            <var>msg</var>
+        </resource-bundle>
+        <message-bundle>config/i18n/Messages</message-bundle>
+        <locale-config>
+            <default-locale>pt</default-locale>
+            <!--supported-locale>en</supported-locale/-->
+            <supported-locale>pt</supported-locale>
+        </locale-config>
+    </application>
+    <navigation-rule>
+        <navigation-case>
+            <from-outcome>principal</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>principal_nr</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>followup</from-outcome>
+            <to-view-id>/followup/page.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>ar_form</from-outcome>
+            <to-view-id>/ar/form.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>materiais_estoque</from-outcome>
+            <to-view-id>/consulta/materiais_estoque.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>ar_page</from-outcome>
+            <to-view-id>/ar/page.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>login_error</from-outcome>
+            <to-view-id>/login_error.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>login</from-outcome>
+            <to-view-id>/login.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>usuarios</from-outcome>
+            <to-view-id>/acesso/funcionario/page.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>perfil</from-outcome>
+            <to-view-id>/acesso/perfil/page.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>conect_users</from-outcome>
+            <to-view-id>/monitor/conect_users.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>rel_pedido</from-outcome>
+            <to-view-id>/rel/pedido.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>rel_aut_saida</from-outcome>
+            <to-view-id>/rel/rel_aut_saida.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>password</from-outcome>
+            <to-view-id>#</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>admin_principal</from-outcome>
+            <to-view-id>#</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+</faces-config>

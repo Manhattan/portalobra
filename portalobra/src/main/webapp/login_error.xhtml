@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="templates/loginLayout.xhtml">
+    <ui:param name="img_loginerror_param" value="change_password.png"/>
+    <ui:param name="img_param" value="logo_man.png" />
+    <ui:param name="img_param_bg" value="resources/images/riviera_praia_1.jpg" />
+    <ui:param name="info_param" value="#{loginController.erroLogin}"/>
+    <ui:define name="conteudo">
+        <h:form prependId="false" id="loginform">
+            <div>
+                                            <h:graphicImage name="#{img_loginerror_param}" library="images" />
+               <p:commandButton action="login" value="#{msg.tentarNovamente}" style="position: relative; float: bottom; margin-top: 20px"  />
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

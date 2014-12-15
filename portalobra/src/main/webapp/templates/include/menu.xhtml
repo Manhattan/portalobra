@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <f:subview id="menuApp">
+        <h:form id="menuForm">
+            <p:hotkey bind="esc" oncomplete="dlgCentroCusto.hide()" async="true" global="false" />
+            <p:menubar style="padding-top: 5px; padding-bottom: 5px; margin-bottom: 5px; width: 100%">
+                <p:submenu label="#{msg.principal}" icon="ui-icon-document" >
+                    <p:menuitem value="#{msg.followUp}" action="followup" />
+                    <p:separator />
+                    <p:menuitem value="#{msg.sair}" action="#{loginController.logout()}" />
+                </p:submenu>
+
+                <p:submenu label="#{msg.consultas}" icon="ui-icon-search" >
+                    <p:menuitem value="#{msg.insumos}" icon="ui-icon-cart" actionListener="#{insumoController.desconsiderarLinkOrcamento()}" oncomplete="dlgConsultaInsumo.show()" />
+                    <p:menuitem value="#{msg.fornecedores}" icon="ui-icon-person" oncomplete="dlgConsultaCredor.show()" />
+                    <p:menuitem value="#{msg.estoqueMateriais}" icon="ui-icon-pin-s"  oncomplete="#{materiaisEstoqueController.initCentroSelecionado(loginController.centroSelecionado)}" action="materiais_estoque" />
+                </p:submenu>
+
+                <p:submenu label="#{msg.seguranca}" icon="ui-icon-locked" rendered="#{loginController.renderMenuSeguranca}" >
+                    <p:menuitem value="#{msg.usuarios}" action="usuarios" disabled="#{!loginController.verUsuario}" />
+                    <p:menuitem value="#{msg.perfilAcesso}" action="perfil" disabled="#{!loginController.verPerfil}" />
+                    <p:menuitem value="#{msg.alterarSenha}" disabled="true" />
+                    <p:menuitem value="#{msg.usuariosConectados}" action="conect_users" disabled="#{!loginController.verUsuariosConectados}" />
+                </p:submenu>
+
+                <p:submenu label="#{msg.utilitarios}" icon="ui-icon-wrench">
+                    <p:menuitem value="#{msg.calculadora}" disabled="true" />
+                </p:submenu>
+
+                <p:submenu label="#{msg.ajuda}" icon="ui-icon-help">
+                    <p:menuitem value="#{msg.descricaoProcessos}" oncomplete="dlgAjuda.show()" update=":dialogForm" actionListener="#{followUpSolicitacoesController.createCurrent(null, 'dlgAjuda')}"/>
+                    <p:menuitem value="#{msg.reportarProblema}" url="#{msg.helpdeskLink}" target="_blank" />
+                    <p:menuitem value="#{msg.comoUtilizar}" disabled="true" />
+                    <p:menuitem value="#{msg.manualCompras}" url="#{msg.manualComprasLink}" target="_blank" />
+                </p:submenu>
+
+                <p:menuitem oncomplete="#{credorController.initCentroSelecionario(loginController.centroSelecionado)} dlgCentroCusto.show()" update=":panelCentroCusto" value="#{loginController.centroSelecionado.nomeCompleto}" style="margin-left: 30%; width: 300px; font-size: small" />
+            </p:menubar>
+        </h:form>
+        <ui:include src="/ajuda.xhtml" />
+        <ui:include src="/consulta/insumo.xhtml" />
+        <ui:include src="/consulta/credor.xhtml" />
+
+        <h:panelGroup id="pngPosCred">
+            <ui:include src="/consulta/posicao_credor.xhtml" />
+        </h:panelGroup>
+
+        <h:panelGroup id="pnlFornecedor" >
+            <ui:include src="../../followup/fornecedor.xhtml" />
+        </h:panelGroup>
+    </f:subview>
+</ui:composition>

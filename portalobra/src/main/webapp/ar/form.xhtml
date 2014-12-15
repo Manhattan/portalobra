@@ -1,0 +1,417 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                template="../templates/layout.xhtml"
+                >
+    <ui:param name="titulomenu" value="#{msg.avisoRecebimento}" />
+    <ui:define name="content" >
+        <h:panelGroup rendered="#{loginController.statusLogin == 0 or followUpSolicitacoesController.funcionario == null or followUpSolicitacoesController.funcionario.login == null}">
+            <ui:include src="../semPermissao.xhtml" />
+        </h:panelGroup>
+
+        <h:form id="formMain" rendered="#{loginController.statusLogin == 1 and followUpSolicitacoesController.funcionario != null and followUpSolicitacoesController.funcionario.login != null}">
+            <h:panelGrid id="arPanelTopo" columns="4">
+                <h:outputText value="#{msg.centroNegocioAbrev}: " />
+                <h:outputText value="#{documentoEntradaController.avisoRecebimento.centro.nomeCompleto}" style="padding-right: 40px; margin-left: 5px" />
+                
+                <h:outputText value="#{msg.dataAR}: " />
+                <h:outputText value="#{documentoEntradaController.avisoRecebimento.data}" />
+                
+                <h:outputText value="#{msg.fornecedor}: " />
+                <p:commandButton value="#{documentoEntradaController.credor.razaoSocial == null ? msg.pesquisar : documentoEntradaController.credor.razaoSocial}" icon="#{documentoEntradaController.credor.razaoSocial == null ? 'ui-icon-search' : ''}" iconPos="right" style="width: 300px; text-align: left; margin-left: 5px; background-color: transparent; color: #{documentoEntradaController.credor.razaoSocial == null ? '#585b57' : 'blue'}" oncomplete="credorDialog.show()" update=":dialogForm" />
+                
+                <h:outputText value="#{msg.numeroARAbrev}: " />
+                <h:outputText value="#{documentoEntradaController.avisoRecebimento.numero}" />
+                
+                <h:outputText value="" />
+            </h:panelGrid>
+            <p:separator />
+            <p:commandButton value="#{msg.novo}" iconPos="left" icon="ui-icon-circle-plus" actionListener="#{documentoEntradaController.novoCurrent()}" update="tabViewMain" />
+            <p:tabView id="tabViewMain" value="#{documentoEntradaController.currentList}" var="doc" >
+                <p:tab title="#{doc.item}">
+                    <h:panelGrid columns="6">
+                        <h:outputText value="#{msg.dataAR}:"/>
+                        <p:calendar value="#{doc.avisoRecebimento.data}" size="11" maxlength="10"  id="dataAR"
+                                    title="#{msg.dataAR}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                    navigator="true" immediate="true" timeZone="#{initParam['timezone']}" style="width: 90px" />
+                        <h:outputText value="#{msg.ufOrigem}:"/>
+                        <p:selectOneMenu value="#{doc.docUFOrigem}" >
+                            <f:selectItems value="#{documentoEntradaController.UFSelect}" var="uf"/>
+                        </p:selectOneMenu>
+                        <h:outputText value="#{msg.valorIPI}:"/>
+                        <pe:inputNumber value="#{doc.valorIPI}" style="width: 90px" />
+
+                        <h:outputText value="#{msg.tipoDoc}:"/>
+                        <p:selectOneMenu value="#{doc.docTipo}" filter="true" filterMatchMode="startsWith" style="width: 137px;" >
+                            <f:selectItems value="#{documentoEntradaController.docEntTipoSelect}" var="de" />
+                            <f:converter converterId="documentoEntradaTipoConverter" />
+                        </p:selectOneMenu>
+
+                        <h:outputText value="#{msg.valor}:"/>
+                        <pe:inputNumber id="docValor" value="#{doc.docValor}" style="width: 90px">
+                            <p:ajax update=":formMain:tabViewMain:tabView" immediate="true" />
+                        </pe:inputNumber>
+                        <h:outputText value="#{msg.descontoProdutosAbrev}:"/>
+                        <pe:inputNumber value="#{doc.descontoProduto}" style="width: 90px" />
+
+                        <h:outputText value="#{msg.numeroDoc}:"/>
+                        <pe:inputNumber id="docNumero" value="#{doc.numeroDocumento}" decimalPlaces="0" thousandSeparator="" maxValue="999999999999999999" />
+
+
+                        <h:outputText value="#{msg.dataEntrada}:"/>
+                        <p:calendar  value="#{doc.dataEntrada}" size="11" maxlength="10"  id="dataEntrada"
+                                     title="#{msg.dataEntrada}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                     navigator="true" immediate="true" timeZone="#{initParam['timezone']}" style="width: 90px" />
+                        <h:outputText value="#{msg.despesasAcessoriasAbrev}:"/>
+                        <pe:inputNumber value="#{doc.despesasAcessorias}" style="width: 90px" />
+
+                        <h:outputText value="#{msg.complemento}:"/>
+                        <p:inputText value="#{doc.complementoDocumento}" maxlength="50"/>
+                        <h:outputText value="#{msg.naturezaOperacaoAbrev}:"/>
+                        <p:selectOneMenu value="#{doc.naturezaFiscal}" filter="true" filterMatchMode="contains" style="width: 137px;">
+                            <f:selectItems value="#{documentoEntradaController.naturezaFiscalSelect}" var="nat" />
+                            <f:converter converterId="naturezaFiscalConverter" />
+                        </p:selectOneMenu>
+                        <h:outputText value="#{msg.descontoSemDoc}:"/>
+                        <pe:inputNumber value="#{doc.valorDescontos}" style="width: 90px" />
+
+                        <h:outputText value="#{msg.serieDoc}:"/>
+                        <p:inputText value="#{doc.docSerie}" maxlength="3" style="width: 40px"/>
+                        <h:outputText value="#{msg.aClassificar}:"/>
+                        <pe:inputNumber value="#{doc.valorAClassificar}" style="width: 90px" />
+                        <h:outputText value="#{msg.acrescimoSemDoc}:"/>
+                        <pe:inputNumber value="#{doc.valorAcrescimos}" style="width: 90px" />
+
+                        <h:outputText value="#{msg.dataDoc}"/>
+                        <p:calendar  value="#{doc.dataEmissao}" size="11" maxlength="10"  id="dataDoc"
+                                     title="#{msg.dataDoc}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                     navigator="true" immediate="true" timeZone="#{initParam['timezone']}" style="width: 90px" />
+                        <h:outputText value="#{msg.valorICMS}:"/>
+                        <pe:inputNumber value="#{doc.valorICMS}" style="width: 90px" />
+                        <h:outputText value="#{msg.valorFinanciamentoBens}:"/>
+                        <pe:inputNumber value="#{doc.valorFinanciadoBens}" style="width: 90px" />
+                    </h:panelGrid>
+
+                    <p:tabView id="tabView" >
+                        <p:tab id="tabPrincipal" title="#{msg.principal}">
+
+                            <table class="referencesmall">
+                                <tr class="cabecalhoDiscreto" style="text-align: center">
+                                    <th colspan="17">#{msg.itensDocumento}</th>
+                                </tr>
+                                <tr class="cabecalhoDiscreto" style="text-align: center">
+                                    <th align='center'><h:selectBooleanCheckbox style="margin: 0px; padding: 0px" /></th>
+                                    <th>#{msg.item}</th>
+                                    <th>#{msg.insumo}</th>
+                                    <th>#{msg.especificacao}</th>
+                                    <th>#{msg.unidade}</th>
+                                    <th></th>
+                                    <th>#{msg.quantidade}</th>
+                                    <th>#{msg.precoUnitarioAbrev}</th>
+                                    <th>#{msg.totalProdutoAbrev}</th>
+                                    <th>#{msg.descontoProdutoAbrev}</th>
+                                    <th>#{msg.subTotal}</th>
+                                    <th>#{msg.percentIPI}</th>
+                                    <th>#{msg.valorIPI}</th>
+                                    <th>#{msg.despesas}</th>
+                                    <th>#{msg.totalItem}</th>
+                                    <th>#{msg.valorAClassificar}</th>
+                                </tr>
+                                <ui:repeat value="#{doc.itens}" var="dei">
+                                    <tr class="alignMiddle">
+                                        <td rowspan="2" align='center'><h:selectBooleanCheckbox style="margin: 0px; padding: 0px" /></td>                        
+                                        <td rowspan="2"><h:outputText value="000" /></td>
+                                        <td rowspan="2"><h:outputText value="#{dei.insumoCod}" /></td>
+                                        <td rowspan="2"><h:outputText value="#{dei.solicitacaoCompraItem.insumo.especificacao}" /></td>
+                                        <td rowspan="2" align="center"><h:outputText value="#{dei.solicitacaoCompraItem.insumo.unidade.codigo}" /></td>
+                                        <td class="colunaDiscreta"><h:outputText value="E" title="#{msg.entregue}" /></td>
+                                        <td>
+                                            <pe:inputNumber value="#{dei.quantidade}" style="width: 65px" decimalPlaces="4">
+                                                <p:ajax update=":formMain:tabViewMain:tabView" />
+                                            </pe:inputNumber>
+                                        </td>
+                                        <td><p:inputText    value="#{dei.precoUnitarioE}" style="width: 65px" readonly="true"   /></td>
+                                        <td>
+                                            <pe:inputNumber value="#{dei.totalItem}" style="width: 65px" decimalPlaces="2" >
+                                                <p:ajax update=":formMain:tabViewMain:tabView" />
+                                            </pe:inputNumber>
+                                        </td>
+                                        <td>
+                                            <pe:inputNumber value="#{dei.descontoProduto}" emptyValue="0" style="width: 65px" decimalPlaces="2">
+                                                <p:ajax update=":formMain:tabViewMain:tabView" />
+                                            </pe:inputNumber>
+                                        </td>
+                                        <td><p:inputText    value="#{dei.totalItemE}" style="width: 65px" readonly="true"   /></td>
+                                        <td>
+                                            <pe:inputNumber value="#{dei.aliqIPIE}" style="width: 65px" decimalPlaces="2">
+                                                <p:ajax update=":formMain:tabViewMain:tabView" listener="#{dei.calcValorIPI(dei.totalItemE, dei.aliqIPIE)}" />
+                                            </pe:inputNumber>
+                                        </td>
+                                        <td>
+                                            <pe:inputNumber value="#{dei.valorIPIE}" style="width: 65px" decimalPlaces="2">
+                                                <p:ajax update=":formMain:tabViewMain:tabView" listener="#{dei.calcAliqIPIE(dei.totalItemE, dei.valorIPIE)}" />
+                                            </pe:inputNumber>
+                                        </td>
+                                        <td>
+                                            <pe:inputNumber value="#{dei.acrescimoProduto}" style="width: 65px" decimalPlaces="2" >
+                                                <p:ajax update=":formMain:tabViewMain:tabView" />
+                                            </pe:inputNumber>
+                                        </td>
+                                        <td><p:inputText    value="#{dei.totalItemComIPIE}" style="width: 65px" readonly="true"   /></td>
+                                        <td><p:inputText    value="" style="width: 65px" disabled="true" /></td>
+                                    </tr>
+                                    <tr class="alignMiddle" style="border-bottom: gray solid">
+                                        <td class="colunaDiscreta"><h:outputText value="R" title="#{msg.recebido}" /></td>
+                                        <td>
+                                            <pe:inputNumber value="#{dei.quantidadeRecebida}" style="width: 65px" decimalPlaces="4">
+                                                <p:ajax update=":formMain:tabViewMain:tabView" />
+                                            </pe:inputNumber>
+                                        </td>
+                                        <td><p:inputText    value="#{dei.precoUnitarioPedido}" style="width: 65px" readonly="true" /></td>
+                                        <td><p:inputText    value="#{dei.totalItemPedido}" style="width: 65px" readonly="true" /></td>
+                                        <td><p:inputText    value="" style="width: 65px" disabled="true" /></td>
+                                        <td><p:inputText    value="" style="width: 65px" disabled="true" /></td>
+                                        <td><p:inputText    value="#{dei.aliqIPIPedido}" style="width: 65px" readonly="true" /></td>
+                                        <td><p:inputText    value="#{dei.valorIPIPedido}" style="width: 65px" readonly="true" /></td>
+                                        <td><p:inputText    value="" style="width: 65px" disabled="true" /></td>
+                                        <td><p:inputText    value="#{dei.totalItemComIPIPedido}" styleClass="inputMoneyRead" readonly="true" /></td>
+                                        <td><pe:inputNumber value="#{dei.totalItemRp}" style="width: 65px" /></td>
+                                    </tr>
+                                </ui:repeat>
+                                <tr>
+                                    <td style="border:none">
+                                        <p:commandButton value="" icon="ui-icon-circle-plus" oncomplete="pedidoItensDialog.show() #{pedidoItemController.pesquisar(loginController.centroSelecionado)}" update=":dialogForm" styleClass="button-only-icon" iconPos="left" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </p:tab>
+                        <p:tab id="tabOutros" title="#{msg.outros}">
+                            <table class="referencesmall">
+                                <tr class="cabecalhoDiscreto" style="text-align: center">
+                                    <th colspan="16">#{msg.itensDocumento}</th>
+                                </tr>
+                                <tr class="cabecalhoDiscreto" style="text-align: center">
+                                    <th></th>
+                                    <th>#{msg.item}</th>
+                                    <th>#{msg.insumo}</th>
+                                    <th colspan="2">#{msg.especificacao}</th>
+                                    <th>#{msg.unidade}</th>
+                                    <th></th>
+                                    <th>#{msg.quantidade}</th>
+                                    <th>#{msg.precoUnitarioAbrev}</th>
+                                    <th>#{msg.totalProdutoAbrev}</th>
+                                    <th>#{msg.descontoProdutoAbrev}</th>
+                                    <th>#{msg.subTotal}</th>
+                                    <th>#{msg.percentIPI}</th>
+                                    <th>#{msg.valorIPI}</th>
+                                    <th>#{msg.despesasAcessoriasAbrev}</th>
+                                    <th>#{msg.totalItem}</th>
+                                    <th>#{msg.valorAClassificar}</th>
+                                </tr>
+
+                                <ui:repeat value="#{doc.itens}" var="dei">
+                                    <tr>
+                                        <td>#{dei.itemItem}</td>
+                                        <td>#{dei.insumoCod}</td>
+                                        <td colspan="2">#{dei.solicitacaoCompraItem.insumo.especificacao}</td>
+                                        <td>#{dei.solicitacaoCompraItem.insumo.unidade.codigo}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </ui:repeat>
+                            </table>
+                        </p:tab>
+                        <p:tab id="tabImpostos" title="#{msg.impostos}">
+                            <table class="referencesmall">
+                                <tr class="cabecalhoDiscreto" style="text-align: center">
+                                    <th>#{msg.imposto}</th>
+                                    <th>#{msg.percentBase}</th>
+                                    <th>#{msg.baseCalculo}</th>
+                                    <th>#{msg.percentAliq}</th>
+                                    <th>#{msg.calculo}</th>
+                                    <th>#{msg.minimo}</th>
+                                    <th>#{msg.valor}</th>
+                                    <th>#{msg.retidoApresentado}</th>
+                                </tr>
+                                <tr>
+                                    <td align='center'><h:outputText value="#{msg.inss}" style="font-weight: bold" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.basePercINSS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.baseINSS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.aliqINSS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.calcINSS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.minINSS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.valorINSS}" /></td>
+                                    <td>
+                                        <p:selectOneMenu value="#{doc.recolhimentoINSS}">
+                                            <f:selectItems value="#{documentoEntradaController.recolhimentoImpostoSelect}" />
+                                            <f:converter converterId="enumRecolhimentoImpostoConverter" />
+                                        </p:selectOneMenu>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align='center'><h:outputText value="#{msg.iss}" style="font-weight: bold" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.basePercISS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.baseISS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.aliqISS}" /></td>
+                                    <td><p:inputText style="width: 65px" value="CALC" /></td>
+                                    <td><p:inputText style="width: 65px" value="MINIMO" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.valorISS}" /></td>
+                                    <td>
+                                        <p:selectOneMenu value="#{doc.recolhimentoISS}" >
+                                            <f:selectItems value="#{documentoEntradaController.recolhimentoImpostoSelect}" />
+                                            <f:converter converterId="enumRecolhimentoImpostoConverter" />
+                                        </p:selectOneMenu>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align='center'><h:outputText value="#{msg.irrf}" style="font-weight: bold" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.basePercIRRF}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.baseIRRF}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.aliqIRRF}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.calcIRRF}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.minIRRF}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.valorIRRF}" /></td>
+                                    <td>
+                                        <p:selectOneMenu value="#{doc.recolhimentoIRRF}" >
+                                            <f:selectItems value="#{documentoEntradaController.recolhimentoImpostoSelect}" />
+                                            <f:converter converterId="enumRecolhimentoImpostoConverter" />
+                                        </p:selectOneMenu>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align='center'><h:outputText value="#{msg.pis}" style="font-weight: bold" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.basePercPIS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.basePIS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.aliqPIS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.calcPIS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.minPIS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.valorPIS}" /></td>
+                                    <td>
+                                        <p:selectOneMenu value="#{doc.recolhimentoPIS}" >
+                                            <f:selectItems value="#{documentoEntradaController.recolhimentoImpostoSelect}" />
+                                            <f:converter converterId="enumRecolhimentoImpostoConverter" />
+                                        </p:selectOneMenu>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align='center'><h:outputText value="#{msg.cofins}" style="font-weight: bold" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.basePercCOFINS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.baseCOFINS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.aliqCOFINS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.calcCOFINS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.minCOFINS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.valorCOFINS}" /></td>
+                                    <td>
+                                        <p:selectOneMenu value="#{doc.recolhimentoCOFINS}" >
+                                            <f:selectItems value="#{documentoEntradaController.recolhimentoImpostoSelect}" />
+                                            <f:converter converterId="enumRecolhimentoImpostoConverter" />
+                                        </p:selectOneMenu>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align='center'><h:outputText value="#{msg.csll}" style="font-weight: bold" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.basePercCSSL}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.baseCSSL}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.aliqCSSL}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.calcCSSL}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.minCSSL}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.valorCSSL}" /></td>
+                                    <td>
+                                        <p:selectOneMenu value="#{doc.recolhimentoCSSL}" >
+                                            <f:selectItems value="#{documentoEntradaController.recolhimentoImpostoSelect}" />
+                                            <f:converter converterId="enumRecolhimentoImpostoConverter" />
+                                        </p:selectOneMenu>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align='center'><h:outputText value="#{msg.sestSenat}" style="font-weight: bold" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.basePercSS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.baseSS}" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.aliqSS}" /></td>
+                                    <td><p:inputText style="width: 65px" value="CALC" /></td>
+                                    <td><p:inputText style="width: 65px" value="MINIMO" /></td>
+                                    <td><pe:inputNumber style="width: 65px" value="#{doc.valorSS}" /></td>
+                                    <td>
+                                        <p:selectOneMenu value="#{doc.recolhimentoSS}" >
+                                            <f:selectItems value="#{documentoEntradaController.recolhimentoImpostoSelect}" />
+                                            <f:converter converterId="enumRecolhimentoImpostoConverter" />
+                                        </p:selectOneMenu>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </p:tab>
+
+                        <p:tab id="tabParcelas" title="#{msg.parcelas}">
+                            <table class="referencesmall">
+                                <tr class="cabecalhoDiscreto">
+                                    <th colspan="8">
+                                        #{msg.parcelasAPagar} - #{msg.valorTotal}: R$ #{documentoEntradaController.current.docValor} 
+                                    </th>
+                                </tr>
+                                <tr class="cabecalhoDiscreto">
+                                    <th>#{msg.numeroParcelaAbrev}</th>
+                                    <th>#{msg.sPar}</th>
+                                    <th>#{msg.situacaoA}</th>
+                                    <th>#{msg.especieTituloAbrev}</th>
+                                    <th>#{msg.numeroTituloAbrev}</th>
+                                    <th>#{msg.vencimento}</th>
+                                    <th>#{msg.valorTitulo}</th>
+                                    <th>#</th>
+                                </tr>
+                                <ui:repeat value="#{documentoEntradaController.titulosAPagar}" var="tit">
+                                    <tr>
+                                        <td>
+                                            <p:inputText value="#{tit.numeroParcela}" style="width: 50px" />
+                                        </td>
+                                        <td>
+                                            <p:inputText value="#{tit.numeroSubParcela}" style="width: 50px" />
+                                        </td>
+                                        <td>#{tit.situacao}</td>
+                                        <td>
+                                            <p:selectOneMenu value="#{tit.especieTitulo}">
+                                                <f:selectItems value="#{documentoEntradaController.especieTituloAPagarSelect}" />
+                                            </p:selectOneMenu>
+                                        </td>
+                                        <td>
+                                            <p:inputText value="#{tit.numeroDocumento}" />
+                                        </td>
+                                        <td>
+                                            <p:calendar  value="#{tit.dataVencimento}" size="11" maxlength="10"  id="dataEntrada"
+                                                         title="#{msg.dataEntrada}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                                         navigator="true" immediate="true" timeZone="#{initParam['timezone']}" />
+                                        </td>
+                                        <td>
+                                            <pe:inputNumber value="#{tit.valorTitulo}" />
+                                        </td>
+                                        <td><p:inputText value="#{tit.naturezaPagamento}" style="width: 10px" maxlength="1" /></td>
+                                    </tr>
+                                </ui:repeat>
+                            </table>
+                        </p:tab>
+                    </p:tabView>
+                </p:tab>
+            </p:tabView>
+            <p:commandButton id="salvarBtn" value="Salvar" update=":formMain" actionListener="#{documentoEntradaController.createDocumentoEntrada(loginController.centroSelecionado)}" />
+
+        </h:form>
+
+        <h:panelGroup id="dialogForm">
+            <ui:include src="ar-pedido-itens.xhtml" />
+            <ui:include src="credor.xhtml" />
+        </h:panelGroup>
+
+        <!-- ************************* AQUI FICA A TELA QUE TROCA O CENTRO DE CUSTO ******************************************* /-->
+        <h:panelGroup id="panelCentroCusto" >
+            <arq:centroCusto formName=":formMain" entityBean="#{documentoEntradaController}" listCentros="#{loginController.funcionario.centros}" pageRender="ar_form" />
+        </h:panelGroup>
+
+    </ui:define>
+</ui:composition>

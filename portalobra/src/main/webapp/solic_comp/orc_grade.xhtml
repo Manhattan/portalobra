@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                >
+
+    <f:subview id="form-orc">
+        <h:panelGroup id="dialogPanelOrc" style='margin-right: 0px; width: auto'>
+            <h:form id="formOrc">
+                <p:dialog widgetVar="dlgOrc" modal="true" styleClass="dialog" style="position: absolute; float: top" position="top" closeOnEscape="true" header="#{msg.orcamento} - #{orcamentoController.currentItem.insumo}" >
+                    <f:facet name="footer">
+                        <p:commandButton id="btnOrcOk" value="#{orcamentoController.valorSoma}"  icon="ui-icon-circle-check" iconPos="left" actionListener="#{followUpSolicitacoesController.substituteSolicItemOrcado(orcamentoController.confirmOrcamentoGrid(), orcamentoController.solicitacao)}" oncomplete="dlgOrc.hide()" update=":panelMain" style="position: relative; float: bottom; min-width: 100px" />
+                    </f:facet>
+                    <p:treeTable id="treeOrc" value="#{orcamentoController.root}" var="root" rendered="#{orcamentoController.root != null}" emptyMessage="#{msg.semNenhumRegistro}" scrollable="true" scrollHeight="true" liveResize="true" style="max-width: 800px; max-height: 500px">
+                        <f:facet name="header">
+                            <h:outputText value="#{orcamentoController.currentItem.gradeOrcamento.data}" style="font-size: small" />
+                        </f:facet>
+                        <p:column headerText="#{msg.discriminacao}" style="background-color: #{root.backgroundColor}; width: auto"> 
+                            <h:outputText value="#{root.discriminacao}" style="margin-left: #{root.marginLeft}px; color:black; font-size: smaller" />
+                        </p:column>
+                        <p:column headerText="#{msg.saldoAj}" style="background-color: #{root.backgroundColor}; width: 70px">
+                            <h:outputText id="saldoSolic" value="#{utilsController.getRoundedNumberDouble(root.valorSaldo + root.valorSolic)}" rendered="#{root.valorSaldo != null}" style="font-size: smaller" >
+                                <f:convertNumber maxFractionDigits="4" minFractionDigits="4" locale="pt-br" />
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="#{msg.solicitado}" style="background-color: #{root.backgroundColor}; width: 70px">
+                            <pe:inputNumber id="inputValorSolicAtual" value="#{root.valorSolic}" decimalPlaces="4" onclick="this.select();" disabled="#{root.insumoCod == 0}" rendered="#{root.classeItem == 'IN' and orcamentoController.solicitacao}" maxValue="#{utilsController.somarNumerosPositivos(root.valorSaldo, root.valorSolic, 4)}" style="font-size: smaller; height: 10px; width: 70px; background: #{root.valorSolic == null or root.valorSolic > 0 ? 'blue' : 'white'}; color: #{root.valorSolic == null or root.valorSolic > 0 ? 'white' : '#585b57'}">
+                                <p:ajax listener="#{orcamentoController.getSomaValores()}" update=":form-solicitacao:form-orc:formOrc:btnOrcOk, :form-solicitacao:form-orc:formOrc:treeOrc:inputValorSolicAtual" /> 
+                            </pe:inputNumber>
+                            <h:outputText value="#{root.valorSolic}" rendered="#{root.valorSolic != null and root.classeItem == 'IN' and !orcamentoController.solicitacao}" style="color: #{root.valorSolic > 0 ? 'blue' : '#585b57'}; font-size: smaller">
+                                <f:convertNumber maxFractionDigits="4" minFractionDigits="4" locale="pt-br" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="#{msg.valorOrcado}" style="background-color: #{root.backgroundColor}; width: 70px">
+                            <h:outputText value="#{root.valorOrcado}" rendered="#{root.valorOrcado != null}" style="font-size: smaller" >
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2" currencyCode="BRL" locale="pt-br"/>
+                            </h:outputText>
+                        </p:column>
+                    </p:treeTable> 
+                </p:dialog>
+            </h:form>
+        </h:panelGroup>
+    </f:subview>
+</ui:composition>

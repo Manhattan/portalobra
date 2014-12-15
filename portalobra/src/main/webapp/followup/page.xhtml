@@ -1,0 +1,885 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                template="../templates/layout.xhtml"
+                >
+    <ui:param name="titulomenu" value="#{msg.solicitacoesCompra}" />
+    <ui:define name="content" >
+        <h:panelGroup rendered="#{loginController.statusLogin == 0 or followUpSolicitacoesController.funcionario == null or followUpSolicitacoesController.funcionario.login == null}">
+            <ui:include src="../semPermissao.xhtml" />
+        </h:panelGroup>
+        <h:panelGroup id="pngRelPed">
+            <ui:include src="../rel/pedido.xhtml" />
+        </h:panelGroup>
+
+        <!-- ************************* DIALOGS DO FOLLOWUP ******************************************************************* /-->
+        <h:panelGroup id="dialogForm">
+            <p:dialog header="#{msg.insumo}" closeOnEscape="true" widgetVar="dlgInsumo" resizable="false" rendered="#{followUpSolicitacoesController.showDialogInsumo == true}">  
+                <h:form id="formIns">  
+                    <h:panelGrid columns="2" style="margin-bottom:10px; border-style: solid" border="1"  columnClasses="itemColumEspaco">  
+                        <h:outputText value="#{msg.codigo}:"/>
+                        <h:outputText value="#{followUpSolicitacoesController.current.insumo.codigo}" />
+                        <h:outputText value="#{msg.especificacao}:"/> 
+                        <h:outputText value="#{followUpSolicitacoesController.current.insumo.especificacao} "/>
+                        <h:outputText value="#{msg.unidade}: "/>
+                        <h:outputText value="#{followUpSolicitacoesController.current.insumo.unidade.unidade} "/>
+                        <h:outputText value="#{msg.classe}: "/>
+                        <h:outputText value="#{followUpSolicitacoesController.current.insumo.caracterizacaoInsumo.grupoInsumos.classeInsumos.titulo} "/>
+                        <h:outputText value="#{msg.grupo}: "/>
+                        <h:outputText value="#{followUpSolicitacoesController.current.insumo.caracterizacaoInsumo.grupoInsumos.titulo} "/>
+                        <h:outputText value="#{msg.caracterizacao}: "/>
+                        <h:outputText value="#{followUpSolicitacoesController.current.insumo.caracterizacaoInsumo.titulo} "/>
+                    </h:panelGrid>  
+                </h:form>  
+            </p:dialog> 
+            <!--Dialog RS /-->
+            <p:dialog header="#{msg.RS}" closeOnEscape="true" widgetVar="dlgRS" resizable="false" rendered="#{followUpSolicitacoesController.showDialogRS == true}">  
+                <h:form>  
+                    <h:panelGrid columns="2" style="margin-bottom:10px; border-style: solid" border="1"  columnClasses="itemColumEspaco">  
+                        <h:outputText value="#{msg.numeroSolicitacaoAbreviada}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraIDSis} "/>
+                        <h:outputText value="#{msg.dataSolicitacaoAbrev}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.dataRegistroSolicitacao}">    
+                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                        <h:outputText value="#{msg.solicitante}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.solicitacao.solicitante.nome}"/>
+                        <h:outputText value="#{msg.numeroItemAbrev}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.numero}"/>
+                        <h:outputText value="#{msg.situacao}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.situacao.label}"/>
+                        <h:outputText value="#{msg.especificacao}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.especificacaoCompleta}"/>
+                        <h:outputText value="#{msg.observacao}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoItemObservacao}"/>
+                        <h:outputText value="#{msg.dataEntrega}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoDataEntrega}">  
+                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </h:panelGrid>
+                </h:form>
+            </p:dialog>
+            <!--Dialog CS /-->
+            <p:dialog header="#{msg.CS}" closeOnEscape="true" widgetVar="dlgCS" resizable="false" rendered="#{followUpSolicitacoesController.showDialogCS == true}">  
+                <h:form>  
+                    <h:panelGrid columns="2" style="margin-bottom:10px; border-style: solid" border="1"  columnClasses="itemColumEspaco">  
+                        <h:outputText value="#{msg.numeroSolicitacaoAbreviada}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraIDSis} "/>
+                        <h:outputText value="#{msg.dataConclusao}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.dataConclusaoSolicitacao}">    
+                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                        <h:outputText value="#{msg.usuario}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.solicitacao.usuarioConcluido}"/>
+                    </h:panelGrid>  
+                </h:form>  
+            </p:dialog>             
+            <!--Dialog AS /-->
+            <p:dialog header="#{msg.AS}" closeOnEscape="true" widgetVar="dlgAS" resizable="false" rendered="#{followUpSolicitacoesController.showDialogAS == true}">  
+                <h:form>  
+                    <h:panelGrid columns="2" style="margin-bottom:10px; border-style: solid" border="1"  columnClasses="itemColumEspaco">  
+                        <h:outputText value="#{msg.numeroSolicitacaoAbreviada}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraIDSis}"/>
+                        <h:outputText value="#{msg.data}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.dataAutorizacaoSolicitacao}">    
+                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                        <h:outputText value="#{msg.motivo}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.instrucaoMotivo}" style="color:red" />
+                        <h:outputText value="#{msg.usuario}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.usuarioInstrucao}"/>
+                        <h:outputText value="#{msg.situacao}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.situacaoAutorizacao}"/>
+                    </h:panelGrid>  
+                </h:form>  
+            </p:dialog> 
+            <!--Dialog /-->
+            <p:dialog header="#{msg.coleta}" closeOnEscape="true" widgetVar="dlgAC" resizable="false" rendered="#{followUpSolicitacoesController.showDialogAC == true}">  
+                <h:form>  
+                    <h:panelGrid columns="2" style="margin-bottom:10px; border-style: solid; width: 700px" border="1" columnClasses="itemColumEspaco">  
+                        <f:facet name="header">
+                            #{msg.coleta}
+                        </f:facet>
+                        <h:outputText value="#{msg.numeroColetaAbrev}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.numero}"/>
+                        <h:outputText value="#{msg.fornecedor}: "  />
+                        <h:commandLink value="#{followUpSolicitacoesController.current.coletaPrecoItem.credor.razaoSocial}" style="text-align: left" >
+                            <p:ajax oncomplete="dlgFornecedor.show()" listener="#{credorController.initCurrent(followUpSolicitacoesController.current.coletaPrecoItem.credor)}" update=":menuApp:pnlFornecedor" />
+                        </h:commandLink>
+                        <h:outputText value="#{msg.dataRegistro}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.data}">
+                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                        <h:outputText value="#{msg.usuarioRegistro}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.usuarioInstrucaoEdit}"/>
+                        <h:outputText value="#{msg.dataConclusao}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.dataConcluido}">
+                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                        <h:outputText value="#{msg.usuarioConclusao}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.usuarioConcluido}"/>
+                        <h:outputText value="#{msg.dataAutorizacao}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPrecoItem.instrucaoData}">
+                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                        <h:outputText value="#{msg.usuarioAutorizacao}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPrecoItem.usuarioInstrucao}"/>
+                    </h:panelGrid>  
+
+                    <h:panelGrid rendered="#{followUpSolicitacoesController.current.pedidoIDSis != null}" columns="2" style="margin-bottom:10px; border: 1px double #c3c3c3; width: 700px" border="3" columnClasses="itemColumEspaco">  
+                        <f:facet name="header">
+                            #{msg.pedido}
+                        </f:facet>
+                        <h:outputText value="#{msg.numeroPedidoAbrev}: " />
+                        <h:panelGroup>
+                            <h:outputText value="#{followUpSolicitacoesController.current.pedidoIDSis} "/>
+                            (<p:commandLink value="#{msg.imprimir}" oncomplete="dlgRelPed.show()" actionListener="#{pedidoController.initPedido(followUpSolicitacoesController.current.pedido)}" update=":pngRelPed" />)
+                        </h:panelGroup>
+                        <h:outputText value="#{msg.numeroItemAbrev}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedidoItem.itemNumero} "/>
+                        <h:outputText value="#{msg.fornecedor}: "  />
+
+                        <h:commandLink class="button-field2" value="#{followUpSolicitacoesController.current.pedido.credor.razaoSocial}" style="text-align: left" >
+                            <p:ajax oncomplete="dlgFornecedor.show()" listener="#{credorController.initCurrent(followUpSolicitacoesController.current.pedido.credor)}" update=":menuApp:pnlFornecedor" />
+                        </h:commandLink>
+
+                        <h:outputText value="#{msg.dataRegistro}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedido.dataPedido}">
+                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                        <h:outputText value="#{msg.valorTotalItemAbrev}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedidoItem.valorTotalItemFormatado} "  />
+                        <h:outputText value="#{msg.valorTotalPedidoAbrev}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedido.valorTotalFormatado} "  />
+                        <h:outputText value="#{msg.usuario}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedido.auditUserName}"/>
+                        <h:outputText value="#{msg.observacao}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedido.observacao}"/>
+                    </h:panelGrid>
+                </h:form>  
+            </p:dialog> 
+            <!--Dialog RP /-->
+            <p:dialog header="#{msg.RP}" closeOnEscape="true" widgetVar="dlgRP" resizable="false" rendered="#{followUpSolicitacoesController.showDialogRP == true}">  
+                <h:form>  
+                    <h:panelGrid columns="2" style="margin-bottom:10px; border: 1px double #c3c3c3;" border="3" columnClasses="itemColumEspaco">  
+                        <h:outputText value="#{msg.numeroPedidoAbrev}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedidoIDSis} "/>
+                        <h:outputText value="#{msg.numeroItemAbrev}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedidoItem.itemNumero} "/>
+                        <h:outputText value="#{msg.fornecedor}: "  />
+                        <h:commandButton class="button-field2" onmouseout="this.className = 'button-field-out2'" onmousemove="this.className = 'button-field-over2'" value="#{followUpSolicitacoesController.current.pedido.credor.razaoSocial}" style="text-align: left" >
+                            <p:ajax oncomplete="dlgFornecedor.show()" listener="#{credorController.initCurrent(followUpSolicitacoesController.current.pedido.credor)}" update=":menuApp:pnlFornecedor"/>
+                        </h:commandButton>
+                        <h:outputText value="#{msg.dataRegistro}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedido.dataPedido}">
+                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                        <h:outputText value="#{msg.valorTotalItemAbrev}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedidoItem.valorTotalItemFormatado} "  />
+                        <h:outputText value="#{msg.valorTotalPedidoAbrev}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedido.valorTotalFormatado} "  />
+                        <h:outputText value="#{msg.usuario}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedido.auditUserName}"/>
+                        <h:outputText value="#{msg.observacao}: "  />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedido.observacao}"/>
+                    </h:panelGrid>
+                </h:form>
+            </p:dialog>
+            <!--Dialog AP /-->
+            <p:dialog header="#{msg.AP}" closeOnEscape="true" widgetVar="dlgAP" resizable="false" rendered="#{followUpSolicitacoesController.showDialogAP == true}">  
+                <h:form>  
+                    <table class="dialogtable" style="max-width: 500px">
+                        <tr>
+                            <td align='left'>
+                                #{msg.numeroPedidoAbrev}: 
+                            </td>
+                            <td colspan="2" align='left'>
+                                #{followUpSolicitacoesController.current.pedidoIDSis}
+                                (<p:commandLink value="#{msg.imprimir}" oncomplete="dlgRelPed.show()" actionListener="#{pedidoController.initPedido(followUpSolicitacoesController.current.pedido)}" update=":pngRelPed" />)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align='left'>
+                                #{msg.valorTotalItemAbrev}:
+                            </td>
+                            <td colspan="2" align='left'>
+                                #{followUpSolicitacoesController.current.pedidoItem.valorTotalItemFormatado}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align='left'>
+                                #{msg.fornecedor}
+                            </td>
+                            <td align='left' colspan="2">                    
+                                <h:commandLink class="button-field2" value="#{followUpSolicitacoesController.current.pedido.credor.razaoSocial}" style="text-align: left; text-decoration: none" >
+                                    <p:ajax oncomplete="dlgFornecedor.show()" listener="#{credorController.initCurrent(followUpSolicitacoesController.current.pedido.credor)}" update=":menuApp:pnlFornecedor" />
+                                </h:commandLink>
+                            </td>
+                        </tr>
+                        <tr align='center'>
+                            <th>#{msg.usuario}</th>
+                            <th>#{msg.data}</th>
+                            <th>#{msg.situacao}</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td><h:outputText value="#{msg.PENDENTE}" rendered="#{(followUpSolicitacoesController.current.pedido.situacao eq 'A' || followUpSolicitacoesController.current.pedido.situacao eq 'R') ? false : true}" /></td>
+                        </tr>
+                        <ui:repeat value="#{followUpSolicitacoesController.pedidoAutorizantes}" var="aut" varStatus="a">
+                            <tr>
+                                <td>#{aut.usuario}</td>
+                                <td>
+                                    <h:outputText value="#{aut.data}">
+                                        <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </td>
+                                <td>#{aut.situacao}</td>
+                            </tr>
+                        </ui:repeat>
+                        <tr>
+                            <td><h:outputText value="#{msg.observacao}:" rendered="#{followUpSolicitacoesController.current.pedido.observacao != null and followUpSolicitacoesController.current.pedido.observacao ne ''}" /> </td>
+                            <td colspan="2"><h:outputText value="#{followUpSolicitacoesController.current.pedido.observacao}" rendered="#{followUpSolicitacoesController.current.pedido.observacao != null and followUpSolicitacoesController.current.pedido.observacao ne ''}" /></td>
+                        </tr>
+                        <tr>
+                            <td><h:outputText value="#{msg.motivo}:" rendered="#{followUpSolicitacoesController.current.pedido.motivo != null and followUpSolicitacoesController.current.pedido.motivo ne ''}" /> </td>
+                            <td colspan="2"><h:outputText value="#{followUpSolicitacoesController.current.pedido.motivo}" rendered="#{followUpSolicitacoesController.current.pedido.motivo != null and followUpSolicitacoesController.current.pedido.motivo ne ''}" style="color: red" /></td>
+                        </tr>
+                    </table>
+                </h:form>
+            </p:dialog>
+            <!--Dialog ENF /-->
+            <p:dialog header="#{msg.ENF}" closeOnEscape="true" widgetVar="dlgENF" resizable="false" rendered="#{followUpSolicitacoesController.showDialogENF == true}">  
+                <h:form> 
+                    <p:panelGrid columns="1" style="border: solid 1px #c3c3c3; height: 3px; width: 100%">
+                        <h:outputText style="font-size: x-small; font-weight: bold" value="#{msg.parcialmenteRecebido}" rendered="#{followUpSolicitacoesController.current.pedidoParcial == 1}" />
+                    </p:panelGrid>
+
+                    <p:scrollPanel style="height:auto" >
+                        <table class="dialogtable">
+                            <tr>
+                                <th style="width: 50px">#{msg.numeroARAbrev}</th>
+                                <th style="width: 50px">#{msg.tipo}</th>
+                                <th style="width: 100px">#{msg.dataEmissao}</th>
+                            </tr>
+                            <ui:repeat var="de" varStatus="d" value="#{followUpSolicitacoesController.current.documentosEntrada}" >
+                                <tr>
+                                    <td>
+                                        <h:outputText value="#{de.avisoRecebimento.idSistema}" />
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{de.docTipo.codigo}" />
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{de.dataEmissao}">
+                                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </table>
+                    </p:scrollPanel>
+                </h:form>
+            </p:dialog>
+            <!--Dialog EMO /-->
+            <p:dialog header="#{msg.EMO}" closeOnEscape="true" widgetVar="dlgEMO" resizable="false" rendered="#{followUpSolicitacoesController.showDialogEMO == true}">  
+                <h:form>  
+                    <p:scrollPanel style="height:auto" >
+                        <table class="dialogtable">
+                            <tr>
+                                <th style="width: 50px">
+                                    #{msg.numeroARAbrev}
+                                </th>
+                                <th style="width: 50px">
+                                    #{msg.tipo}
+                                </th>
+                                <th style="width: 100px">
+                                    #{msg.dataEntrada}
+                                </th>
+                                <th>
+                                    #{msg.atraso}
+                                </th>
+                            </tr>
+                            <ui:repeat var="de" varStatus="d" value="#{followUpSolicitacoesController.current.documentosEntrada}" >
+                                <tr>
+                                    <td>
+                                        <h:outputText value="#{de.avisoRecebimento.idSistema}" />
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{de.docTipo.codigo}" />
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{de.dataEntrada}">
+                                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{de.atrasoEntrada}" />
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </table>
+                    </p:scrollPanel>
+                </h:form>
+            </p:dialog>
+            <!--Dialog RA /-->
+            <p:dialog header="#{msg.RA}" closeOnEscape="true" widgetVar="dlgRA" resizable="false" rendered="#{followUpSolicitacoesController.showDialogRA == true}">  
+                <h:form>  
+                    <p:scrollPanel style="height:auto" >
+                        <table class="dialogtable">
+                            <tr>
+                                <th style="width: 50px">#{msg.numeroARAbrev}</th>
+                                <th style="width: 50px">#{msg.tipo}</th>
+                                <th style="width: 100px">#{msg.dataRegistro}</th>
+                                <th>#{msg.atraso}</th>
+                            </tr>
+                            <ui:repeat var="de" varStatus="d" value="#{followUpSolicitacoesController.current.documentosEntrada}" >
+                                <tr>
+                                    <td>
+                                        <h:outputText value="#{de.avisoRecebimento.idSistema}" />
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{de.docTipo.codigo}" />
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{de.avisoRecebimento.data}">
+                                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{de.atrasoRegistroAR}" />
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </table>
+                    </p:scrollPanel>
+                </h:form>
+            </p:dialog>
+            <!--Dialog AA /-->
+            <p:dialog header="#{msg.AA}" closeOnEscape="true" widgetVar="dlgAA" resizable="false" rendered="#{followUpSolicitacoesController.showDialogAA == true}">  
+                <h:form>  
+                    <p:scrollPanel style="height:auto" >
+                        <table class="dialogtable">
+                            <tr>
+                                <th style="width: 50px">#{msg.numeroARAbrev}</th>
+                                <th style="width: 100px">#{msg.dataAutoriz}</th>
+                                <th style="width: 110px">#{msg.usuarioAutoriz}</th>
+                                <th>#{msg.situacao}</th>
+                            </tr>
+                            <ui:repeat var="de" varStatus="d" value="#{followUpSolicitacoesController.current.documentosEntrada}" >
+                                <tr>
+                                    <td>
+                                        <h:outputText value="#{de.avisoRecebimento.idSistema}" />
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{de.dataAutorizacao}">
+                                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{de.usuarioAutorizacao}" />
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{de.situacaoFormatada}" />
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </table>
+                    </p:scrollPanel>
+                </h:form>
+            </p:dialog>
+            <!--Dialog PG /-->
+            <p:dialog header="#{msg.pagamento}" closeOnEscape="true" widgetVar="dlgPG" resizable="false" rendered="#{followUpSolicitacoesController.showDialogPG == true}">  
+                <h:form>  
+                    <table style="border: double 1px #c3c3c3; width: 100%">
+                        <tr>
+                            <td colspan="2">#{msg.quantidadeParcelas}:</td>
+                            <td colspan="4">#{followUpSolicitacoesController.current.quantidadeParcelasTotal}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">#{msg.pagas}:</td>
+                            <td colspan="4">#{followUpSolicitacoesController.current.quantidadeParcelasPagas}</td>
+                        </tr>                        
+                    </table>
+                    <p:scrollPanel style="height: auto" >
+                        <table class="dialogtable">
+                            <tr>
+                                <th style="width: 50px">#{msg.numeroPagAbrev}</th>
+                                <th>#{msg.parcelaAbrev}</th>
+                                <th style="width: 80px">#{msg.dataVenc}</th>
+                                <th style="width: 80px">#{msg.dataPagamentoAbrev}</th>
+                                <th>#{msg.usuario}</th>
+                                <th>#{msg.atraso}</th>
+                            </tr>
+                            <ui:repeat value="#{followUpSolicitacoesController.current.titulosAPagar}" var="tit" varStatus="d">
+                                <tr>
+                                    <td>#{tit.numero}</td>
+                                    <td>#{tit.numeroParcela}</td>
+                                    <td><h:outputText value="#{tit.dataVencimento}">
+                                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </td>
+                                    <td><h:outputText value="#{tit.dataPagamento}">
+                                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </td>
+                                    <td><h:outputText value="#{tit.usuarioInstrucao}" rendered="#{tit.dataPagamento != null}" /></td>
+                                    <td><h:outputText value="#{tit.diasVencidos}" /></td>
+                                </tr>
+                            </ui:repeat>
+                        </table>
+                    </p:scrollPanel>
+                </h:form>
+            </p:dialog>
+            <!--Dialog Kardex /-->
+            <p:dialog header="#{msg.extratoMateriais} - #{followUpSolicitacoesController.current.insumo}" closeOnEscape="true" widgetVar="dlgKardex" resizable="false" rendered="#{followUpSolicitacoesController.showDialogKardex == true}">  
+                <h:form>
+                    <table class="dialogtable">
+                        <tr>
+                            <th>#{msg.data}</th>
+                            <th>#{msg.classe}</th>
+                            <th>#{msg.tipo}</th>
+                            <th>#{msg.docTipo}</th>
+                            <th>#{msg.docNumero}</th>
+                            <th>#{msg.numero}</th>
+                            <th>#{msg.item}</th>
+                            <th>#{msg.quantidade}</th>
+                        </tr>
+                        <tr>
+                            <td>#{followUpSolicitacoesController.dataSaldoInicial}</td>
+                            <td>SI</td>
+                            <td></td>
+                            <td>A</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="valored">#{followUpSolicitacoesController.current.materiaisEstoqueInicial.estoqueQuantidade}</td>
+                        </tr>
+                        <ui:repeat value="#{followUpSolicitacoesController.materialEntradasESaidas}" var="mat" varStatus="e">
+                            <tr>
+                                <td>
+                                    <h:outputText value="#{mat.data}">
+                                        <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </td>
+                                <td>#{mat.classe}</td>
+                                <td>#{mat.tipoMovimento}</td>
+                                <td>#{mat.tipoDocumento}</td>
+                                <td>#{mat.numeroDocumento}</td>
+                                <td><p:commandLink value="#{mat.numero}" action="#{followUpSolicitacoesController.prepareEditEntradaOrSaida(mat.classe, mat.numero)}" update=":panelMain, :dialogForm" /></td>
+                                <td>#{mat.itemItem}</td>
+                                <td class="valored">#{mat.quantidade}</td>
+                            </tr>
+                        </ui:repeat>
+
+                        <tr>
+                            <td>#{followUpSolicitacoesController.dataSaldoFinal}</td>
+                            <td>SF</td>
+                            <td></td>
+                            <td>Z</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="valored">#{followUpSolicitacoesController.current.materiaisEstoqueFinal.estoqueQuantidade}</td>
+                        </tr>
+                    </table>
+                </h:form>
+            </p:dialog>
+        </h:panelGroup>
+
+
+        <h:panelGroup id="panelOrc" >
+            <ui:include src="/solic_comp/orc_grade.xhtml" />
+        </h:panelGroup>
+        <!-- ************************* AQUI FICA A TELA QUE EXIBE A PESQUISA DE INSUMOS ************************************** /-->
+        <h:panelGroup id="panelInsumo" >
+            <ui:include src="insumo.xhtml" />
+        </h:panelGroup>
+        <!-- ************************* AQUI FICA A TELA QUE TROCA O CENTRO DE CUSTO ******************************************* /-->
+        <h:panelGroup id="panelCentroCusto" >
+            <arq:centroCusto formName=":panelMain" entityBean="#{followUpSolicitacoesController}" listCentros="#{loginController.funcionario.centros}" pageRender="followup" />
+        </h:panelGroup>
+        <!-- ************************* AQUI FICA A TELA COM AS INFORMAÇÕES DO FORNECEDOR ************************************** /-->
+        <h:panelGroup id="panelFornecedor" >
+            <ui:include src="fornecedor.xhtml" />
+        </h:panelGroup>
+
+        <h:panelGroup id="panelMain">
+            <!-- ************************* AQUI FICA A TELA QUE REQUISITA A SOLICITACAO DE COMPRA ******************************** /-->
+            <h:panelGroup id="panelSolicitacaoCompra" rendered="#{followUpSolicitacoesController.solicitacaoCompra != null}">
+                <ui:include src="/solic_comp/form.xhtml" />
+            </h:panelGroup>
+
+            <h:panelGroup id="panelEntradaMaterialF" rendered="#{followUpSolicitacoesController.materialEntrada != null}">
+                <ui:include src="/mat_entrada/form.xhtml" />
+            </h:panelGroup>
+            <h:panelGroup id="panelEntradaMaterialP">
+                <ui:include src="/mat_entrada/page.xhtml" />
+            </h:panelGroup>
+
+            <h:panelGroup id="panelSaidaMaterialF" rendered="#{followUpSolicitacoesController.materialSaida != null}">
+                <ui:include src="/mat_saida/form.xhtml" />
+            </h:panelGroup>
+            <h:panelGroup id="panelSaidaMaterialP">
+                <ui:include src="/mat_saida/page.xhtml" />
+            </h:panelGroup>
+
+            <!-- ************************* FORM PRINCIPAL DO FOLLOWUP ************************************************************ /-->
+            <h:form id="formMain" rendered="#{loginController.statusLogin == 1 and followUpSolicitacoesController.funcionario != null and followUpSolicitacoesController.funcionario.login != null}">
+                <p:hotkey bind="return" update=":formMain" actionListener="#{followUpSolicitacoesController.pesquisa()}" global="false" />
+                <p:defaultCommand target="mainExecutarButton" />
+                <h:panelGroup id="panelFollowUp" >
+                    <!-- *************************************** BARRA DE PESQUISA DO FOLLOWUP *************************************** /-->
+                    <h:panelGroup id="panelFollowUpItens" style="width: auto">
+                        <p:panel id="panelFiltros" rendered="#{followUpSolicitacoesController.showPanelFiltros}" style="margin-bottom: 5px" >
+
+                            <h:panelGrid columns="5">
+                                <h:outputText value="#{msg.solicitante}:" style="font-weight: bold" />
+                                <h:outputText value="#{msg.numeroPedidoAbrev}:" style="font-weight: bold" />
+                                <h:outputText value="#{msg.razaoSocial}:" style="font-weight: bold" />
+                                <h:outputText value="#{msg.nomeFantasia}:" style="font-weight: bold" />
+                                <h:outputText value="#{msg.cpfCnpj2}:" style="font-weight: bold" />
+
+                                <p:selectOneMenu id="filtroSolicitante" value="#{followUpSolicitacoesController.solicitante}" filter="true" filterMatchMode="contains" style="margin-right: 5px">
+                                    <f:selectItem value="#{null}" itemLabel="" />
+                                    <f:selectItems value="#{followUpSolicitacoesController.solicitanteSelect}" var="solic" />
+                                    <f:converter converterId="solicitanteConverter" />
+                                </p:selectOneMenu>
+                                <p:inputText value="#{followUpSolicitacoesController.numeroPedido}" style="width: 65px; margin-right: 5px" onkeypress="return SomenteNumero(event)" />
+                                <p:inputText value="#{followUpSolicitacoesController.razaoSocialCredor}" style="width: 207px; margin-right: 5px" />
+                                <p:inputText value="#{followUpSolicitacoesController.nomeFantasiaCredor}" style="width: 207px; margin-right: 5px" />
+                                <p:inputText value="#{followUpSolicitacoesController.cpfCnpjCredor}" style="width: 120px; margin-right: 5px" maxlength="14" onkeypress="return SomenteNumero(event)" />
+                            </h:panelGrid>
+
+
+                            <h:selectBooleanCheckbox id="fltMescEst" value="#{followUpSolicitacoesController.filtroMesclarEstoque}" style="margin-right: 5px" /> 
+                            <h:outputLabel for="fltMescEst" value="#{msg.mesclarEstoque}" style="margin-right: 10px; font-weight: bold" />
+
+                            <h:selectBooleanCheckbox id="fltMescEstAlmCen" value="#{followUpSolicitacoesController.filtroMesclarEstoqueUsina}" style="margin-right: 5px" /> 
+                            <h:outputLabel for="fltMescEstAlmCen" value="#{msg.mesclarEstoqueUsina}" style="margin-right: 10px; font-weight: bold"/>
+
+                            <h:selectBooleanCheckbox id="fltR" value="#{followUpSolicitacoesController.filtroR}" style="margin-right: 5px" /> 
+                            <h:outputLabel for="fltR" value="#{msg.itensRejeitados}" style="margin-right: 5px; font-weight: bold" />
+
+                            <h:selectBooleanCheckbox id="filtroSolicMaiorEstoque" value="#{followUpSolicitacoesController.filtroSolicMaiorEstoque}" style="margin-right: 5px" />
+                            <h:outputLabel for="filtroSolicMaiorEstoque" value="#{msg.solicMaiorEstoque}" title="#{msg.solicMaiorEstoque1}" style="margin-right: 10px; font-weight: bold"  />
+
+                            <p:commandButton value="#{msg.filtrosHide}" icon="filterIco" immediate="true" actionListener="#{followUpSolicitacoesController.hidePanelFiltros()}" rendered="#{followUpSolicitacoesController.showPanelFiltros}" update=":formMain:panelFollowUpItens" style="padding-top: -1px; padding-bottom: 1px; position: relative; float: right" />
+                            <p:commandButton value="" icon="filterClear" iconPos="left" actionListener="#{followUpSolicitacoesController.cleanPanelFiltros()}" rendered="#{followUpSolicitacoesController.showPanelFiltros}" update=":formMain:panelFollowUpItens" style="height: 26px; width: 30px; position: relative; float: right" />
+                        </p:panel>
+
+                        <p:commandButton id="addSolicItemBtn" rendered="#{loginController.incluiSolicitacao}"     disabled="#{followUpSolicitacoesController.disableButtonSolicitacao}"      title="#{msg.novaSolicitacao}"   tabindex="2" icon="ui-icon-circle-plus"   iconPos="left" value="" styleClass="button-only-icon" update=":panelMain"  action="#{followUpSolicitacoesController.incluirItemSolicitacao(insumoController.insumosSelecionados)}"     actionListener="#{insumoController.limparInsumosSelecionados()}" />
+                        <p:commandButton id="addMEItemBtn"    rendered="#{loginController.incluiEntradaMaterial}" disabled="#{followUpSolicitacoesController.disableButtonEntradaMateriais}" title="#{msg.entradaMateriais}"  tabindex="3" icon="arrowUpGreenIco"       iconPos="left" value="" styleClass="button-only-icon" update=":panelMain"  action="#{followUpSolicitacoesController.incluirItemMaterialEntrada(insumoController.insumosSelecionados)}" actionListener="#{insumoController.limparInsumosSelecionados()}" />
+                        <p:commandButton id="addMSItemBtn"    rendered="#{loginController.incluiSaidaMaterial}"   disabled="#{followUpSolicitacoesController.disableButtonSaidaMateriais}"   title="#{msg.saidaMateriais}"    tabindex="4" icon="arrowDownOrangeIco"    iconPos="left" value="" styleClass="button-only-icon" update=":panelMain"  action="#{followUpSolicitacoesController.incluirItemMaterialSaida(insumoController.insumosSelecionados)}"   actionListener="#{insumoController.limparInsumosSelecionados()}" style="margin-right: 10px" />
+
+                        <p:commandButton id="autItemBtn"      rendered="#{loginController.autorizaSolicitacao}"   disabled="#{followUpSolicitacoesController.disableButtonAutItem}"   title="#{msg.autorizaItensSolicitacao}" tabindex="5" icon="ui-icon-circle-check"  iconPos="left" value="" styleClass="button-only-icon" update="panelFollowUpItens, :panelMain"  action="#{followUpSolicitacoesController.autorizaSolicitacao()}" oncomplete="#{insumoController.limparInsumosSelecionados()}" />
+                        <p:commandButton id="rejItemBtn"      rendered="#{loginController.autorizaSolicitacao}"   disabled="#{followUpSolicitacoesController.disableButtonRejItem}"   title="#{msg.rejeitaItensSolicitacao}"  tabindex="6" icon="ui-icon-circle-close"  iconPos="left" value="" styleClass="button-only-icon" oncomplete="dlgMotivoRejeitaSolicitacao.show()" />
+                        <p:commandButton id="desItemBtn"      rendered="#{loginController.autorizaSolicitacao}"   disabled="#{followUpSolicitacoesController.disableButtonRejItem}"   title="#{msg.desfazAutItemSolicitacao}" tabindex="7" icon="ui-icon-arrowreturnthick-1-w" iconPos="left" value="" styleClass="button-only-icon" update="panelFollowUpItens, :panelMain"  action="#{followUpSolicitacoesController.desfazAutorizacao()}"   oncomplete="#{insumoController.limparInsumosSelecionados()}" style="margin-right: 10px" />
+
+                        <h:outputText value="#{msg.periodoSolic}: " style="font-weight: bold" />
+                        <p:calendar  value="#{followUpSolicitacoesController.dataInicial}" size="11" maxlength="10"  id="dataInicial" onkeypress="AtalhoData(event, this)"
+                                     title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" maxdate="utilsController.getDate()" locale="pt" mode="popup"
+                                     navigator="true" immediate="true"
+                                     timeZone="#{initParam['timezone']}" >
+                        </p:calendar>
+                        <h:outputText value=" a " />
+                        <p:calendar value="#{followUpSolicitacoesController.dataFinal}" size="11" maxlength="10"  id="dataFinal"
+                                    title="#{msg.dataFinal}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                    navigator="true" immediate="true"
+                                    timeZone="#{initParam['timezone']}" >
+                        </p:calendar>
+
+                        <p:commandButton tabindex="1" value="#{msg.executar}" widgetVar="mainExecutar" id="mainExecutarButton" style="margin-left: 10px; margin-right: 5px" icon="ui-icon-search" update=":formMain" actionListener="#{followUpSolicitacoesController.pesquisa()}" >
+                        </p:commandButton>
+
+                        <p:commandButton value="#{msg.filtrosShow}" immediate="true" icon="filterIco" actionListener="#{followUpSolicitacoesController.showPanelFiltros()}" rendered="#{!followUpSolicitacoesController.showPanelFiltros}" update=":formMain:panelFollowUpItens" style="margin-right: 20px" />
+
+                        <h:selectBooleanCheckbox id="filtroSelecionarTodos" value="#{followUpSolicitacoesController.filtroSelecionarTodos}" style="margin-right: 5px" >
+                            <p:ajax listener="#{followUpSolicitacoesController.filtroSelecionarTodosAction()}" update=":formMain:panelFollowUpTable" />
+                        </h:selectBooleanCheckbox> 
+                        <h:outputLabel for="filtroSelecionarTodos" value="#{msg.selecionarTodos}" style="margin-right: 10px; font-weight: bold"  />
+                    </h:panelGroup>
+
+                    <h:panelGroup id="panelFollowUpTable">
+                        <!-- ************************************** CABECALHO DA TABELA DO FOLLOWUP ************************************** /-->
+                        <table class="referencesmall" width="100%" id="tableFollowUpSolic" >
+                            <thead style="font-size: 0.9em;" id="headFollowup" ><tr>
+                                    <th align='center' rowspan="2">
+                                        <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.marcado}" disabled="#{!followUpSolicitacoesController.newSolicitacao or !followUpSolicitacoesController.newMovEntrada}" >
+                                            <p:ajax update=":panelMain" listener="#{followUpSolicitacoesController.addOrRemoveTodos()}" />
+                                        </h:selectBooleanCheckbox>
+                                    </th>
+                                    <th align='center' rowspan="2">
+                                        #{msg.situacaoAbrev}
+                                    </th>
+                                    <th align='center' rowspan="2">
+                                        <h:outputText value="#{msg.solicitacaoAbrev}" /><br/>
+                                        <h:inputText value="#{followUpSolicitacoesController.filtroSolicId}" onkeypress='return SomenteNumero(event)' style="width: 40px; height: 13px; margin-top: 5px" maxlength="6" />
+                                    </th>
+                                    <th align='center' rowspan="2">
+                                        #{msg.item}
+                                    </th>
+                                    <th align='center' rowspan="2">
+                                        <h:outputText value="#{msg.insumo}" /><br/>
+                                        <h:inputText value="#{followUpSolicitacoesController.filtroInsumoCod}" onkeypress='return SomenteNumero(event)'  style="width: 40px; height: 13px; margin-top: 5px" maxlength="6" />
+                                    </th>
+                                    <th align='center' rowspan="2">
+                                        <h:outputText value="#{msg.especificacao}" /><br/>
+                                        <h:inputText value="#{followUpSolicitacoesController.filtroInsumoEspecificacao}" style="height: 13px; width: 90%; margin-top: 5px" />
+                                    </th>
+                                    <th align='center' rowspan="2">
+                                        #{msg.unidadeAbrevidada}
+                                    </th>
+                                    <th align='center' rowspan="2">
+                                        #{msg.quantidadeSolicitadaAbreviada}
+                                    </th>
+                                    <th align='center' rowspan="2">
+                                        #{msg.quantidadeRecebidaAbreviada}
+                                    </th>
+                                    <th align='center' rowspan="2">
+                                        #{msg.saldoAReceberAbrev}
+                                    </th>
+                                    <th align='center' rowspan="2">
+                                        #{msg.estoqueAtual}
+                                    </th>
+                                    <th align='center' rowspan="2" style="max-width: 80px">
+                                        #{msg.estoqueUsina}
+                                    </th>
+                                    <th align='center' rowspan="2">
+                                        #{msg.quantidadeOrcamentoAbrev}
+                                    </th>
+                                    <th align='center' colspan="3"> 
+                                        #{msg.solicitacao}
+                                    </th>
+                                    <th title="#{msg.coleta}" align='center'>
+                                        #{msg.coletaAbrev}
+                                    </th>
+                                    <th title="#{msg.pedido}" align='center' colspan="1">
+                                        #{msg.pedidoAbrev}
+                                    </th>
+                                    <th align='center' colspan="4">
+                                        #{msg.avisoRecebimentoAbrev}
+                                    </th>
+                                    <th align='center' colspan="1">
+                                        #{msg.pagamentoAbrev}
+                                    </th>
+                                    <th align='center' colspan="1" rowspan="2">
+                                        #{msg.okInterrog} <br/>
+                                        <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroOK}" />
+                                    </th>
+                                    <tr align='center'>
+                                        <th>
+                                            #{msg.data}
+                                        </th>
+                                        <th>
+                                            <h:outputText value="#{msg.situacaoCS}" title="#{msg.CS}" /><br/>
+                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroCS}" title="#{msg.CS}" />
+                                        </th>
+                                        <th>
+                                            <h:outputText value="#{msg.situacaoAS}" title="#{msg.AS}" /><br/>
+                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroAS}" title="#{msg.AS}" />
+                                        </th>
+                                        <th>
+                                            <h:outputText value="#{msg.situacaoCO}" title="#{msg.CO}" /><br/>
+                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroAC}" title="#{msg.CO}" />
+                                        </th>
+                                        <!--th>
+                                            <h:outputText value="# {msg.situacaoRP}" title="# {msg.RP}" /><br/>
+                                            <h:selectBooleanCheckbox value="# {followUpSolicitacoesController.filtroRP}" title="# {msg.RP}" />
+                                        </th/!-->
+                                        <!--th title="# {msg.PE}" align='center'>
+                                            <h:outputText value="# {msg.situacaoPE}" />
+                                        </th!-->
+                                        <th>
+                                            <h:outputText value="#{msg.situacaoAP}" title="#{msg.AP}" /><br/>
+                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroAP}" title="#{msg.AP}" />
+                                        </th>
+                                        <th>
+                                            <h:outputText value="#{msg.situacaoENF}" title="#{msg.ENF}" /><br/>
+                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroENF}" title="#{msg.ENF}" />
+                                        </th>
+                                        <th>
+                                            <h:outputText value="#{msg.situacaoEMO}" title="#{msg.EMO}" /><br/>
+                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroEMO}" title="#{msg.EMO}" />
+                                        </th>
+                                        <th>
+                                            <h:outputText value="#{msg.situacaoRA}" title="#{msg.RA}" /><br/>
+                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroRA}" title="#{msg.RA}" />
+                                        </th>
+                                        <th>
+                                            <h:outputText value="#{msg.situacaoAA}" title="#{msg.AA}" /><br/>
+                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroAA}" title="#{msg.AA}" />
+                                        </th>
+                                        <th>
+                                            <h:outputText value="#{msg.situacaoPG}" title="#{msg.PG}" /><br/>
+                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroPG}" title="#{msg.PG}" />
+                                        </th>
+                                    </tr>
+
+                                </tr>
+                            </thead>
+                            <!-- ************************************* CORPO DA TABELA DO FOLLOWUP *************************************** /-->
+                            <tbody>
+                                <ui:repeat value="#{followUpSolicitacoesController.items}"  var="item" varStatus="x">
+                                    <tr >
+                                        <td align='center'>
+                                            <h:selectBooleanCheckbox value="#{item.marcado}" rendered="true" disabled="#{!followUpSolicitacoesController.newSolicitacao or !followUpSolicitacoesController.newMovEntrada}" >
+                                                <p:ajax listener="#{followUpSolicitacoesController.addOrRemoveInsumo(item.insumo.codigo, item.marcado, item.solicitacaoCompraItem)}" update=":formMain:panelFollowUpItens" />
+                                            </h:selectBooleanCheckbox>
+                                        </td>
+                                        <td align='center'>
+                                            <h:outputText value="#{item.situacao}" style="color:#{item.situacao == 'R' ? 'red': 'black'}" >
+                                            </h:outputText>
+                                        </td>
+                                        <td align='center'>
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" value="#{item.solicitacaoCompraIDSis}" actionListener="#{followUpSolicitacoesController.prepareEditSolicitacao(item.solicitacaoCompraItem.solicitacao)}" rendered="#{item.solicitacaoCompraIDSis != null}">
+                                                <p:ajax update=":panelMain, :panelSolicitacaoCompra, :formMain:panelFollowUpItens" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td align='center'><h:outputText value="#{item.solicitacaoCompraItem.itemItem}"/></td>
+                                        <td align='left'>
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" value="#{item.insumo.codigo.toString()}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgInsumo')}">
+                                                <p:ajax oncomplete="dlgInsumo.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td align='left' style="width: 170px;">
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" value="#{item.insumoEspecificacao}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgInsumo')}" style="text-align: left;">
+                                                <p:ajax oncomplete="dlgInsumo.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td align='center'><h:outputText value="#{item.unidade}"/></td>
+                                        <td align='right'>
+                                            <h:outputText value="#{item.quantidadeSolicitada}" style="color: #{item.estoqueAtual >= item.quantidadeSolicitada and item.diasColeta == null ? 'red': 'black'}">
+                                                <f:convertNumber type="number" maxFractionDigits="5" />
+                                            </h:outputText>
+                                        </td>
+                                        <td align='right'>
+                                            <h:outputText value="#{item.quantidadeRecebida}">
+                                                <f:convertNumber type="number" maxFractionDigits="5" />
+                                            </h:outputText>
+                                        </td>
+                                        <td align='right'>
+                                            <h:outputText value="#{item.saldo}">
+                                                <f:convertNumber type="number" maxFractionDigits="5" />
+                                            </h:outputText>
+                                        </td>
+
+                                        <td align='right'>
+                                            <h:commandButton value="#{item.estoqueAtualFmt}" class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" style="text-align: right;" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgKardex')}" >
+                                                <p:ajax oncomplete="dlgKardex.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td align='right'>
+                                            <h:outputText value="#{item.estoqueUsina}" >
+                                                <f:convertNumber type="number" maxFractionDigits="5" />
+                                            </h:outputText>
+                                        </td>
+                                        <td align='right'>
+                                            <h:commandButton value="#{insumoController.getValorOrcadoCentro(item.insumo, item.centro)}" class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" style="text-align: right;" >
+                                                <p:ajax oncomplete="dlgOrc.show()" listener="#{orcamentoController.openOrcamentoGrid(item.solicitacaoCompraItem, false)}" update=":panelOrc" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td align='center'>
+                                            <h:commandButton style=" width: auto" class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" value="#{item.dataRegistroSolicitacaoFormatada}" rendered="#{item.dataRegistroSolicitacaoFormatada != null}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgRS')}" >
+                                                <p:ajax oncomplete="dlgRS.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td align='center'>
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" value="#{item.diasConclusaoSolicitacao}" rendered="#{item.diasConclusaoSolicitacao != null}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgCS')}" >
+                                                <p:ajax oncomplete="dlgCS.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td align='center'>
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" value="#{item.diasAutorizacaoSolicitacao}" rendered="#{item.diasAutorizacaoSolicitacao != null}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgAS')}" >
+                                                <p:ajax oncomplete="dlgAS.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td align='center'>
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" value="#{item.diasColeta}" rendered="#{item.diasColeta != null}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgAC')}" >
+                                                <p:ajax oncomplete="dlgAC.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td>
+                                        <!--td align='center'>
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" value="# {item.diasRegistroPedido}" rendered="# {item.diasRegistroPedido != null}" actionListener="# {followUpSolicitacoesController.createCurrent(item, 'dlgRP')}" >
+                                                <p:ajax oncomplete="dlgRP.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td/!-->
+                                        <!--td align='center'>
+                                            <h:outputText value="# {item.pedido.encaminhado}" />
+                                        </td!-->
+                                        <td align='center'>
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" value="#{item.diasAutorizacaoPedido + item.diasRegistroPedido}" rendered="#{item.diasAutorizacaoPedido != null}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgAP')}" >
+                                                <p:ajax oncomplete="dlgAP.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td align='center'>
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" value="#{item.diasEmissaoNF}" rendered="#{item.diasEmissaoNF != null}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgENF')}" >
+                                                <p:ajax oncomplete="dlgENF.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td align='center'>
+                                            <h:commandButton class="button-field-parcial" onmouseout="this.className = 'button-field-parcial'" onmousemove="this.className = 'button-field-over'" value="#{item.diasEntradaMaterial}" rendered="#{item.diasEntradaMaterial != null and item.pedidoParcial == 1}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgEMO')}" >
+                                                <p:ajax oncomplete="dlgEMO.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field'" onmousemove="this.className = 'button-field-over'" value="#{item.diasEntradaMaterial}" rendered="#{item.diasEntradaMaterial != null and item.pedidoParcial == 0}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgEMO')}" >
+                                                <p:ajax oncomplete="dlgEMO.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td align='center'>
+                                            <h:commandButton class="button-field-parcial" onmouseout="this.className = 'button-field-parcial'" onmousemove="this.className = 'button-field-over'" value="#{item.diasRegistroAR}" rendered="#{item.diasRegistroAR != null and item.pedidoParcial == 1}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgRA')}" >
+                                                <p:ajax oncomplete="dlgRA.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field'" onmousemove="this.className = 'button-field-over'" value="#{item.diasRegistroAR}" rendered="#{item.diasRegistroAR != null and item.pedidoParcial == 0}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgRA')}" >
+                                                <p:ajax oncomplete="dlgRA.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td align='center'>
+                                            <h:commandButton class="button-field-parcial" onmouseout="this.className = 'button-field-parcial'" onmousemove="this.className = 'button-field-over'" value="#{item.diasAutorizacaoAR}" rendered="#{item.diasAutorizacaoAR != null and item.pedidoParcial == 1}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgAA')}" >
+                                                <p:ajax oncomplete="dlgAA.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field'" onmousemove="this.className = 'button-field-over'" value="#{item.diasAutorizacaoAR}" rendered="#{item.diasAutorizacaoAR != null and item.pedidoParcial == 0}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgAA')}" >
+                                                <p:ajax oncomplete="dlgAA.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td align='center'>
+                                            <h:commandButton class="button-field-parcial" onmouseout="this.className = 'button-field-parcial'" onmousemove="this.className = 'button-field-over'" value="#{item.diasPagamento}" rendered="#{item.diasPagamento != null and item.pedidoParcial == 1}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgPG')}" >
+                                                <p:ajax oncomplete="dlgPG.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field'" onmousemove="this.className = 'button-field-over'" value="#{item.diasPagamento}" rendered="#{item.diasPagamento != null and item.pedidoParcial == 0}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgPG')}" >
+                                                <p:ajax oncomplete="dlgPG.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td align='center'>
+                                            <h:commandButton disabled="true" class="button-field" value="#{item.situacao}" rendered="#{item.situacao == 'OK'}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgOK')}" >
+                                                <p:ajax oncomplete="dlgOK.show()" update=":dialogForm" />
+                                            </h:commandButton>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                    </h:panelGroup>
+                </h:panelGroup>
+                <arq:paginator id="paginadorFollowUp" regsPerPage="true" regsPerPageAction="#{followUpSolicitacoesController.recreateTable()}" regsPerPageAttribute="#{followUpSolicitacoesController.registrosPorPagina}" entityBean="#{followUpSolicitacoesController}" formName=":formMain" renderedNew="false"/>
+
+                <p:spacer width="100%" height="20"/>
+
+                <p:dialog widgetVar="dlgMotivoRejeitaSolicitacao" resizable="false">
+                    <f:facet name="header">
+                        <h:outputText value="#{msg.rejeitandoSolicitacaoCompra}" />
+                    </f:facet>
+                    <h:outputText value="#{msg.motivoRejeicao}:" style="font-weight: bold;" /><p/>
+                    <p:inputTextarea cols="70" rows="5" value="#{followUpSolicitacoesController.motivoRejeitaSolicitacao}" /> <p/>
+                    <p:commandButton value="#{msg.ok}"       id="btnOkRejSolic"   update=":panelMain" icon="ui-icon-circle-check" action="#{followUpSolicitacoesController.rejeitaSolicitacao()}" oncomplete="#{insumoController.limparInsumosSelecionados()}" />
+                    <p:commandButton value="#{msg.cancelar}" id="btnCancRejSolic" update=":panelSolicitacaoCompra, :panelMain" icon="ui-icon-circle-close" actionListener="#{followUpSolicitacoesController.limparSolicitacaoCompra()}" />
+                </p:dialog>
+
+            </h:form>
+        </h:panelGroup>
+
+    </ui:define>
+</ui:composition>

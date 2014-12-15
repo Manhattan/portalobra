@@ -1,0 +1,141 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                >
+    <f:subview id="form-solicitacao">
+        <h:panelGroup id="dialogPanelSolicitacao"  style='margin-right: 0px; width: auto'>
+            <h:panelGroup id="pngRelSolic">
+                <ui:include src="../rel/solicitacao.xhtml" rendered="#{followUpSolicitacoesController.solicitacaoCompra.numero > 0}" />
+            </h:panelGroup>
+            <h:form id="solicCompraForm">
+                <h:outputText value="#{msg.solicitacoesCompra}" style="font-weight: bolder; margin-right: 10px" />
+                <p:commandButton id="btnPrintSolic" icon="ui-icon-print" value="" iconPos="left" styleClass="button-only-icon" actionListener="#{solicitacaoCompraController.initSolicitacao(followUpSolicitacoesController.solicitacaoCompra)}" update=":form-solicitacao:pngRelSolic" oncomplete="dlgRelSolic.show()" />
+                <hr />
+                <table>
+                    <tr>
+                        <td>
+                            <h:outputText value="#{msg.solicitante}: " style="font-weight: bolder" />
+                            <h:outputText value="#{followUpSolicitacoesController.solicitanteAtual}" style="margin-right: 50px"/>
+                        </td>
+                        <td>
+                            <h:outputText value="#{msg.situacao}: " style="font-weight: bolder;" rendered="#{!followUpSolicitacoesController.newSolicitacao}"/>
+                            <h:outputText value="#{followUpSolicitacoesController.solicitacaoCompra.situacao}" rendered="#{!followUpSolicitacoesController.newSolicitacao}"/>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr><td colspan="3"/></tr>
+                    <tr>
+                        <td>
+                            <h:outputText value="#{msg.dataSolicitacaoAbrev}: " style="font-weight: bolder;" />
+                            <h:outputText value="#{followUpSolicitacoesController.solicitacaoCompra.dataSolicitacao}" style="margin-right: 50px">
+                                <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </td>
+                        <td>
+                            <h:outputText value="#{msg.dataConclusaoAbrev}: " style="font-weight: bolder;" rendered="#{!followUpSolicitacoesController.newSolicitacao}"/>
+                            <h:outputText value="#{followUpSolicitacoesController.solicitacaoCompra.dataConcluido}" style="margin-right: 50px" rendered="#{!followUpSolicitacoesController.newSolicitacao}">
+                                <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h:outputText value="#{msg.numeroSolicitacaoAbreviada}: " style="font-weight: bolder;" rendered="#{!followUpSolicitacoesController.newSolicitacao}" />
+                            <h:outputText value="#{followUpSolicitacoesController.solicitacaoCompra.idSistema}" style="margin-right: 50px" rendered="#{!followUpSolicitacoesController.newSolicitacao}"/>
+                        </td>
+                        <td>
+                            <p:commandButton id="btnConcluiSolic" icon='ui-icon-check'   value="#{msg.concluir}"    update=":panelSolicitacaoCompra, :panelMain" actionListener="#{followUpSolicitacoesController.manageConclusaoSolicitacao()}" disabled="#{!followUpSolicitacoesController.enableConclusaoSolicitacao}" rendered="#{followUpSolicitacoesController.renderConcluirSolicitacao}" />
+                            <p:commandButton id="btnDesconcSolic" icon='ui-icon-extlink' value="#{msg.desconcluir}" update=":panelSolicitacaoCompra, :panelMain" actionListener="#{followUpSolicitacoesController.manageConclusaoSolicitacao()}" disabled="#{!followUpSolicitacoesController.enableConclusaoSolicitacao}" rendered="#{followUpSolicitacoesController.renderDesconcluirSolicitacao}" />
+
+                            <p:commandButton id="btnRemoveSolic" icon='ui-icon-trash' value="#{msg.excluir}" update=":panelSolicitacaoCompra, :panelMain" actionListener="#{followUpSolicitacoesController.removeSolicitacaoCompra()}" disabled="#{!followUpSolicitacoesController.enableRemocaoSolicitacao}" rendered="#{followUpSolicitacoesController.renderRemocaoSolicitacao}" style="width: 95px; margin-right: 20px" >
+                                <p:confirm header="#{msg.excluirSolicitacaoCompra}" message="#{msg.confirmaExclusaoSolicitacao}" icon="ui-icon-alert" />
+                            </p:commandButton>
+
+                            <p:confirmDialog closeOnEscape="true" global="true" >
+                                <p:commandButton value="#{msg.sim}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                <p:commandButton value="#{msg.nao}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog>
+
+                            <p:commandButton id="btnCancelSolic"   value="#{msg.cancelar}"    update=":panelSolicitacaoCompra, :panelMain" actionListener="#{followUpSolicitacoesController.limparSolicitacaoCompra()}" style="width: 95px;" icon="ui-icon-cancel" oncomplete="#{insumoController.limparInsumos()}" />
+                            <p:commandButton id="btnConfirmarSolic"  value="#{msg.ok}" update=":panelMain" actionListener="#{insumoController.limparInsumos()}" icon="ui-icon-circle-check" style="width: 95px;" disabled="#{!followUpSolicitacoesController.enableInsercaoSolicitacao}" action="#{followUpSolicitacoesController.createOrEditSolicitacao()}" />
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                </table>
+                <p:panel id="solicCompraTable" style="margin: 0px; padding: 0px; width: auto">
+                    <table class="referencesmall" style='margin: 0px; width: auto'>
+                        <tr class="cabecalhoDiscreto">
+                            <th style="width: 10px"></th>
+                            <th style="width: 10px"></th>
+                            <th align='center' style="width: auto">#{msg.item}</th>
+                            <th align='center' style="width: auto">#{msg.insumo}</th>
+                            <th>#{msg.descricao}</th>
+                            <th>#{msg.especificacao}</th>
+                            <th>#{msg.unidadeAbrevidada}</th>
+                            <th style="width: 70px">#{msg.quantidade}</th>
+                            <th>#{msg.estoqueAtual}</th>
+                            <th title="#{msg.estoqueUsina}">#{msg.estoqueUsinaAbrev}</th>
+                            <th style="width: 75px">#{msg.dataEntrega}</th>
+                            <th><h:outputText value="#{msg.observacao} (#{msg.comunicacaoInternaSetorCompras})" /></th>
+                        </tr>
+                        <ui:repeat rendered="#{followUpSolicitacoesController.solicitacaoTemItens}" value="#{followUpSolicitacoesController.itensSolicitacao}" var="si" varStatus="s">
+                            <tr class="noborder" id="itensList">
+                                <td>
+
+                                </td>
+                                <td>
+                                    <p:commandButton id="btnRemoveItem" update=":form-solicitacao:solicCompraForm:solicCompraTable, :form-solicitacao:solicCompraForm:btnConfirmarSolic, :form-solicitacao:solicCompraForm:btnConcluiSolic, :form-solicitacao:solicCompraForm:btnDesconcSolic, :form-solicitacao:solicCompraForm:btnRemoveSolic" actionListener="#{followUpSolicitacoesController.removerItemSolic(si)}" icon="ui-icon-closethick" disabled="#{!followUpSolicitacoesController.enableEdicaoSolicitacao}" />
+                                </td>
+                                <td>#{si.itemItem}</td>
+                                <td align='center'><h:outputText value="#{si.insumo.codigo}" /></td>
+                                <td><h:outputText value="#{si.insumo.especificacao}" style='width: auto' /></td>
+                                <td><p:inputTextarea maxlength="250" rows="1" value="#{si.especificacaoComplemento}" readonly="#{!followUpSolicitacoesController.enableEdicaoSolicitacao}" /></td>
+                                <td>#{si.insumo.unidade.codigo}</td>
+                                <td align='center'>
+                                    <pe:inputNumber value="#{si.quantidade}"    rendered="#{followUpSolicitacoesController.enableEdicaoSolicitacao and !followUpSolicitacoesController.obraLinkadaOrcamento}"  style="width: 65px" id="qtdSolic" maxValue="9999999" immediate="true"   />
+                                    <p:inputText    value="#{si.quantidadeFmt}" rendered="#{!followUpSolicitacoesController.enableEdicaoSolicitacao}" style="width: 65px" readonly="true"   />
+                                    <p:commandLink  value="#{si.quantidadeFmt}" rendered="#{followUpSolicitacoesController.enableEdicaoSolicitacao and followUpSolicitacoesController.obraLinkadaOrcamento}"   style="width: 65px; text-align: center; color: blue"  actionListener="#{orcamentoController.openOrcamentoGrid(si, true)}" oncomplete="dlgOrc.show()" update=":form-solicitacao:panelOrcamento" />
+
+                                </td>
+                                <td align='center'><h:outputText id="qtdEstAtual" value="#{followUpSolicitacoesController.getEstoqueAtual(si.insumo)}" /></td>
+                                <td align='center'><h:outputText id="qtdEstUsina" value="#{followUpSolicitacoesController.getEstoqueUsina(si.insumo)}" /></td>
+                                <td align='center'>
+                                    <p:calendar  value="#{si.dataEntrega}" style="width: 70px"  size="11" maxlength="10" id="dataEntrega" onkeypress="AtalhoData(event, this)"
+                                                 title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                                 navigator="true" immediate="true"
+                                                 timeZone="#{initParam['timezone']}" rendered="#{followUpSolicitacoesController.enableEdicaoSolicitacao}" >
+                                    </p:calendar>
+                                    <h:outputText value="#{si.dataEntrega}" rendered="#{!followUpSolicitacoesController.enableEdicaoSolicitacao}" >
+                                        <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </td>
+                                <td><p:inputTextarea maxlength="384" rows="1" cols="80" value="#{si.observacao}" readonly="#{!followUpSolicitacoesController.enableEdicaoSolicitacao}" /></td>
+                            </tr>
+                        </ui:repeat>
+                        <tr class="noborder">
+                            <td></td>
+                            <td colspan="2">
+                                <p:commandButton oncomplete="dlgNovoInsumo.show()" icon="ui-icon-circle-plus" style="width: 30px; height: 20px; margin-right: 5px" actionListener="#{insumoController.initCentroSelecionado(loginController.centroSelecionado)}" action="#{insumoController.considerarLinkOrcamento()}" update=":form-insumo:formNovoInsumo" disabled="#{!followUpSolicitacoesController.enableEdicaoSolicitacao}" >
+                                </p:commandButton>
+                            </td>
+                        </tr>
+                    </table>
+                </p:panel>
+            </h:form>
+        </h:panelGroup>
+
+        <h:panelGroup id="panelOrcamento" >
+            <ui:include src="/solic_comp/orc_grade.xhtml" />
+        </h:panelGroup>
+
+    </f:subview>
+</ui:composition>

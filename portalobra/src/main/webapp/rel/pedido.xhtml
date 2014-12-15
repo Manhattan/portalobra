@@ -1,0 +1,319 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp">
+    <f:subview id="pngPed">
+        <p:dialog widgetVar="dlgRelPed" modal="true" closeOnEscape="true" resizable="false">
+            <h:form id="frmRelPed" style="background: #fdfdfd;">
+                <p:scrollPanel style="width:1020px; height: 550px">
+                    <h:panelGroup id="pngRelPedPrint">
+                        <table style="border: solid 1px; width: 1000px">
+                            <tr>
+                                <td colspan="4">
+                                    <h:outputText value="#{pedidoController.current.centroCusto.empresa.nome}" style="font-weight: bold; font-size: 110%" />
+                                    <h:outputText id="txtPedNum" value="#{pedidoController.current.idSistema}" style="float: right; font-weight: bold; font-size: 110%" >
+                                        <f:convertNumber pattern="##00000" />
+                                    </h:outputText>
+                                    <h:outputLabel for="txtPedNum" value="#{msg.pedidoNum}:" style="float: right; margin-right: 10px; font-weight: bold" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <p:separator style="margin-top: 0px; margin-bottom: 1px" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">
+                                    #{msg.fornecedor}:
+                                </td>
+                                <td colspan="3">
+                                    <h:outputText value="#{pedidoController.current.credor.razaoSocial}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">
+                                    #{msg.endereco}:
+                                </td>
+                                <td style="min-width: 150px">
+                                    <h:outputText value="#{pedidoController.current.credor.endereco}" />
+                                </td>
+                                <td style="font-weight: bold">
+                                    #{msg.cnpj}:
+                                </td>
+                                <td>
+                                    <h:outputText value="#{pedidoController.current.credor.cpfCnpj}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">
+                                    #{msg.bairro}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.credor.bairro}
+                                </td>
+                                <td style="font-weight: bold">
+                                    #{msg.contato}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.credor.contato}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">
+                                    #{msg.cidade}/#{msg.uf}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.credor.cidade}/#{pedidoController.current.credor.uf}
+                                </td>
+                                <td style="font-weight: bold">
+                                    #{msg.fone}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.credor.telefone}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">
+                                    #{msg.cep}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.credor.cep}
+                                </td>
+                                <td style="font-weight: bold">
+                                    #{msg.email}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.credor.email}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <p:separator style="margin-top: 0px; margin-bottom: 1px" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold; min-width: 150px">
+                                    #{msg.empresaFaturamento}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.centroCusto.filial.nome}
+                                </td>
+                                
+                                <td style="font-weight: bold">
+                                    #{msg.inscricaoEstadual}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.centroCusto.filial.inscricaoEstadual}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">
+                                    #{msg.endereco}:
+                                </td>
+                                <td style="width: 300px">
+                                    #{pedidoController.current.centroCusto.filial.endereco}, #{followUpSolicitacoesController.current.pedido.centroCusto.filial.numero} - #{pedidoController.current.centroCusto.filial.complemento}
+                                </td>
+                                <td style="font-weight: bold">
+                                    #{msg.cnpj}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.centroCusto.filial.cnpj}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">
+                                    #{msg.bairro}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.centroCusto.filial.bairro}
+                                </td>
+                                <td style="font-weight: bold">
+                                    #{msg.contato}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.centroCusto.filial.contato}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">
+                                    #{msg.cidade}/#{msg.uf}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.centroCusto.filial.cidade}/#{pedidoController.current.centroCusto.filial.uf}
+                                </td>
+                                <td style="font-weight: bold">
+                                    #{msg.fone}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.centroCusto.filial.telefone}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">
+                                    #{msg.cep}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.centroCusto.filial.cep}
+                                </td>
+                                <td style="font-weight: bold">
+                                    #{msg.email}:
+                                </td>
+                                <td>
+                                    #{pedidoController.current.centroCusto.filial.email}
+                                </td>
+                            </tr>
+                        </table>
+                        <table style="width: 1000px; margin-top: 1px; font-weight: bold; border: solid 1px">
+                            <tr>
+                                <td style="border-right: solid 1px; width: 18%">
+                                    #{msg.condicoesPagamento}:
+                                </td>
+                                <td style="border-right: solid 1px; padding-left: 5px; width: 62%">
+                                    #{pedidoController.current.formaPagamento}
+                                </td>
+                                <td align='center' style="width: 20%">
+                                    #{msg.transporte}: #{pedidoController.current.ctr.label}
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="font-smaller1" style="width: 1000px; font-size: 95%; border: black solid 1px; margin-top: 1px">
+                            <tr>
+                                <td align='center' colspan="7" style="font-weight: bold; border-bottom: solid 1px; font-size: 90%">
+                                    #{msg.avaliacao}
+                                </td>
+                            </tr>
+                            <tr style="background: #f0f0f0; font-size: 90%">
+                                <th style="border-bottom: solid 1px; height: 5px">#{msg.item}</th>
+                                <th style="border-bottom: solid 1px; height: 5px">#{msg.pontos}</th>
+                                <th style="border-bottom: solid 1px; height: 5px">#{msg.observacao}</th>
+                                <th style="border-bottom: solid 1px; height: 5px"></th>
+                                <th style="border-bottom: solid 1px; height: 5px">#{msg.item}</th>
+                                <th style="border-bottom: solid 1px; height: 5px">#{msg.pontos}</th>
+                                <th style="border-bottom: solid 1px; height: 5px">#{msg.observacao}</th>
+                            </tr>
+                            <tr>
+                                <td class="avalItemB">#{msg.pontualidade}:</td>
+                                <td class="avalSmallLRB"> #{qualidadeController.getPontualidade(pedidoController.itensAvaliacao).pontuacao} </td>
+                                <td class="avalMediumRB"> #{qualidadeController.getPontualidade(pedidoController.itensAvaliacao).observacao} </td>
+                                <td rowspan="5" />
+                                <td class="avalItemLRB"> #{msg.qualidadeIntrinsecaQ}:</td>
+                                <td class="avalSmallRB"> #{qualidadeController.getQualidadeIntrinseca(pedidoController.itensAvaliacao).pontuacao} </td>
+                                <td class="avalMediumB"> #{qualidadeController.getQualidadeIntrinseca(pedidoController.itensAvaliacao).observacao} </td>
+                            </tr>
+                            <tr>
+                                <td class="avalItemB">#{msg.especPedidoQ}:</td>
+                                <td class="avalSmallLRB"> #{qualidadeController.getEspecPedido(pedidoController.itensAvaliacao).pontuacao} </td>
+                                <td class="avalMediumRB"> #{qualidadeController.getEspecPedido(pedidoController.itensAvaliacao).observacao} </td>
+                                <td class="avalItemLRB">#{msg.requisitosComerciaisQ}:</td>
+                                <td class="avalSmallRB"> #{qualidadeController.getRequisitosComerciais(pedidoController.itensAvaliacao).pontuacao} </td>
+                                <td class="avalMediumB"> #{qualidadeController.getRequisitosComerciais(pedidoController.itensAvaliacao).observacao} </td>
+                            </tr>
+                            <tr>
+                                <td class="avalItemB">#{msg.qualidadeIntegridade}:</td>
+                                <td class="avalSmallLRB"> #{qualidadeController.getQualidadeIntegridade(pedidoController.itensAvaliacao).pontuacao} </td>
+                                <td class="avalMediumRB"> #{qualidadeController.getQualidadeIntegridade(pedidoController.itensAvaliacao).observacao} </td>
+                                <td class="avalItemLRB">#{msg.requisitosSgq}:</td>
+                                <td class="avalSmallRB"> #{qualidadeController.getRequisitosSgq(pedidoController.itensAvaliacao).pontuacao} </td>
+                                <td class="avalMediumB"> #{qualidadeController.getRequisitosSgq(pedidoController.itensAvaliacao).observacao} </td>
+                            </tr>
+                            <tr>
+                                <td class="avalItem">#{msg.dadosNf}:</td>
+                                <td class="avalSmallLR"> #{qualidadeController.getDadosNf(pedidoController.itensAvaliacao).pontuacao} </td>
+                                <td class="avalMediumR"> #{qualidadeController.getDadosNf(pedidoController.itensAvaliacao).observacao} </td>
+                                <td colspan="3"></td>
+                            </tr>
+                        </table>
+
+                        <br/>
+                        <h:panelGroup style="width: 1000px; font-size: 100%">
+                            <h:outputText value="#{msg.dataEntrega}:" style="font-weight: bold; margin-right: 5px" />
+                            <h:inputText value="#{pedidoController.current.dataPrevisaoEntrega}" style="margin-right: 20px; padding-left: 5px" size="10" readonly="true">
+                                <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                            </h:inputText>
+
+                            <h:outputText value="#{msg.valorPedido}:" style="font-weight: bold; margin-right: 5px" />
+                            <h:inputText value="#{pedidoController.current.valorTotal}" style="margin-right: 20px; padding-left: 5px" size="10" readonly="true">
+                                <f:convertNumber currencyCode="BRL" minFractionDigits="2" maxFractionDigits="2" />
+                            </h:inputText>
+
+                            <h:outputText value="#{msg.desconto}:" style="font-weight: bold; margin-right: 5px" />
+                            <h:inputText value="#{pedidoController.current.descontoPedido}" style="margin-right: 20px; padding-left: 5px" size="10" readonly="true">
+                                <f:convertNumber currencyCode="BRL" minFractionDigits="2" maxFractionDigits="2" />
+                            </h:inputText>
+
+                            <h:outputText value="#{msg.totalPedido}:" style="font-weight: bold; margin-right: 5px" />
+                            <h:inputText value="#{pedidoController.current.valorComDesconto}" style="margin-right: 20px; padding-left: 5px" size="10" readonly="true">
+                                <f:convertNumber currencyCode="BRL" minFractionDigits="2" maxFractionDigits="2" />
+                            </h:inputText>
+
+                            <p style="margin: 5px"/>
+                            <h:outputText value="#{msg.observacao}:" style="font-weight: bold" />
+                            <p style="margin-bottom: 3px; margin-top: 1px"/>
+                            <p:panel style="border: solid 1px #aaaaaa">
+                                <h:outputText value="#{pedidoController.current.observacao}" />
+                            </p:panel>
+                        </h:panelGroup>
+                        <table class="referencesmall noFormatColumn" style="width: 1000px">
+                            <thead>
+                                <tr class="cabecalhoDiscreto">
+                                    <th>#{msg.item}</th>
+                                    <th>#{msg.sc}</th>
+                                    <th>#{msg.insumo}</th>
+                                    <th>#{msg.discriminacao}</th>
+                                    <th>#{msg.unidade}</th>
+                                    <th>#{msg.qtd}</th>
+                                    <th>#{msg.preco}</th>
+                                    <th>#{msg.percentIPI}</th>
+                                    <th>#{msg.totalItem}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat value="#{pedidoController.current.itens}" var="pItem">
+                                    <tr align='center'>
+                                        <td>#{pItem.itemItem}</td>
+                                        <td>#{pItem.solicitacaoCompraItem.solicitacao.idSistema}</td>
+                                        <td>#{pItem.solicitacaoCompraItem.insumo.codigo}</td>
+                                        <td align='left'>#{pItem.solicitacaoCompraItem.especificacaoCompleta} - #{pItem.solicitacaoCompraItem.observacao}</td>
+                                        <td>#{pItem.solicitacaoCompraItem.insumo.unidade.codigo}</td>
+                                        <td align='right' style="padding-right: 10px">
+                                            <h:outputText value="#{pItem.quantidade}">
+                                                <f:convertNumber maxFractionDigits="4" />
+                                            </h:outputText>
+                                        </td>
+                                        <td align='right' style="padding-right: 10px">
+                                            <h:outputText value="#{pItem.precoInsumo}">
+                                                <f:convertNumber currencyCode="BRL" maxFractionDigits="2" minFractionDigits="2" />
+                                            </h:outputText>
+                                        </td>
+                                        <td align='right' style="padding-right: 10px">
+                                            <h:outputText value="#{pItem.aliqIpi}">
+                                                <f:convertNumber currencyCode="BRL" maxFractionDigits="2" minFractionDigits="2" />
+                                            </h:outputText>
+                                        </td>
+                                        <td align='right' style="padding-right: 10px">
+                                            <h:outputText value="#{pItem.valorTotalItem}">
+                                                <f:convertNumber currencyCode="BRL" maxFractionDigits="2" minFractionDigits="2" />
+                                            </h:outputText>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                            <tr>
+                                <td colspan="8">
+                                    <p:separator />
+                                </td>
+                            </tr>
+                        </table>
+                    </h:panelGroup>
+                </p:scrollPanel>
+                <p:commandButton value="#{msg.imprimir}" icon="ui-icon-print" iconPos="left">
+                    <p:printer target=":pngPed:frmRelPed:pngRelPedPrint" />
+                </p:commandButton>
+            </h:form>  
+        </p:dialog>
+    </f:subview>
+</ui:composition>

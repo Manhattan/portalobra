@@ -1,0 +1,123 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                >
+    <f:subview id="viewConsultaCredor">
+        <p:dialog id="credorConsultaDialog" header="#{msg.fornecedor}" onHide="#{credorController.cleanSearch()}"  widgetVar="dlgConsultaCredor" style="position: absolute; float: top" position="top"  closeOnEscape="true" resizable="false" >
+            <h:form id="formConsultaCredor">
+                <p:panelGrid columns="4" styleClass="noFormatColumn">
+                    <h:panelGroup style="margin-right: 20px">
+                        <h:outputText value="#{msg.codigo}:" style="float: left; font-weight: bold"/><br/>
+                        <p:inputText value="#{credorController.codigo}" style="width: 100px; float: left" maxlength="6" />
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <h:outputText value="#{msg.cpfCnpj2}:" style="float: left; font-weight: bold"/><br/>
+                        <p:inputText value="#{credorController.cpfCnpj}" size="20" style="float: left" maxlength="14" />
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <h:outputText value="#{msg.nomeFantasia}:" style="float: left; font-weight: bold" /><br/>
+                        <p:inputText value="#{credorController.nomeFantasia}" size="30" style="float: left" maxlength="30" />
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <br/>
+                        <h:selectBooleanCheckbox id="chkSemEspec" value="#{credorController.semEspecificidade}" style="float: left" />
+                        <h:outputLabel value="#{msg.semEspecificidade}" for="chkSemEspec" style="font-weight: bold"/>
+                    </h:panelGroup>
+                </p:panelGrid>
+
+                <p:panelGrid columns="4" styleClass="noFormatColumn">
+                    <h:panelGroup>
+                        <h:outputText value="#{msg.razaoSocial}:"  style="float: left; font-weight: bold"/><br/>
+                        <p:inputText value="#{credorController.razaoSocial}" size="50" style="float: left" maxlength="50" />
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <h:outputText value="#{msg.cidade}:"  style="float: left; font-weight: bold"/><br/>
+                        <p:inputText value="#{credorController.cidade}" maxlength="30" size="30" style="float: left" />
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <h:outputText value="#{msg.estado}:"  style="float: left; font-weight: bold"/><br/>
+                        <p:selectOneMenu id="filtroCredorEstado" value="#{credorController.estado}" style="text-align: left; float: left" >
+                            <f:selectItem value="#{null}" itemLabel="" />
+                            <f:selectItems value="#{credorController.estadoSelect}" />
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+
+                    <p:commandButton actionListener="#{credorController.pesquisar}" icon="ui-icon-search" update=":menuApp:viewConsultaCredor:formConsultaCredor:credorConsultaTable" value="#{msg.executar}" style="float: left; margin-top: 16px" />
+
+
+                </p:panelGrid>
+
+                <h:panelGroup id="credorConsultaTable">
+                    <table class="referencesmall">
+                        <tr>
+                            <th></th>
+                            <th>#{msg.codigo}</th>
+                            <th>#{msg.razaoSocial}</th>
+                            <th>#{msg.cpfCnpj2}</th>
+                            <th>#{msg.nomeFantasia}</th>
+                            <th>#{msg.endereco}</th>
+                            <th>#{msg.bairro}</th>
+                            <th>#{msg.cidade}</th>
+                            <th>#{msg.uf}</th>
+                            <th>#{msg.contato}</th>
+                            <th>#{msg.telefone}</th>
+                        </tr>
+                        <ui:repeat value="#{credorController.items}" var="item" varStatus="x">
+                            <tr>
+                                <td>
+                                    <p:commandButton actionListener="#{posicaoCredorController.initCredor(item)}" update=":menuApp:pngPosCred" oncomplete="dlgPosCred.show()" value="" icon="ui-icon-cart" iconPos="left" styleClass="button-only-icon" />
+                                </td>
+                                <td>
+                                    <h:commandLink class="button-field2" value="#{item.codigo}" style="text-align: left;" >
+                                        <p:ajax oncomplete="dlgFornecedor.show()" listener="#{credorController.initCurrent(item)}" update=":menuApp:pnlFornecedor" />
+                                    </h:commandLink>
+                                </td>
+                                <td align='left'>
+                                    #{item.razaoSocial}
+                                </td>
+                                <td>
+                                    #{item.cpfCnpj}
+                                </td>
+                                <td align='left'>
+                                    #{item.nomeFantasia}
+                                </td>
+                                <td align='left'>
+                                    #{item.enderecoNumEComp}
+                                </td>
+                                <td align='left'>
+                                    #{item.bairro}
+                                </td>
+                                <td>
+                                    #{item.cidade}
+                                </td>
+                                <td>
+                                    #{item.uf}
+                                </td>
+                                <td align='left'>
+                                    #{item.contato}
+                                </td>
+                                <td>
+                                    #{item.telefone}
+                                </td>
+                            </tr>
+                        </ui:repeat>
+                    </table>
+
+                    <p:panel id="paginadorConsultaCredorPanel" style="border: none">
+                        <arq:paginator id="paginadorConsultaCredor" entityBean="#{credorController}"  formName=":menuApp:viewConsultaCredor:formConsultaCredor:credorConsultaTable" renderedNew="false"/>
+                    </p:panel>
+
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+    </f:subview>
+</ui:composition>

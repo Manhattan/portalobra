@@ -1,0 +1,93 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                >
+    <f:subview id="form-fornecedor">
+        <h:panelGroup id="pngPosCred">
+            <ui:include src="/consulta/posicao_credor.xhtml" />
+        </h:panelGroup>
+        <h:panelGroup id="dialogPanelFornecedor"  style='margin-right: 0px; width: auto'>
+            <p:dialog widgetVar="dlgFornecedor" id="dlgFornecedor" header="#{msg.fornecedor}" closeOnEscape="true" resizable="false" >
+                <h:form id="fornecedorForm">
+                    <p:commandButton value="#{msg.pagamento}" icon="ui-icon-cart" iconPos="left" 
+                                     update=":menuApp:pngPosCred" actionListener="#{posicaoCredorController.initCredor(credorController.current)}" 
+                                     oncomplete="dlgPosCred.show()" style="float: left; height: 23px" />
+                    <br/>
+                    <br/>
+                    <table class="dialogtable">
+                        <tr>
+                            <td class="fontBold" colspan="2">#{msg.codigo}:</td>
+                            <td colspan="3">#{credorController.current.codigo}</td>
+                            <td colspan="1" rowspan="6"></td>
+                            <td class="fontBold" colspan="1">#{msg.complemento}:</td>
+                            <td colspan="1">#{credorController.current.complemento}</td>
+                        </tr>
+                        <tr>
+                            <td class="fontBold" colspan="2">#{msg.razaoSocial}:</td>
+                            <td colspan="3">#{credorController.current.razaoSocial}</td>
+                            <td class="fontBold" colspan="1">#{msg.cep}:</td>
+                            <td colspan="1">#{credorController.current.cep}</td>
+                        </tr>
+                        <tr>
+                            <td class="fontBold" colspan="2">#{msg.nomeFantasia}:</td>
+                            <td colspan="3">#{credorController.current.nomeFantasia}</td>
+                            <td class="fontBold" colspan="1">#{msg.bairro}:</td>
+                            <td colspan="1">#{credorController.current.bairro}</td>
+                        </tr>
+                        <tr>
+                            <td class="fontBold" colspan="2">#{msg.cpfCnpj2}:</td>
+                            <td colspan="3">#{credorController.current.cpfCnpj}</td>
+                            <td class="fontBold" colspan="1">#{msg.cidade}:</td>
+                            <td colspan="1">#{credorController.current.cidade}</td>
+                        </tr>
+                        <tr>
+                            <td class="fontBold" colspan="2">#{msg.logradouro}:</td>
+                            <td colspan="3">#{credorController.current.endereco}</td>
+                            <td class="fontBold" colspan="1">#{msg.uf}:</td>
+                            <td colspan="1">#{credorController.current.uf}</td>
+                        </tr>
+                        <tr>
+                            <td class="fontBold" colspan="2">#{msg.numero}:</td>
+                            <td colspan="3">#{credorController.current.numero}</td>
+                            <td class="fontBold" colspan="1">#{msg.pais}:</td>
+                            <td colspan="1">#{credorController.current.pais}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8"></td>
+                        </tr>
+                        <tr class="fontsmall">
+                            <th colspan="1">#{msg.departamento}</th>
+                            <th colspan="1">#{msg.contato}</th>
+                            <th colspan="1" style="width: 90px">#{msg.telefone}</th>
+                            <th colspan="1">#{msg.cargoFuncao}</th>
+                            <th colspan="1" style="width: 90px">#{msg.fax}</th>
+                            <th colspan="2">#{msg.observacao}</th>
+                            <th colspan="1">#{msg.email}</th>
+                        </tr>
+
+                        <ui:repeat value="#{credorController.current.contatos}" var="c">
+                            <tr class="fontsmall">
+                                <td colspan="1">#{c.departamento}</td>
+                                <td colspan="1">#{c.contato}</td>
+                                <td colspan="1">#{c.telefone}</td>  
+                                <td colspan="1">#{c.cargoContato}</td>
+                                <td colspan="1">#{c.fax}</td>
+                                <td colspan="2">#{c.observacao}</td>
+                                <td colspan="1">#{c.email}</td>
+                            </tr>
+                        </ui:repeat>
+
+                    </table>
+
+                </h:form>
+            </p:dialog>
+        </h:panelGroup>
+
+
+
+    </f:subview>
+</ui:composition>

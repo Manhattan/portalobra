@@ -1,0 +1,120 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                template="../../templates/layout.xhtml"
+                >
+    <ui:param name="titulomenu" value="#{msg.usuarios}" />
+    <ui:define name="content" >
+        <h:panelGroup rendered="#{loginController.statusLogin == 0 or loginController.funcionario == null or loginController.funcionario.login == null or !loginController.verUsuario}">
+            <ui:include src="../../semPermissao.xhtml" />
+        </h:panelGroup>
+        <p:dialog widgetVar="dlgNovoInsumo" visible="false" />
+        <h:panelGroup id="panelMain" rendered="#{loginController.verUsuario}">
+            <h:panelGroup>
+                <ui:include src="form.xhtml" />
+            </h:panelGroup>
+            <h:outputText value="#{msg.cadastroUsuarios}" style="font-weight: bolder" />
+            <p:separator />
+            <h:form id="formMain">
+                <h:panelGrid columns="3">
+                    <h:outputText value="#{msg.centroNegocio}:" style="font-weight: bold" />
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+
+                    <p:selectOneMenu value="#{funcionarioController.centro}" filter="true" filterMatchMode="contains">
+                        <f:selectItem itemLabel="" itemValue="#{null}" />
+                        <f:selectItems value="#{funcionarioController.centroSelect}" />
+                        <f:converter converterId="centroCustoConverter" />
+                    </p:selectOneMenu>
+
+                    <p:commandButton value="#{msg.executar}" icon="ui-icon-search" iconPos="left" 
+                                     actionListener="#{funcionarioController.pesquisar()}" update=":formMain" />
+
+                    <p:commandButton value="#{msg.novo}" rendered="#{loginController.incluiUsuario}" 
+                                     action="#{funcionarioController.prepareCreate()}" update=":panelMain" 
+                                     icon="ui-icon-circle-plus" iconPos="left"/>
+                </h:panelGrid>
+
+                <table class="referencesmall" style="width: 100%">
+                    <tr>
+                        <th style="width: 65px" align='center' />
+                        <th align='center' style="padding: 5px">
+                            <h:panelGroup>
+                                <h:selectBooleanCheckbox id="chkFltAtivo" value="#{funcionarioController.ativo}" label="#{msg.ativo}"/>
+                                <h:outputLabel for="chkFltAtivo" value="#{msg.ativo}" style="font-weight: bold" />
+                            </h:panelGroup>
+                        </th>
+                        <th align='center' style="padding: 5px">
+                            <h:outputText value="#{msg.codigo}" />
+                        </th>
+                        <th style="padding: 5px; min-width: 200px; padding-left: 5px">
+                            <h:outputText value="#{msg.nome}" />
+                            <p style="margin: 3px"  />
+                            <p:inputText value="#{funcionarioController.nome}" style="width: 80%" />
+                        </th>
+                        <th style="padding: 5px; min-width: 200px">
+                            <h:outputText value="#{msg.login}" style="padding-left: 5px"/>
+                            <p style="margin: 3px"  />
+                            <p:inputText value="#{funcionarioController.login}" style="width: 80%" />
+                        </th>
+                        <th align='center' style="padding: 5px">
+                            <h:outputText value="#{msg.empresa}" style="padding-left: 5px" />
+                            <p style="margin: 3px"  />
+                            <p:selectOneMenu value="#{funcionarioController.empresa}" filter="true" filterMatchMode="contains">
+                                <f:selectItem itemLabel="" itemValue="#{null}" />
+                                <f:selectItems value="#{funcionarioController.empresaSelect}" />
+                            </p:selectOneMenu>
+                        </th>
+                    </tr>
+                    <ui:repeat value="#{funcionarioController.items}"  var="item" varStatus="x">
+                        <tr class="hovered" style="font-size: 110%">
+                            <td>
+                                <p:commandButton id="btnDeleteFunc" title="#{msg.remover}" icon="ui-icon-close" 
+                                                 iconPos="left" value="" styleClass="button-only-icon" update=":panelMain"  
+                                                 action="#{funcionarioController.destroy()}" 
+                                                 rendered="#{loginController.removeUsuario}">
+                                    <p:confirm header="#{msg.excluirUsuario}" message="#{msg.confirmaExclusaoUsuario}" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:commandButton id="btnEditFunc" title="#{msg.editar}" icon="ui-icon-pencil" 
+                                                 iconPos="left" value="" styleClass="button-only-icon" update=":panelMain"  
+                                                 action="#{funcionarioController.prepareEdit()}" 
+                                                 rendered="#{loginController.alteraUsuario}"/>
+
+                                <p:confirmDialog closeOnEscape="true" global="true" >
+                                    <p:commandButton value="#{msg.sim}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="#{msg.nao}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                            </td>
+                            <td align='center'>
+                                <h:selectBooleanCheckbox value="#{item.ativo}" disabled="true"/>
+                            </td>
+                            <td align='center'>
+                                #{item.codigo}
+                            </td>
+                            <td style="padding-left: 10px">
+                                #{item.nomeCompleto}
+                            </td>
+                            <td style="padding-left: 10px">
+                                #{item.login}
+                            </td>
+                            <td align='center'>
+                                #{item.empresa.codigo}
+                            </td>
+                        </tr>
+                    </ui:repeat>
+                </table>
+                <arq:paginator id="paginadorFunc" entityBean="#{funcionarioController}" formName=":formMain" renderedNew="false"/>
+            </h:form>
+
+            <h:panelGroup id="dialogForm" />
+            <!-- ************************* AQUI FICA A TELA QUE TROCA O CENTRO DE CUSTO ******************************************* /-->
+            <h:panelGroup id="panelCentroCusto" >
+                <arq:centroCusto formName=":formMain" entityBean="#{funcionarioController}" listCentros="#{loginController.funcionario.centros}" pageRender="usuarios" />
+            </h:panelGroup>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

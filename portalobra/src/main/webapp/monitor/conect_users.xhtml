@@ -1,0 +1,62 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                template="../templates/layout.xhtml"
+                >
+    <ui:param name="titulomenu" value="#{msg.avisoRecebimento}" />
+    <ui:define name="content" >
+        <h:panelGroup rendered="#{loginController.statusLogin == 0 or loginController.funcionario == null or loginController.funcionario.login == null or !loginController.verUsuariosConectados}">
+            <ui:include src="../semPermissao.xhtml" />
+        </h:panelGroup>
+        <h:form id="formMain">
+            <h:panelGroup id="docMontTable" rendered="#{loginController.verUsuariosConectados}">
+                <h:outputText value="#{msg.usuariosConectados}" style="font-weight: bold; font-size: larger; margin-left: 10px" />
+                <p:commandButton value="#{msg.atualizar}" action="conect_users" style="float: right" actionListener="#{monitorController.atualizaMonitor()}" />
+                <table class="referencesmall">
+                    <tr>
+                        <th style="width: 200px; font-size: small" align='center'>#{msg.usuario}</th>
+                        <th style="width: 50px; font-size: small" align='center'>#{msg.empresa}</th>
+                        <th style="width: 200px; font-size: small" align='center'>#{msg.dataHoraInicial}</th>
+                        <th style="width: 100px; font-size: small" align='center'>#{msg.sistema}</th>
+                    </tr>
+                    <ui:repeat value="#{monitorController.conectedUsers}" var="item">
+                        <tr>
+                            <td align='center'>
+                                <h:outputText value="#{item.funcionario.login}" style="font-size: small; padding: 10px" />
+                            </td>
+                            <td align='center'>
+                                <h:outputText value="#{item.funcionario.empresa.codigo}" style="font-size: small; padding: 10px" />
+                            </td>
+                            <td align='center'>
+                                <h:outputText value="#{item.dataEntrada}" style="font-size: small; padding: 10px">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT-03:00"/>
+                                </h:outputText>
+                            </td>
+                            <td align='center'>
+                                <h:outputText value="#{item.sistema.label}" style="font-size: small; padding: 10px" />
+                            </td>
+                        </tr>
+                    </ui:repeat>
+                    <tr>
+                        <td colspan="3" align='left'>
+                            <h:outputText value="#{msg.total}:" style="font-weight: bold; margin-right: 20px; font-size: small" />
+                            <h:outputText value="#{monitorController.countConectedUsers}" style="font-weight: bold; font-size: small" />
+                        </td>
+                    </tr>
+                </table>
+            </h:panelGroup>
+        </h:form>
+
+        <!-- *************** DIALOGS *************** /-->
+        <h:panelGroup id="dialogForm">
+        </h:panelGroup>
+        <!-- ************************* AQUI FICA A TELA QUE TROCA O CENTRO DE CUSTO ******************************************* /-->
+        <h:panelGroup id="panelCentroCusto" >
+            <arq:centroCusto formName=":formMain" entityBean="#{monitorController}" listCentros="#{loginController.funcionario.centros}" pageRender="conect_users" />
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

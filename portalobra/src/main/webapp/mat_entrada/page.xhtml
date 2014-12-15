@@ -1,0 +1,90 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                >
+
+    <f:subview id="form-mat-ent">
+        <p:dialog widgetVar="dlgMatEnt" resizable="false" styleClass="dialog" header="#{msg.entradaMateriais}" closeOnEscape="true" >
+            <p:panel id="dialogPanelMatEnt" style="margin-right: 0px; width: auto" rendered="#{materialEntradaController.centroSelecionado != null}">
+                <h:form id="formMatEnt">
+                    <h:panelGrid columns="2">
+                        <h:outputText value="#{msg.centroNegocioAbrev}:" style="font-weight: bold" />
+                        <h:outputText value="#{msg.periodoEntradas}:" style="font-weight: bold" />
+                        <p:inputText value="#{materialEntradaController.centroSelecionado.nomeCompleto}" readonly="true"  style="width: 90%" />
+                        <h:panelGroup>
+                            <p:calendar  value="#{materialEntradaController.dataInicial}" size="11" maxlength="10"  id="dataInicialMatEnt"
+                                         title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                         navigator="true" immediate="true"
+                                         timeZone="#{initParam['timezone']}" >
+                            </p:calendar>
+                            <h:outputText value=" a " style="margin-left: 5px; margin-right: 5px" />
+                            <p:calendar value="#{materialEntradaController.dataFinal}" size="11" maxlength="10"  id="dataFinalMatEnt"
+                                        title="#{msg.dataFinal}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                        navigator="true" immediate="true"
+                                        timeZone="#{initParam['timezone']}" >
+                            </p:calendar>
+                        </h:panelGroup>
+
+                        <h:panelGrid columns="3">
+                            <h:outputText value="#{msg.numeroEntradaAbrev}:" style="font-weight: bold" />
+                            <h:outputText value="#{msg.material}:" style="font-weight: bold" />
+                            <h:outputText value="#{msg.origem}:" style="font-weight: bold" />
+
+                            <p:inputText value="#{materialEntradaController.numeroEntrada}" style="width: 80px" />
+                            <p:inputText value="#{materialEntradaController.insumoCod}" style="width: 80px" />
+
+                            <p:selectOneMenu value="#{materialEntradaController.origem}" >
+                                <f:selectItems value="#{materialEntradaController.origemSelect}"/>
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="2">
+                            <h:outputText value="#{msg.especificacao}" style="font-weight: bold" />
+                            <br/>
+                            <p:inputText value="#{materialEntradaController.especificacao}" />
+                            <p:commandButton value="#{msg.executar}" actionListener="#{materialEntradaController.pesquisa()}" update=":form-mat-ent:formMatEnt:panelTableMatEntPaginador" />
+                        </h:panelGrid>
+
+                    </h:panelGrid>
+                    <h:panelGroup id="panelTableMatEntPaginador" style="margin-right: 0px; width: auto">
+                        <table class="referencesmall" style="margin: 0px; width: auto">
+                            <tr class="cabecalhoDiscreto">
+                                <th></th>
+                                <th align='center'>#{msg.numeroEntradaAbrev}</th>
+                                <th align='center'>#{msg.data}</th>
+                                <th align='center'>#{msg.origem}</th>
+                                <th align='center'>#{msg.tipoMovimentoAbrev}</th>
+                                <th align='center'>#{msg.tipoDoc}</th>
+                                <th align='center'>#{msg.numeroDoc}</th>
+                            </tr>
+                            <ui:repeat value="#{materialEntradaController.items}" var="item" varStatus="s">
+                                <tr>
+                                    <td>
+                                        <p:commandButton icon="ui-icon-arrow-1-e" iconPos="left" value="" style="height: 15px; width: 25px" styleClass="button-only-icon" action="#{followUpSolicitacoesController.prepareEditEntradaOrSaida('E', item.numeroEntrada)}" oncomplete="dlgMatEnt.hide()" actionListener="#{materialEntradaController.clean()}" update=":panelEntradaMaterialF" />
+                                    </td>
+                                    <td>
+                                        <p:commandLink value="#{item.numeroEntrada}" action="#{followUpSolicitacoesController.prepareEditEntradaOrSaida('E', item.numeroEntrada)}" oncomplete="dlgMatEnt.hide()" actionListener="#{materialEntradaController.clean()}" update=":panelEntradaMaterialF" style="margin: 0px 15px 0px 15px;" styleClass="tableLinkField" />
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{item.dataEntrada}" style="margin: 0px 15px 0px 15px" >
+                                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </td>
+                                    <td><h:outputText value="#{item.entradaOrigem}" style="margin: 0px 15px 0px 15px" /></td>
+                                    <td align='center'><h:outputText value="#{item.tipoMovimento}" style="margin: 0px 15px 0px 15px" /></td>
+                                    <td><h:outputText value="#{item.tipoDocumento}" style="margin: 0px 15px 0px 15px" /></td>
+                                    <td><h:outputText value="#{item.numeroDocumento}" style="margin: 0px 15px 0px 15px" /></td>
+                                </tr>
+                            </ui:repeat>
+                        </table>
+                        <arq:paginator id="paginadorMatEnt" entityBean="#{materialEntradaController}" formName=":form-mat-ent:formMatEnt" renderedNew="false"/>
+                    </h:panelGroup>
+                </h:form>
+            </p:panel>
+        </p:dialog>
+    </f:subview>
+</ui:composition>

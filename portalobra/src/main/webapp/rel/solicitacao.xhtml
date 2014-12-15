@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp">
+    <f:subview id="pngSolic">
+        <p:dialog widgetVar="dlgRelSolic" modal="true" closeOnEscape="true" resizable="false">
+            <h:form id="frmRelSolic" style="background: #fdfdfd;">
+                <p:scrollPanel style="width:1020px; height: 550px; border: none">
+                    <h:panelGroup id="pngRelSolicPrint">
+                        <p:panel style="margin-bottom: 5px; padding: 0px">
+                            <h:outputText value="#{solicitacaoCompraController.current.centro.empresa.nome}" style="font-weight: bold" />
+                            <h:outputText value="#{utilsController.preencheZeroEsquerda(solicitacaoCompraController.current.idSistema, 6)}" style="float: right" />
+                            <h:outputText value="#{msg.solicitacao}: " style="float: right; margin-right: 5px" />
+                            
+                        </p:panel>
+
+                        <p:panel style="margin-bottom: 5px; padding: 0px">
+                            <h:outputText value="#{msg.dataSolicitacao}: " />
+                            <h:outputText value="#{solicitacaoCompraController.current.dataSolicitacao}">
+                                <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" timeZone="#{initParam['timezone']}" />
+                            </h:outputText>
+                            <h:outputText value="#{solicitacaoCompraController.current.centro.nomeCompleto}" style="float: right" />
+                        </p:panel>
+
+                        <p:panel style="margin-bottom: 5px; padding: 0px">
+                            <h:outputText value="#{msg.solicitante}: " />
+                            <h:outputText value="#{solicitacaoCompraController.current.solicitante.nome}" />
+                        </p:panel>
+                        <table class="referencesmall noFormatColumn" style="width: 100%; border: solid 1px #c3c3c3">
+                            <thead align='center'>
+                                <tr class="cabecalhoDiscreto">
+                                    <th>#{msg.item}</th>
+                                    <th>#{msg.insumo}</th>
+                                    <th>#{msg.discriminacao}</th>
+                                    <th>#{msg.unidade}</th>
+                                    <th>#{msg.quantidade}</th>
+                                    <th>#{msg.dataEntrega}</th>
+                                    <th>#{msg.situacaoAbrev}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat value="#{solicitacaoCompraController.current.itens}" var="sItem">
+                                    <tr align='center'>
+                                        <td>
+                                            #{sItem.itemItem}
+                                        </td>
+                                        <td>
+                                            #{sItem.insumo.codigo}
+                                        </td>
+                                        <td align='left'>
+                                            #{sItem.especificacaoCompleta}
+                                        </td>
+                                        <td>
+                                            #{sItem.insumo.unidade.codigo}
+                                        </td>
+                                        <td>
+                                            #{sItem.quantidade}
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{sItem.dataEntrega}">
+                                                <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" timeZone="#{initParam['timezone']}" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            #{sItem.situacao}
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                        <br/>
+                        <p:panel style="font-size: 110%">
+                            <h:outputText value="#{msg.observacao}:" />
+                            <br/>
+                            <ui:repeat value="#{solicitacaoCompraController.current.itens}" var="sItem1">
+                                <h:outputText value="#{sItem1.itemItem}: " rendered="#{sItem1.observacao != null}" />
+                                <h:outputText value="#{sItem1.observacao}" />
+                                <br/>
+                            </ui:repeat>
+                        </p:panel>
+
+
+                    </h:panelGroup>
+                </p:scrollPanel>
+                <p:commandButton value="#{msg.imprimir}" icon="ui-icon-print" iconPos="left">
+                    <p:printer target=":form-solicitacao:pngSolic:frmRelSolic:pngRelSolicPrint" />
+                </p:commandButton>
+            </h:form>  
+        </p:dialog>
+    </f:subview>
+</ui:composition>

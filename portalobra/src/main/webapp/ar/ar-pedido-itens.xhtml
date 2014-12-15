@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                >
+
+    <f:subview id="viewPedidoItens">
+        <p:dialog id="pedidoItensDialog" widgetVar="pedidoItensDialog" closeOnEscape="true" resizable="false" position="20,20"  >
+            <f:facet name="header">
+                <h:outputText value="#{msg.centroNegocioAbrev}: " style="font-weight: bold; margin-right: 10px" />
+                <h:outputText value="#{loginController.centroSelecionado.nomeCompleto}" style="margin-right: 30px" />
+                <h:outputText value="#{msg.fornecedor}: " style="font-weight: bold; margin-right: 10px" />
+                <h:outputText value="#{pedidoItemController.credor.razaoSocial}"  />
+            </f:facet>
+            <h:form id="formPedidoItens">
+                <p:panelGrid styleClass="noFormatColumn" columns="5" >
+                    <h:outputText value="#{msg.periodoPedidos}:" />
+                    <h:outputText value="#{msg.especificacao}:" />
+                    <h:outputText value="#{msg.numeroPedidoAbrev}:" />
+                    <h:outputText value="#{msg.caracterizacao}:" />
+                    <br/>
+                    <h:panelGroup>
+                        <p:calendar value="#{pedidoItemController.pedidoDataInicial}" size="11" maxlength="10"  id="pedidoDataInicial"
+                                    title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                    navigator="true" immediate="true" timeZone="#{initParam['timezone']}" />
+                        #{msg.a}
+                        <p:calendar value="#{pedidoItemController.pedidoDataFinal}" size="11" maxlength="10"  id="pedidoDataFinal"
+                                    title="#{msg.dataFinal}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                    navigator="true" immediate="true" timeZone="#{initParam['timezone']}" />
+                    </h:panelGroup>
+                    <p:inputText value="#{pedidoItemController.especificacao}" />
+                    <p:inputText value="#{pedidoItemController.numeroPedido}" />
+                    <p:inputText value="#{pedidoItemController.caracterizacao}" />
+                    <p:commandButton value="#{msg.executar}" actionListener="#{pedidoItemController.pesquisar(loginController.centroSelecionado)}" update=":viewPedidoItens:formPedidoItens" />
+                    <p:commandButton value="#{msg.incluirItem}" actionListener="#{documentoEntradaController.incluirItens(pedidoItemController.itensSelecionados)}" oncomplete="pedidoItensDialog.hide() #{pedidoItemController.limparItensSelecionados()}" />
+                </p:panelGrid>
+
+                <h:panelGroup id="pedidoItensTable">
+                    <table class="referencesmall">
+                        <tr>
+                            <th></th>
+                            <th>#{msg.pedido}</th>
+                            <th>#{msg.solicitacao}</th>
+                            <th>#{msg.situacaoAbrev}</th>
+                            <th>#{msg.insumo}</th>
+                            <th>#{msg.especificacao}</th>
+                            <th>!</th>
+                            <th>#{msg.unidade}</th>
+                            <th>#{msg.quantidade}</th>
+                            <th>#{msg.quantidadeRecebidaAbreviada1}</th>
+                            <th>#{msg.saldoAReceberAbrev}</th>
+                            <th>#{msg.dataEntrada}</th>
+                        </tr>
+                        <ui:repeat value="#{pedidoItemController.items}" var="pi">
+                            <tr>
+                                <td>
+                                    <h:selectBooleanCheckbox value="#{pi.marcado}" rendered="true" disabled="false">
+                                        <p:ajax listener="#{pedidoItemController.addOrRemoveItem(pi.pedido, pi.itemNumero, pi.marcado)}" /> 
+                                    </h:selectBooleanCheckbox>
+                                </td>
+                                <td>#{pi.idComposto}</td>
+                                <td>#{pi.solicitacaoCompraItem.idCompleto}</td>
+                                <td></td>
+                                <td>#{pi.solicitacaoCompraItem.insumo}</td>
+                                <td style="width: 110%">#{pi.solicitacaoCompraItem.insumo.especificacao}</td>
+                                <td></td>
+                                <td>#{pi.solicitacaoCompraItem.insumo.unidade}</td>
+                                <td>#{pi.quantidade}</td>
+                                <td>#{pi.documentoEntradaItem.quantidadeRecebida}</td>
+                                <td>#{utilsController.subtrair(pi.quantidade, pi.documentoEntradaItem.quantidadeRecebida)}</td>
+                                <td>
+                                    <h:outputText value="#{pi.solicitacaoCompraItem.dataEntrega}" >
+                                        <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </td>
+                            </tr>
+                        </ui:repeat>
+                    </table>
+                    <p:panel style="border: none">
+                        <arq:paginator id="paginadorPedidoItens" entityBean="#{pedidoItemController}" formName=":viewPedidoItens:formPedidoItens:pedidoItensTable" renderedNew="false"/>
+                    </p:panel>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+    </f:subview>
+</ui:composition>

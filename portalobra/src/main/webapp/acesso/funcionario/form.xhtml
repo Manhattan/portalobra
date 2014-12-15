@@ -1,0 +1,92 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                >
+    <f:subview id="svwCadFunc">
+        <h:panelGroup id="pngCadFunc" rendered="#{funcionarioController.current != null}" style='margin-right: 0px; width: auto'>
+            <h:outputText value="#{msg.usuario}" style="font-weight: bolder" />
+            <hr />
+            <h:form id="frmCadFunc">
+                <table>
+                    <tr>
+                        <td>
+                            <h:outputText value="#{msg.nome}: " style="font-weight: bold" />
+                            <br/>
+                            <p:inputText value="#{funcionarioController.current.nome}" required="true" />
+                        </td>
+                        <td>
+                            <h:outputText value="#{msg.sobrenome}: " style="font-weight: bold;" />
+                            <br/>
+                            <p:inputText value="#{funcionarioController.current.sobrenome}" required="true" />
+                        </td>
+                        <td>
+                            <h:outputText value="#{msg.login}: " style="font-weight: bold;" />
+                            <br/>
+                            <p:inputText value="#{funcionarioController.current.login}" required="true" readonly="#{!funcionarioController.enabledLogin}" />
+                        </td>
+                        <td>
+                            <h:outputText value="#{msg.empresa}: " style="font-weight: bolder;"/>
+                            <br/>
+                            <p:selectOneMenu value="#{funcionarioController.current.empresa}" filter="true" filterMatchMode="contains" required="true">
+                                <f:selectItem itemLabel="" itemValue="#{null}" />
+                                <f:selectItems value="#{funcionarioController.empresaSelect}" />
+                                <f:converter converterId="empresaConverter" />
+                            </p:selectOneMenu>
+                        </td>
+                        <td>
+                            <h:selectBooleanCheckbox id="chkCadFuncAtivo" value="#{funcionarioController.current.ativo}" label="#{msg.ativo}" style="margin-top: 15px"/>
+                            <h:outputLabel for="chkCadFuncAtivo" value="#{msg.ativo}" style="font-weight: bold" />
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <h:panelGroup id="pnlTbFunc" style="margin: 0px; padding: 0px; width: auto">
+                    <table class="referencesmall" style='margin: 0px; width: auto'>
+                        <tr class="cabecalhoDiscreto">
+                            <th />
+                            <th>#{msg.centroNegocio}</th>
+                            <th>#{msg.perfil}</th>
+                        </tr>
+                        <ui:repeat value="#{funcionarioController.current.funcionarioCentros}" var="fc" varStatus="s">
+                            <tr class="noborder" id="itensList">
+                                <td>
+                                    <p:commandButton actionListener="#{funcionarioController.removeCentro(fc)}" immediate="true" update=":svwCadFunc:frmCadFunc:pnlTbFunc" iconPos="left" icon="ui-icon-close" value="" styleClass="button-only-icon"  />
+                                </td>
+                                <td>
+                                    <p:selectOneMenu value="#{fc.centro}" filter="true" filterMatchMode="contains" required="true">
+                                        <f:selectItem itemLabel="" itemValue="#{null}" />
+                                        <f:selectItems value="#{funcionarioController.centroSelect}" />
+                                        <f:converter converterId="centroCustoConverter" />
+                                    </p:selectOneMenu>
+                                </td>
+                                <td>
+                                    <p:selectOneMenu value="#{fc.perfil}" filter="true" filterMatchMode="contains" required="true">
+                                        <f:selectItem itemLabel="" itemValue="#{null}" />
+                                        <f:selectItems value="#{funcionarioController.perfilAcessoSelect}" />
+                                        <f:converter converterId="perfilAcessoConverter" />
+                                    </p:selectOneMenu>
+                                </td>
+                            </tr>
+                        </ui:repeat>
+                        <tr class="noborder">
+                            <td></td>
+                            <td colspan="2">
+                                <p:commandButton value="" actionListener="#{funcionarioController.incluirCentro()}" styleClass="button-only-icon" update=":svwCadFunc:frmCadFunc" icon="ui-icon-circle-plus" iconPos="left">
+                                </p:commandButton>
+                            </td>
+                        </tr>
+                    </table>
+                </h:panelGroup>
+                <br/>
+                <p:commandButton id="btnCadFuncCancel" value="#{msg.cancelar}" update=":panelMain" action="#{funcionarioController.clean()}" immediate="true" style="width: 95px;" icon="ui-icon-cancel" />
+                <p:commandButton id="btnCadFuncConfirm" value="#{msg.ok}" update=":panelMain" action="#{funcionarioController.createOrEdit()}" icon="ui-icon-circle-check" style="width: 95px;" />
+                <p:separator />
+            </h:form>
+        </h:panelGroup>
+    </f:subview>
+</ui:composition>

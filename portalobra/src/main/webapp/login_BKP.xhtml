@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/loginLayout.xhtml">
+    
+    <ui:param name="img_param" value="logo_man.png"/>
+    <ui:param name="img_param_bg" value="resources/images/riviera_praia_1.jpg"/>
+    <ui:define name="conteudo">
+        <h:form>
+                <h:panelGrid columns="1" style="padding-left: 13px" >
+                    <h:outputText value="#{msg.login}:" styleClass="textLabel" />
+                    <p:inputText value="#{loginController.login}" style="padding: 6px 4px 6px 3px; color: #7D0000; font-size: 16px; width: 100%; margin-bottom: 4px;" />
+                    <h:outputText value="#{msg.senha}:" styleClass="textLabel" />
+                    <p:password value="#{loginController.senha}" style="padding: 6px 4px 6px 3px; color: #7D0000; font-size: 16px; width: 100%; margin-bottom: 4px;"/>
+
+                    <p:commandButton id="btnLogin" action="#{followUpSolicitacoesController.initFuncionario(loginController.performLogin, loginController.statusLogin)}" 
+                                     update="btnLogin" value="#{msg.entrar}" styleClass="btnLogin" />
+                </h:panelGrid>
+            </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,147 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                >
+    <f:subview id="form-saidamaterial">
+        <h:panelGroup id="dialogPanelSaidaMaterial"  style='margin-right: 0px; width: auto'>
+            <h:panelGroup id="pngRelAutSai">
+                <ui:include src="../rel/rel_aut_saida.xhtml" rendered="#{materialSaidaController.current.tipoMovimento == 'T'}" />
+            </h:panelGroup>
+            <h:form id="saidaMaterialForm">
+                <h:outputText value="#{msg.saidaMateriais}" style="font-weight: bolder" />
+                <hr />
+                <table>
+                    <tr>
+                        <td>
+                            <h:outputText value="#{msg.centroNegocioAbrev}: " style="font-weight: bolder" />
+                            <h:outputText value="#{loginController.centroSelecionado.nomeCompleto}" style="margin-right: 20px"/>
+                        </td>
+                        <td>
+                            <h:outputText value="#{msg.numeroMovimentoAbrev}: " style="font-weight: bolder" rendered="#{followUpSolicitacoesController.materialSaida.numeroSaida > 0}" />
+                            <h:outputText value="#{followUpSolicitacoesController.materialSaida.numeroSaida}" rendered="#{followUpSolicitacoesController.materialSaida.numeroSaida > 0}" />
+                        </td>
+                        <td>
+                            <h:outputText value="#{msg.criadoPor}: " style="font-weight: bolder" rendered="#{followUpSolicitacoesController.materialSaida.numeroSaida > 0}"/> 
+                            <h:outputText value="#{followUpSolicitacoesController.materialSaida.usuarioInsercao} " rendered="#{followUpSolicitacoesController.materialSaida.numeroSaida > 0}"/>
+                            <h:outputText value="#{followUpSolicitacoesController.materialSaida.dataInsercao}" rendered="#{followUpSolicitacoesController.materialSaida.numeroSaida > 0}" style="margin-right: 20px">
+                                <f:convertDateTime locale="pt_BR" timeZone="GMT-03:00" pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h:outputText value="#{msg.mesAno}: " style="font-weight: bolder" />
+                            <h:outputText value="#{utilsController.getMesAno(followUpSolicitacoesController.materialSaida.dataSaida)}" />
+                        </td>
+                        <td>
+                            <h:outputText value="#{msg.dataMovimentoAbrev}: " style="font-weight: bolder" />
+                            <h:outputText value="#{followUpSolicitacoesController.materialSaida.dataSaida}" style="margin-right: 20px">
+                                <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </td>
+                        <td>
+                            <h:outputText value="#{msg.ultimaAlteracao}: " style="font-weight: bolder" rendered="#{followUpSolicitacoesController.materialSaida.numeroSaida > 0}"/>
+                            <h:outputText value="#{followUpSolicitacoesController.materialSaida.usuarioAlteracao} " rendered="#{followUpSolicitacoesController.materialSaida.numeroSaida > 0}"/>
+                            <h:outputText value="#{followUpSolicitacoesController.materialSaida.dataAlteracao}" rendered="#{followUpSolicitacoesController.materialSaida.numeroSaida > 0}">
+                                <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <h:panelGrid columns="8">
+                    <h:outputText value="#{msg.numeroDocumento}:" style="font-weight: bold" />
+                    <h:outputText value="#{msg.dia}:" style="font-weight: bold" />
+                    <h:outputText value="#{msg.tipoMovimento}:" style="font-weight: bold" />
+                    <h:outputText value="#{msg.tipoDoc}:" style="font-weight: bold" />
+                    <h:outputText value="" /><h:outputText value="" /><h:outputText value="" /><h:outputText value="" />
+
+                    <p:inputText id="numeroDocumentoMatSai" value="#{followUpSolicitacoesController.materialSaida.numeroDocumento}" style="width: 80px; margin-right: 10px" maxlength="7"  />
+                    <p:inputText value="#{followUpSolicitacoesController.materialSaida.diaSaida}" style="width: 30px; margin-right: 10px" maxlength="2" onkeypress="return SomenteNumero(event)" />
+
+                    <p:selectOneMenu value="#{followUpSolicitacoesController.materialSaida.tipoMovimento}" style="margin-right: 10px" >
+                        <f:selectItems value="#{followUpSolicitacoesController.tipoMovimentoMaterialSaidaSelect}" var="i" itemLabel="#{i.label}" />
+                        <p:ajax update="tipoMovMSCentroDestino"/>
+                    </p:selectOneMenu>
+
+                    <p:selectOneMenu value="#{followUpSolicitacoesController.materialSaida.tipoDocumento}">
+                        <f:selectItems value="#{followUpSolicitacoesController.tipoDocumentoMaterialSaidaSelect}" />
+                    </p:selectOneMenu>
+
+                    <h:panelGroup>
+                        <p:commandButton id="btnRemoveMatSai" icon='ui-icon-trash' value="#{msg.excluir}" update=":panelSaidaMaterialF, :panelMain" actionListener="#{followUpSolicitacoesController.removeMaterialSaida()}" disabled="#{!followUpSolicitacoesController.enableRemocaoMatSaida}" rendered="#{followUpSolicitacoesController.renderRemocaoMatSaida}" style="width: 95px" >
+                            <p:confirm header="#{msg.excluirMaterialSaida}" message="#{msg.confirmaExclusaoMaterialSaida}" icon="ui-icon-alert" />
+                        </p:commandButton>
+
+                        <p:confirmDialog closeOnEscape="true" global="true" >
+                            <p:commandButton value="#{msg.sim}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                            <p:commandButton value="#{msg.nao}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </h:panelGroup>
+
+                    <p:commandButton id="btnPesquisarMatSai" update=":panelSaidaMaterialP" icon="ui-icon-search" value="#{msg.pesquisar}" actionListener="#{materialSaidaController.initCentroSelecionado(loginController.centroSelecionado)}" oncomplete="dlgMatSai.show()" style="margin-right: 10px" />
+                    <p:commandButton id="cancelarSaidaMaterial" value="#{msg.cancelar}" style="width: 95px" icon="ui-icon-cancel" update=":panelMain, :panelMain" actionListener="#{followUpSolicitacoesController.limparMovimentacaoMaterial()}" oncomplete="#{insumoController.limparInsumos()}" />
+                    <p:commandButton id="btnConfirmarMatSai" value="#{msg.ok}" style="width: 95px;" update=":panelMain" oncomplete="#{insumoController.limparInsumos()}" icon="ui-icon-circle-check" disabled="#{!followUpSolicitacoesController.enableInsercaoMatSaida}"  actionListener="#{followUpSolicitacoesController.createOrEditMovimentacaoSaida()}" action="#{materialSaidaController.clean()}" />
+                </h:panelGrid>
+
+                <h:panelGrid id="tipoMovMSCentroDestino" columns="3">
+                    <h:outputText rendered="#{followUpSolicitacoesController.materialSaida.tipoMovimento == 'T'}" value="#{msg.centroDestino}:" style="font-weight: bolder" />
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+
+                    <p:inputText style="width: 80px" id="centroDestinoCod" readonly="true" rendered="#{followUpSolicitacoesController.materialSaida.tipoMovimento == 'T'}" value="#{followUpSolicitacoesController.materialSaida.centroDestino.idCompleto}" />
+                    <p:selectOneMenu filter="true" filterMatchMode="contains" rendered="#{followUpSolicitacoesController.materialSaida.tipoMovimento == 'T'}" value="#{followUpSolicitacoesController.materialSaida.centroDestino}">
+                        <f:selectItems value="#{followUpSolicitacoesController.centroCustoSelect}" />
+                        <p:ajax update="tipoMovMSCentroDestino" />
+                        <f:converter converterId="centroCustoConverter" />
+                    </p:selectOneMenu>
+                    <p:commandButton value="#{msg.autorizacao}" rendered="#{followUpSolicitacoesController.materialSaida.tipoMovimento == 'T'}" icon="ui-icon-print" iconPos="left" actionListener="#{materialSaidaController.initSaida(followUpSolicitacoesController.materialSaida)}" update=":form-saidamaterial:pngRelAutSai" oncomplete="dlgRelAutSai.show()" />
+                </h:panelGrid>
+
+                <p:panel id="saidaMaterialTable" style='margin-right: 0px; width: auto'>
+                    <table class="referencesmall" style='margin-right: 0px; width: auto'>
+                        <tr class="cabecalhoDiscreto">
+                            <th style="width: 10px"></th>
+                            <th align='center' style="width: auto">#{msg.item}</th>
+                            <th align='center'>#{msg.material}</th>
+                            <th>#{msg.especificacao}</th>
+                            <th>#{msg.unidadeAbrevidada}</th>
+                            <th style="width: 70px">#{msg.quantidade}</th>
+                            <th align='center'>#{msg.limite}</th>
+                            <th align='center'>#{msg.estoqueAtual}</th>
+                            <th><h:outputText value="#{msg.observacao}" /></th>
+                        </tr>
+                        <ui:repeat rendered="#{followUpSolicitacoesController.materialSaida.itens != null}" value="#{followUpSolicitacoesController.materialSaida.itens}" var="mi" varStatus="s">
+                            <tr class="noborder">
+                                <td>
+                                    <p:commandButton id="btnRemoveItemSM" actionListener="#{followUpSolicitacoesController.removerItemMatSaida(mi)}" disabled="#{!followUpSolicitacoesController.enableEdicaoMatSaida}" update=":form-saidamaterial:saidaMaterialForm:saidaMaterialTable, :form-saidamaterial:saidaMaterialForm:btnConfirmarMatSai" icon="ui-icon-closethick" />
+                                </td>
+                                <td>#{mi.itemItem}</td>
+                                <td>#{mi.insumo.codigo}</td>
+                                <td>#{mi.insumo.especificacao}</td>
+                                <td>#{mi.insumo.unidade.codigo}</td>
+                                <td><pe:inputNumber id="quantidadeSaidaInsert" rendered="#{followUpSolicitacoesController.newMovSaida}"  value="#{mi.quantidade}" style="width: 70px" decimalPlaces="4" maxValue="#{followUpSolicitacoesController.getEstoqueAtual(mi.insumo)}" />
+                                    <pe:inputNumber id="quantidadeSaidaEdit"   rendered="#{!followUpSolicitacoesController.newMovSaida}" value="#{mi.quantidade}" style="width: 70px" decimalPlaces="4" maxValue="#{followUpSolicitacoesController.getEstoqueAtualPositivo(mi.insumo) + mi.quantidade}" /></td>
+                                <td align='center'><h:outputText id="estoqueDisp" value="#{followUpSolicitacoesController.getEstoqueAtualPositivo(mi.insumo) + mi.quantidade}" /></td>
+                                <td align='center'><h:outputText id="estoqueAtual" value="#{followUpSolicitacoesController.getEstoqueAtual(mi.insumo)}" /></td>
+                                <td><p:inputTextarea maxlength="250" rows="1" cols="80" value="#{mi.observacao}" /></td>
+                            </tr>
+                        </ui:repeat>
+                        <tr class="noborder">
+                            <td></td>
+                            <td colspan="2">
+                                <p:commandButton oncomplete="dlgNovoInsumo.show()" actionListener="#{insumoController.desconsiderarLinkOrcamento()}" icon="ui-icon-circle-plus" update=":form-insumo:dialogPanelInsumo" style="width: 30px; height: 20px; margin-right: 5px" disabled="#{!followUpSolicitacoesController.enableEdicaoMatSaida}">
+                                </p:commandButton>
+                            </td>
+                        </tr>
+                    </table>
+                </p:panel>
+            </h:form>
+        </h:panelGroup>
+    </f:subview>
+</ui:composition>

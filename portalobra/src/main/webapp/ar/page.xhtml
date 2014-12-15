@@ -1,0 +1,134 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                template="../templates/layout.xhtml"
+                >
+
+    <ui:param name="titulomenu" value="#{msg.avisoRecebimento}" />
+    <ui:define name="content" >
+
+        <h:form id="formMain">
+            <p:panelGrid styleClass="noFormatColumn" id="arPanelTopo" columns="5" >
+                <h:outputText value="#{msg.periodoAR}:" />
+                <h:outputText value="#{msg.numeroARAbrev}:" />
+                <h:outputText value="#{msg.tipoDoc}:" />
+                <h:outputText value="#{msg.numeroDoc}:" />
+                <br/>
+
+                <h:panelGroup>
+                    <p:calendar  value="#{documentoEntradaController.arDataInicial}" size="11" maxlength="10"  id="arDataInicial"
+                                 title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                 navigator="true" immediate="true" timeZone="#{initParam['timezone']}" />
+                    <h:outputText value="#{msg.a}" style="margin-left: 10px; margin-right: 10px" />
+                    <p:calendar  value="#{documentoEntradaController.arDataFinal}" size="11" maxlength="10"  id="arDataFinal"
+                                 title="#{msg.dataFinal}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                 navigator="true" immediate="true" timeZone="#{initParam['timezone']}" />
+                </h:panelGroup>
+                <p:inputText value="#{documentoEntradaController.numeroAR}" />
+                
+                <p:selectOneMenu value="#{documentoEntradaController.docTipo}" filter="true" filterMatchMode="startsWith" style="width: 135px">
+                    <f:selectItem value="#{null}" itemLabel="" />
+                    <f:selectItems value="#{documentoEntradaController.docEntTipoSelect}" />
+                    <f:converter converterId="documentoEntradaTipoConverter" />
+                </p:selectOneMenu>
+                
+                <p:inputText value="#{documentoEntradaController.docNumero}" />
+                <br/>
+
+                <h:outputText value="#{msg.fornecedor}:" />
+                <h:outputText value="#{msg.classe}:" />
+                <h:outputText value="#{msg.grupo}:" />
+                <h:outputText value="#{msg.caracterizacao}:" />
+                <br/>
+
+                <h:panelGroup>
+                    <p:inputText value="#{documentoEntradaController.credor}" style="width: 173px" />
+                    <p:commandButton id="findCredorBtn" title="#{msg.fornecedor}" icon="ui-icon-search" iconPos="left" value="" styleClass="button-only-icon" style="height: 26px; " oncomplete="credorDialog.show()" update=":dialogForm"  />
+                </h:panelGroup>
+
+                <p:selectOneMenu id="filtroClasseInsumos" filter="true" filterMatchMode="contains" value="#{insumoController.filtroClasseInsumo}" style="width: 135px">
+                    <f:selectItem value="#{null}" itemLabel="" />
+                    <f:selectItems value="#{insumoController.insumoClasseSelect}" />
+                    <p:ajax update="filtroGrupoInsumos, filtroCaracterizacaoInsumos" immediate="true" />
+                    <f:converter converterId="classeInsumosConverter" />
+                </p:selectOneMenu>
+
+                <p:selectOneMenu id="filtroGrupoInsumos" filter="true" filterMatchMode="contains" value="#{insumoController.filtroGrupoInsumo}" style="width: 135px">
+                    <f:selectItem value="#{null}" itemLabel="" />                                
+                    <f:selectItems value="#{insumoController.insumoGrupoSelect}" />
+                    <f:ajax render="filtroCaracterizacaoInsumos" immediate="true" />
+                    <f:converter converterId="grupoInsumosConverter" />
+                </p:selectOneMenu>
+
+                <p:selectOneMenu id="filtroCaracterizacaoInsumos" filter="true" filterMatchMode="contains" value="#{insumoController.filtroCaracInsumo}" style="width: 135px">
+                    <f:selectItem value="#{null}" itemLabel="" />
+                    <f:selectItems value="#{insumoController.insumoCaracterizacaoSelect}" />
+                    <f:ajax render="filtroCaracterizacaoInsumos" immediate="true" />
+                    <f:converter converterId="caracterizacaoInsumosConverter" />
+                </p:selectOneMenu>
+                <p:commandButton value="#{msg.executar}" actionListener="#{documentoEntradaController.pesquisar(loginController.centroSelecionado, insumoController.filtroClasseInsumo, insumoController.filtroGrupoInsumo, insumoController.filtroCaracInsumo)}" update=":formMain" />
+            </p:panelGrid>
+
+            <h:panelGroup id="docEntTable">
+                <table class="referencesmall">
+                    <tr>
+                        <th></th>
+                        <th>#{msg.numeroARAbrev}</th>
+                        <th>#{msg.dataAR2}</th>
+                        <th>#{msg.codigoFornecedor}</th>
+                        <th>#{msg.fornecedor}</th>
+                        <th>#{msg.nat}</th>
+                        <th>#{msg.tipoDoc}</th>
+                        <th>#{msg.numeroDoc}</th>
+                        <th>#{msg.dataEntrada}</th>
+                        <th>#{msg.valor}</th>
+                        <th>#{msg.aClassificar}</th>
+                        <th>#{msg.entradaTipo}</th>
+                        <th>#{msg.pedido}</th>
+                    </tr>
+                    <ui:repeat value="#{documentoEntradaController.items}" var="item">
+                        <tr>
+                            <td></td>
+                            <td>#{item.avisoRecebimento.idSistema}</td>
+                            <td>
+                                <h:outputText value="#{item.avisoRecebimento.dataRegistro}">
+                                    <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </td>
+                            <td>#{item.credor.codigo}</td>
+                            <td>#{item.credor.razaoSocial}</td>
+                            <td></td>
+                            <td>#{item.docTipo.codigo}</td>
+                            <td>#{item.docNumero}</td>
+                            <td>
+                                <h:outputText value="#{item.dataEntrada}">
+                                    <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </td>
+                            <td>#{item.docValor}</td>
+                            <td>#{item.valorAClassificar}</td>
+                            <td>#{item.tipoEntrada}</td>
+                            <td>#{item.pedido.idSistema}</td>
+                        </tr>
+                    </ui:repeat>
+                </table>
+                <p:panel style="border: none">
+                    <arq:paginator id="paginadorDocEnt" entityBean="#{documentoEntradaController}" formName=":formMain:docEntTable" renderedNew="false"/>
+                </p:panel>
+            </h:panelGroup>
+        </h:form>
+
+        <!-- *************** DIALOGS *************** /-->
+        <h:panelGroup id="dialogForm">
+            <ui:include src="credor.xhtml"/>
+        </h:panelGroup>
+        <!-- ************************* AQUI FICA A TELA QUE TROCA O CENTRO DE CUSTO ******************************************* /-->
+        <h:panelGroup id="panelCentroCusto" >
+            <arq:centroCusto formName=":formMain" entityBean="#{documentoEntradaController}" listCentros="#{loginController.funcionario.centros}" pageRender="ar-page" />
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,30 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+
+    <cc:interface>
+        <cc:attribute name="entityBean" required="true" />
+        <cc:attribute name="formName" required="true"/>
+        <cc:attribute name="listCentros" required="true"/>
+        <cc:attribute name="pageRender" required="true"/>
+        <cc:attribute name="widgetVar" required="false"/>
+    </cc:interface>
+    
+    <f:subview id="form-centrocusto">
+        <h:panelGroup id="dialogPanelCentroCusto"  style='margin-right: 0px; width: auto'>
+            <p:dialog widgetVar="dlgCentroCusto" position="650,10" id="dlgCentroCusto" header="#{msg.centroNegocio}" resizable="false" >
+                <h:form id="centroCustoForm">
+                    <ui:repeat value="#{cc.attrs.listCentros}" var="c">
+                        <p:commandButton style="width: 300px; text-align: left; background-color: #fbfcfc;" value="#{c.nomeCompleto}" action="#{loginController.mudaCentro(c, cc.attrs.pageRender)}" oncomplete="#{cc.attrs.entityBean.recreateTable()}">
+                            <f:ajax render="#{cc.attrs.formName}" immediate="true" />
+                        </p:commandButton> <br/>
+                    </ui:repeat>                   
+                </h:form>
+            </p:dialog>
+        </h:panelGroup>
+    </f:subview>
+</html>

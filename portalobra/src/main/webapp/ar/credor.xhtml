@@ -1,0 +1,88 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                >
+    <f:subview id="viewCredor">
+            <p:dialog id="credorDialog" header="#{msg.fornecedor}" widgetVar="credorDialog" closeOnEscape="true" resizable="false" >
+                <h:form id="formCredor">
+                    <p:panelGrid columns="5" styleClass="noFormatColumn">
+                        <h:outputText value="#{msg.codigo}:" />
+                        <h:outputText value="#{msg.razaoSocial}:" />
+                        <h:outputText value="#{msg.especieCredor}:" />
+                        <h:outputText value="" />
+                        <h:outputText value="" />
+
+                        <p:inputText value="#{credorController.codigo}" style="width: 55px" maxlength="6" />
+                        <p:inputText value="#{credorController.razaoSocial}" style="width: 290px" maxlength="50" />
+
+                        <p:selectOneMenu id="filtroEspecieCredor" value="#{credorController.especie}" >
+                            <f:selectItem value="#{null}" itemLabel="" />
+                            <f:selectItems value="#{credorController.especieCredorSelect}" />
+                            <f:converter converterId="especieCredorConverter" />
+                        </p:selectOneMenu>
+
+                        <p:selectBooleanCheckbox value="#{credorController.listaNegra}" itemLabel="#{msg.listaNegra}" />
+                        <h:outputText value="" />
+
+                        <h:outputText value="#{msg.cpfCnpj2}:" />
+                        <h:outputText value="#{msg.nomeFantasia}:" />
+                        <h:outputText value="#{msg.inscricaoEstadualCGF}:" />
+                        <h:outputText value="" />
+                        <h:outputText value="" />
+
+                        <p:inputText value="#{credorController.cpfCnpj}" style="width: 110px" maxlength="14" />
+                        <p:inputText value="#{credorController.nomeFantasia}" style="width: 190px" maxlength="30" />
+                        <p:inputText value="#{credorController.inscricaoEstadual}" style="width: 140px" maxlength="18" />
+                        <p:selectBooleanCheckbox value="#{credorController.semEspecificidade}" itemLabel="#{msg.semEspecificidade}" />
+                        <p:commandButton actionListener="#{credorController.pesquisar}" update=":viewCredor:formCredor:credorTable" value="#{msg.executar}" />
+                    </p:panelGrid>
+
+                    <h:panelGroup id="credorTable">
+                        <table class="referencesmall">
+                            <tr>
+                                <th></th>
+                                <th>#{msg.codigo}</th>
+                                <th>#{msg.razaoSocial}</th>
+                                <th>#{msg.pais}</th>
+                                <th>#{msg.uf}</th>
+                                <th>#{msg.cpfCnpj2}</th>
+                                <th>#{msg.inscricaoEstadualCGF}</th>
+                                <th>LN</th>
+                                <th>#{msg.especieCredor}</th>
+                                <th>#{msg.nomeFantasia}</th>
+                                <th>#{msg.avaliacao}</th>
+                                <th>#{msg.telefone}</th>
+                            </tr>
+                            <ui:repeat value="#{credorController.items}" var="item" varStatus="x">
+                                <tr>
+                                    <td>
+                                        <p:commandButton id="selectCredorBtn" actionListener="#{documentoEntradaController.selecionaCredor(item)}" action="#{pedidoItemController.selecionaCredor(item)}" title="#{msg.selecione}" icon="ui-icon-circle-check" iconPos="left" value="" styleClass="button-only-icon" update=":formMain:arPanelTopo, :dialogForm" oncomplete="credorDialog.hide()" />
+                                    </td>
+                                    <td>#{item.codigo}</td>
+                                    <td>#{item.razaoSocial}</td>
+                                    <td>#{item.pais}</td>
+                                    <td>#{item.uf}</td>
+                                    <td>#{item.cpfCnpj}</td>
+                                    <td>#{item.inscricaoEstadual}</td>
+                                    <td></td>
+                                    <td>#{item.especie.titulo}</td>
+                                    <td>#{item.nomeFantasia}</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </ui:repeat>
+                        </table>
+
+                        <p:panel id="paginadorCredorPanel" style="border: none">
+                            <arq:paginator id="paginadorCredor" entityBean="#{credorController}"  formName=":viewCredor:formCredor:credorTable" renderedNew="false"/>
+                        </p:panel>
+
+                    </h:panelGroup>
+                </h:form>
+            </p:dialog>
+    </f:subview>
+</ui:composition>

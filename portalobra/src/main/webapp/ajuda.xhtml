@@ -1,0 +1,141 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                >
+    <f:subview id="form-ajuda">
+        <h:panelGroup id="dialogPanelAjuda" style='width: auto'>
+            <p:dialog widgetVar="dlgAjuda" id="dlgAjuda" header="#{msg.ajuda}" resizable="false" >
+                <h:form id="centroAjuda">
+                    <p:hotkey bind="esc" oncomplete="dlgAjuda.hide()" async="true" global="false" /> 
+                    <p:panelGrid columnClasses="gridColumn, gridColumn, gridColumn" >
+                        <p:row>
+                            <p:column styleClass="gridRowHeader">
+                                #{msg.situacao}
+                            </p:column>
+                            <p:column styleClass="gridRowHeader">
+                                #{msg.descricao}
+                            </p:column>
+                            <p:column styleClass="gridRowHeader">
+                                #{msg.responsavel}
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                #{msg.situacaoCS}
+                            </p:column>
+                            <p:column>
+                                #{msg.CS}
+                            </p:column>
+                            <p:column>
+                                #{msg.engenheiro}
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                #{msg.situacaoAS}
+                            </p:column>
+                            <p:column>
+                                #{msg.AS}
+                            </p:column>
+                            <p:column>
+                                #{msg.diretorObras} ou #{msg.diretorTecnico}
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                #{msg.situacaoCO}
+                            </p:column>
+                            <p:column>
+                                #{msg.CO}
+                            </p:column>
+                            <p:column>
+                                #{msg.setorCompras}
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                #{msg.situacaoAP}
+                            </p:column>
+                            <p:column>
+                                #{msg.AP}
+                            </p:column>
+                            <p:column>
+                                #{msg.autorizantesPedidoCompra}
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                #{msg.situacaoENF}
+                            </p:column>
+                            <p:column>
+                                #{msg.ENF}
+                            </p:column>
+                            <p:column>
+                                #{msg.fornecedor}
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                #{msg.situacaoEMO}
+                            </p:column>
+                            <p:column>
+                                #{msg.EMO}
+                            </p:column>
+                            <p:column>
+                                #{msg.almoxarife}
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                #{msg.situacaoRA}
+                            </p:column>
+                            <p:column>
+                                #{msg.RA}
+                            </p:column>
+                            <p:column>
+                                #{msg.almoxarife}
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                #{msg.situacaoAA}
+                            </p:column>
+                            <p:column>
+                                #{msg.AA}
+                            </p:column>
+                            <p:column>
+                                #{msg.setorFiscal}
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                #{msg.situacaoPG}
+                            </p:column>
+                            <p:column>
+                                #{msg.PG}
+                            </p:column>
+                            <p:column>
+                                #{msg.setorFinanceiro}
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>             
+                </h:form>
+            </p:dialog>
+        </h:panelGroup>
+
+    </f:subview>
+</ui:composition>

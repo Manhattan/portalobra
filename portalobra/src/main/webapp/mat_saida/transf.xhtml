@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                >
+    <f:subview id="form-transf-mat">
+        <h:panelGroup id="dialogPanelTransfMat"  style='margin-right: 0px; width: auto'>
+            <p:dialog widgetVar="dlgTransfMat" resizable="false" styleClass="dialog" 
+                      style="position: absolute; float: top" position="top" header="#{msg.materiaisTransferidos}" closeOnEscape="true">
+                <h:form id="transfMatForm">
+                    <table>
+                        <tr>
+                            <td>
+                                <h:outputText value="#{msg.centroOrigem}: " style="font-weight: bolder" /> <br/>
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" value="#{materialSaidaController.centroOrigemT}">
+                                    <f:selectItems value="#{materialSaidaController.centroCustoSelect}" />
+                                    <f:converter converterId="centroCustoConverter" />
+                                </p:selectOneMenu>
+                            </td>
+                            <td>
+                                <h:outputText value="#{msg.dataTransf}: " style="font-weight: bolder" /> <br/>
+                                <p:calendar value="#{materialSaidaController.saidaDataT}" id="saidaDataT" size="11" maxlength="10" onkeypress="AtalhoData(event, this)"
+                                            title="#{msg.dataSaida}" pattern="dd/MM/yyyy" pagedate="#{utilsController.getDate()}" locale="pt" mode="popup"
+                                            navigator="true" immediate="true"
+                                            timeZone="#{initParam['timezone']}" >
+                                </p:calendar>
+                            </td>
+                            <td>
+                                <h:outputText value="#{msg.numeroASAbrev}:" style="font-weight: bolder" /> <br/>
+                                <p:inputText value="#{materialSaidaController.docNumeroT}" style="width: 80px" />
+                            </td>
+                            <td>
+                                <h:outputText value="" />
+                            </td>
+                            <td>
+                                <p:commandButton value="#{msg.executar}" update="transfMatTable" actionListener="#{materialSaidaController.pesquisaTransferencias()}"/>
+                            </td>
+                            <td>
+                                <p:commandButton  value="#{msg.incluir}" icon="ui-icon-circle-plus" update=":panelMain" oncomplete="dlgTransfMat.hide()" actionListener="#{followUpSolicitacoesController.initSelecionadosT(materialSaidaController.selecionadosT)}" action="#{materialSaidaController.limpaTransferencias()}" >
+                                </p:commandButton>
+                            </td>
+                        </tr>
+                    </table>
+                        <p:panel id="transfMatTable" style="margin-right: 0">
+                            <table class="referencesmall" style='margin-right: 0px; width: auto'>
+                                <tr class="cabecalhoDiscreto">
+                                    <th style="width: 10px">
+                                        <h:selectBooleanCheckbox value="#{materialSaidaController.transfMarcado}" style="float:left">
+                                            <p:ajax listener="#{materialSaidaController.transfMarcado()}" update=":form-entradamaterial:form-transf-mat:transfMatForm:transfMatTable" />
+                                        </h:selectBooleanCheckbox>
+                                    </th>
+                                    <th align='center' style="width: auto">#{msg.item}</th>
+                                    <th align='center'>#{msg.material}</th>
+                                    <th>#{msg.especificacao}</th>
+                                    <th>#{msg.unidadeAbrevidada}</th>
+                                    <th style="width: 70px">#{msg.quantidade}</th>
+                                    <th><h:outputText value="#{msg.observacao}" /></th>
+                                </tr>
+                                <ui:repeat  value="#{materialSaidaController.transferencias}" var="t" varStatus="s">
+                                    <tr>
+                                        <td>
+                                            <h:selectBooleanCheckbox value="#{t.marcado}">
+                                                <p:ajax listener="#{materialSaidaController.addOrRemoveItemT(t)}" />
+                                            </h:selectBooleanCheckbox>
+                                        </td>
+                                        <td>#{t.itemItem}</td>
+                                        <td>#{t.insumo.codigo}</td>
+                                        <td>#{t.insumo.especificacao}</td>
+                                        <td>#{t.insumo.unidade.codigo}</td>
+                                        <td>#{t.quantidade} </td>
+                                        <td>#{t.observacao}</td>
+                                    </tr>
+                                </ui:repeat>
+                            </table>
+                        </p:panel>
+                </h:form>
+            </p:dialog>
+        </h:panelGroup>
+    </f:subview>
+</ui:composition>
