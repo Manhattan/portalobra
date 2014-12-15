@@ -51,7 +51,8 @@
                             <th align='center' style="padding: 3px">#{msg.insumo} </th>
                             <th align='center' style="padding: 3px">#{msg.especificacao}</th>
                             <th align='center' style="padding: 3px">#{msg.unidade}</th>
-                            <th align='center' style="padding: 3px">#{msg.quantidade}</th>
+                            <th align='center' style="padding: 3px">#{msg.qtdSaida}</th>
+                            <th align='center' style="padding: 3px">#{msg.estoqueAtual}</th>
                             <th align='center' style="padding: 3px">#{msg.usuario}</th>
                         </tr>
                         <ui:repeat value="#{materialSaidaItensController.items}" var="item" varStatus="s">
@@ -78,6 +79,11 @@
                                         <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" />
                                     </h:outputText>
                                 </td>
+                                <td align='right'>
+                                    <h:outputText value="#{materialSaidaItensController.getEstoqueAtual(item.insumo)}">
+                                        <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" />
+                                    </h:outputText>
+                                </td>
                                 <td>
                                     <h:outputText value="#{item.materialSaida.usuarioInsercao}" />
                                 </td>
@@ -85,7 +91,7 @@
                         </ui:repeat>
                     </table>
                     <arq:paginator id="paginadorMatSaiI" regsPerPage="true" regsPerPageAction="#{materialSaidaItensController.pesquisar()}" regsPerPageAttribute="#{materialSaidaItensController.registrosPorPagina}" entityBean="#{materialSaidaItensController}" formName=":formMain:panelTableMatSaiIPaginador" renderedNew="false"/>
-                
+
                 </h:panelGroup>
                 <p:commandButton value="#{msg.imprimir}" icon="ui-icon-print" iconPos="left">
                     <p:printer target=":formMain:panelTableMatSaiIPaginador" />

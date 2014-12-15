@@ -88,21 +88,36 @@
                     <table class="referencesmall">
                         <thead>
                             <tr align='center'>
-                                <th>#{msg.material}</th>
-                                <th>#{msg.especificacao}</th>
-                                <th>#{msg.unidade}</th>
+                                <th>
+                                    #{msg.material}
+                                </th>
+                                <th>
+                                    #{msg.especificacao}
+                                </th>
+                                <th>
+                                    #{msg.unidade}
+                                </th>
                                 <h:panelGroup rendered="#{!materiaisEstoqueController.modoSimples}">
                                     <th>#{msg.caracterizacao}</th>
                                     <th>#{msg.grupo}</th>
                                     <th>#{msg.classe}</th>
                                 </h:panelGroup>
-                                <th>#{msg.quantidade}</th>
+                                <th>
+                                    #{msg.totalRecebido}
+                                </th>
+                                <th>
+                                    #{msg.estoqueAtual}
+                                </th>
+                                <th>
+                                    #{msg.precoUnitarioAbrev}
+                                </th>
                                 <th style="min-width: 50px">
                                     #{msg.valor}
                                     <p:commandLink value="#{msg.maiorMenorSimbol}" style="color: white" actionListener="#{materiaisEstoqueController.alterOrderByValor()}" update=":formMain:materiaisConsultaTable" />
                                 </th>
-                                <th>#{msg.precoUnitarioAbrev}</th>
-                                <th style="width: 60px">#{msg.inventario}</th>
+                                <th style="width: 60px">
+                                    #{msg.inventario}
+                                </th>
                             </tr>
                         </thead>
                         <ui:repeat value="#{materiaisEstoqueController.items}" var="item" varStatus="x">
@@ -116,18 +131,23 @@
                                     <td>#{item.insumo.caracterizacaoInsumo.grupoInsumos.classeInsumos.titulo}</td>
                                 </h:panelGroup>
                                 <td align='right'>
+                                    <h:outputText value="#{materiaisEstoqueController.getTotalCompras(item.insumo)}" style="padding-left: 5px; padding-right: 5px">
+                                        <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="2" />
+                                    </h:outputText>
+                                </td>
+                                <td align='right'>
                                     <h:commandButton value="#{item.estoqueQuantidadeFmt}" class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" style="text-align: right;" actionListener="#{materiaisEstoqueController.mountKardex(item)}" >
                                         <p:ajax oncomplete="dlgKardex.show()" update=":dialogForm" />
                                     </h:commandButton>
                                 </td>
                                 <td align='right'>
-                                    <h:outputText value="#{item.estoqueValor}" style="padding-left: 5px; padding-right: 5px">
-                                        <f:convertNumber type="number" minFractionDigits="2" maxFractionDigits="2" />
+                                    <h:outputText value="#{item.precoUnitario}" style="padding-left: 5px; padding-right: 5px">
+                                        <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="2" />
                                     </h:outputText>
                                 </td>
                                 <td align='right'>
-                                    <h:outputText value="#{item.precoUnitario}" style="padding-left: 5px; padding-right: 5px">
-                                        <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="2" />
+                                    <h:outputText value="#{item.estoqueValor}" style="padding-left: 5px; padding-right: 5px">
+                                        <f:convertNumber type="number" minFractionDigits="2" maxFractionDigits="2" />
                                     </h:outputText>
                                 </td>
                                 <td></td>

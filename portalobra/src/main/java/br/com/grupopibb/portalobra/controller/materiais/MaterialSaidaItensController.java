@@ -7,13 +7,14 @@ package br.com.grupopibb.portalobra.controller.materiais;
 import br.com.grupopibb.portalobra.controller.common.EntityController;
 import br.com.grupopibb.portalobra.controller.common.EntityPagination;
 import br.com.grupopibb.portalobra.dao.geral.CentroCustoFacade;
+import br.com.grupopibb.portalobra.dao.materiais.MateriaisEstoqueFacade;
 import br.com.grupopibb.portalobra.dao.materiais.MaterialSaidaItensFacade;
 import br.com.grupopibb.portalobra.model.geral.CentroCusto;
+import br.com.grupopibb.portalobra.model.insumo.Insumo;
 import br.com.grupopibb.portalobra.model.materiais.MaterialSaidaItens;
 import br.com.grupopibb.portalobra.utils.DateUtils;
 import br.com.grupopibb.portalobra.utils.JsfUtil;
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -38,6 +39,8 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
     private MaterialSaidaItensFacade materialSaidaItensFacade;
     @EJB
     private CentroCustoFacade centroCustoFacade;
+    @EJB
+    private MateriaisEstoqueFacade materiaisEstoqueFacade;
     private MaterialSaidaItens current;
     private CentroCusto centroSelecionado;
     private Date dataInicial;
@@ -121,6 +124,7 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
         return super.clean();
     }
 
+    @Override
     public void pesquisar() {
         recreateTable();
     }
@@ -142,6 +146,11 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
         if (dataFinal == null) {
             dataFinal = new Date();
         }
+    }
+
+    public Double getEstoqueAtual(Insumo insumo) {
+        String anoMes = DateUtils.getDataFormatada("YYYYMM", new Date());
+        return materiaisEstoqueFacade.findSaldo(centroSelecionado, insumo != null ? insumo.getCodigo() : 0L, anoMes);
     }
 
     /**

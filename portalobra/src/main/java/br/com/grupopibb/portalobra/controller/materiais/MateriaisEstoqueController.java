@@ -5,6 +5,7 @@
 package br.com.grupopibb.portalobra.controller.materiais;
 
 import br.com.grupopibb.portalobra.business.materiais.EstoqueBusiness;
+import br.com.grupopibb.portalobra.business.solicitacaocompra.SolicitacaoCompraBusiness;
 import br.com.grupopibb.portalobra.controller.common.EntityController;
 import br.com.grupopibb.portalobra.controller.common.EntityPagination;
 import br.com.grupopibb.portalobra.dao.insumo.CaracterizacaoInsumosFacade;
@@ -15,6 +16,7 @@ import br.com.grupopibb.portalobra.model.geral.CentroCusto;
 import br.com.grupopibb.portalobra.model.insumo.CaracterizacaoInsumos;
 import br.com.grupopibb.portalobra.model.insumo.ClasseInsumos;
 import br.com.grupopibb.portalobra.model.insumo.GrupoInsumos;
+import br.com.grupopibb.portalobra.model.insumo.Insumo;
 import br.com.grupopibb.portalobra.model.materiais.MateriaisEstoque;
 import br.com.grupopibb.portalobra.model.tipos.EnumOrderMatEstField;
 import br.com.grupopibb.portalobra.utils.DateUtils;
@@ -46,6 +48,8 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
     MateriaisEstoqueFacade materialEstoqueFacade;
     @EJB
     EstoqueBusiness estoqueBusiness;
+    @EJB
+    private SolicitacaoCompraBusiness solicitacaoCompraBusiness;
     @EJB
     private ClasseInsumosFacade classeInsumosFacade;
     @EJB
@@ -140,6 +144,10 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
             valorTotal = NumberUtils.formatCurrencyNoSymbol(getFacade().findValorTotal(centroSelecionado, mesAno));
         }
         return valorTotal;
+    }
+
+    public Double getTotalCompras(Insumo insumo) {
+        return solicitacaoCompraBusiness.getTotalComprasInsumo(centroSelecionado, insumo);
     }
 
     /**

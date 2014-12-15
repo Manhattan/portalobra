@@ -4,21 +4,20 @@
  */
 package br.com.grupopibb.portalobra.business.solicitacaocompra;
 
-import br.com.grupopibb.portalobra.acesso.ConnectionFactory;
+import br.com.grupopibb.portalobra.model.geral.CentroCusto;
 import br.com.grupopibb.portalobra.model.insumo.Insumo;
-import br.com.grupopibb.portalobra.model.orcamento.OrcamentoItem;
 import br.com.grupopibb.portalobra.model.solicitacaocompra.SolicitacaoCompra;
 import br.com.grupopibb.portalobra.model.solicitacaocompra.SolicitacaoCompraItem;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import br.com.grupopibb.portalobra.utils.UtilBeans;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import org.primefaces.model.DefaultTreeNode;
-import org.primefaces.model.TreeNode;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -27,6 +26,13 @@ import org.primefaces.model.TreeNode;
 @Stateless
 @LocalBean
 public class SolicitacaoCompraBusiness {
+
+    @PersistenceContext(unitName = UtilBeans.PERSISTENCE_UNIT)
+    private EntityManager em;
+
+    protected EntityManager getEntityManager() {
+        return em;
+    }
 
     /**
      * Verifica se a lista de itens da Solicitação de Compra contém o Insumo
@@ -70,5 +76,20 @@ public class SolicitacaoCompraBusiness {
         }
 
         return insumos;
+    }
+
+    public Double getTotalComprasInsumo(CentroCusto centro, Insumo insumo) {
+        String sql = "exec dbo.sp_PO_TotCompInsumoCentro ?,?,?,?";
+        try {
+            Query q = getEntityManager().createNativeQuery(sql);
+            q.setParameter(1, centro.getEmpresaCod());
+            q.setParameter(2, centro.getFilialCod());
+            q.setParameter(3, centro.getCodigo());
+            q.setParameter(4, insumo.getCodigo().intValue());
+            Double result = ((BigDecimal) q.getSingleResult()).doubleValue();
+            return result;
+        } catch (NullPointerException | NumberFormatException | ClassCastException | NoResultException ex) {
+            return 0.0;
+        }
     }
 }
