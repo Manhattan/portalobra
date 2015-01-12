@@ -62,7 +62,7 @@ import javax.validation.constraints.NotNull;
             + " AND (:itemNumero = pi.itemNumero) ")
 })
 public class PedidoItem implements EntityInterface<PedidoItem> {
- 
+
     public PedidoItem() {
     }
 
@@ -128,7 +128,7 @@ public class PedidoItem implements EntityInterface<PedidoItem> {
     private Date dataEntrega;
     /*
      */
-    @Column(name="PedItem_AliqIPI")
+    @Column(name = "PedItem_AliqIPI")
     private Float aliqIpi;
     /*
      */
@@ -141,6 +141,10 @@ public class PedidoItem implements EntityInterface<PedidoItem> {
 
     public Float getValorTotalItem() {
         return quantidade * precoInsumo;
+    }
+
+    public Float getValorTotalItemComIPI() {
+        return getValorTotalItem() * (1 + (aliqIpi / 100));
     }
 
     public String getValorTotalItemFormatado() {

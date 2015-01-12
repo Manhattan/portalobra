@@ -443,9 +443,3 @@ function mascaraData(campoData)
         return true;
     }
 }
-
-
-function teste(){
-    alert('ok');
-//    document.getElementById('dlgNovoInsumo.hide()');
-}

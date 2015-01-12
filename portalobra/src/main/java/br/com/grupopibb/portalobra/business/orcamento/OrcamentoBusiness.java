@@ -335,7 +335,15 @@ public class OrcamentoBusiness {
                     if (isItemOrcamentoInsumo(item)) {
                         if (item != null && item.getData() != null) {
                             cont++;
-                            soma += NumberUtils.isNull(((SolicitacaoCompraItemOrcPlan) item.getData()).getValorSolic(), 0.0);
+                            Double solic = 0.0;
+                            Double saldo = 0.0;
+                            saldo = NumberUtils.isNull(((SolicitacaoCompraItemOrcPlan) item.getData()).getValorSaldoOriginal(), 0.0);
+                            solic = NumberUtils.isNull(((SolicitacaoCompraItemOrcPlan) item.getData()).getValorSolic(), 0.0);
+                            if (saldo < solic) {
+                                soma += saldo;
+                            } else {
+                                soma += solic;
+                            }
                         }
                     }
                 }
@@ -399,7 +407,7 @@ public class OrcamentoBusiness {
      */
     public void pupulateItenPlanNumero(SolicitacaoCompraItem solicItem) {
         List<SolicitacaoCompraItemOrcPlan> itensPlan = solicItem.getItensPlanoOrcamento();
-        
+
         for (SolicitacaoCompraItemOrcPlan itemPlan : itensPlan) {
             int indexIPlan = itensPlan.indexOf(itemPlan);
             if (NumberUtils.isGreaterThanZero(itemPlan.getValorSolic())) {

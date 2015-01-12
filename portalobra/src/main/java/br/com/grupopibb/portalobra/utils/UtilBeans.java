@@ -26,7 +26,7 @@ public class UtilBeans {
     /**
      * Define qual o nome do servidor de Banco de Dados a aplicação está utilizando.
      */
-    public static final String SERVER_NAME = "10.1.1.52\\informacon";
+    public static final String SERVER_NAME = "10.1.1.65";
     /**
      * Define qual Usuário tem acesso ao banco de dados.
      */
@@ -34,7 +34,7 @@ public class UtilBeans {
     /**
      * Define qual a porta de conexão do Banco de Dados.
      */
-    public static final String PORT = "1389";
+    public static final String PORT = "1433";
     /**
      * Define a Senha para conexão com o banco de dados. Senha referente ao
      * DATABASE_USER.
