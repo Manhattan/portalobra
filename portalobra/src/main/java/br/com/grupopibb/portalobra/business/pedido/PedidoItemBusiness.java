@@ -22,6 +22,14 @@ public class PedidoItemBusiness {
         return result;
     }
 
+    public static Float somaTotalItensComIPI(List<PedidoItem> itens) {
+        Float result = 0F;
+        for (PedidoItem i : itens) {
+            result += i.getValorTotalItemComIPI();
+        }
+        return result;
+    }
+
     /**
      * Transforma a lista de itens do pedido informada em um array com o código
      * de pedidos desses itens. Se tiver dois itens com o mesmo código só vai

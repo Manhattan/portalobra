@@ -22,7 +22,7 @@ public class UtilBeans {
     /**
      * Define qual Banco de Dados aplicação está utilizando.
      */
-    public static final String DATABASE_NAME = "dbMANsup";
+    public static final String DATABASE_NAME = "dbMAN";
     /**
      * Define qual o nome do servidor de Banco de Dados a aplicação está utilizando.
      */

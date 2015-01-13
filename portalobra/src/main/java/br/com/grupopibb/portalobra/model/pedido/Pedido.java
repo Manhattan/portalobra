@@ -184,6 +184,13 @@ public class Pedido implements EntityInterface<Pedido> {
         return valorTotal;
     }
 
+    public Float getValorTotalComIPI() {
+        if (valorTotal == null || valorTotal == 0) {
+            valorTotal = PedidoItemBusiness.somaTotalItensComIPI(itens);
+        }
+        return valorTotal;
+    }
+
     public Float getValorComDesconto() {
         if (valorComDesconto == null) {
             valorComDesconto = getValorTotal() - descontoPedido;
