@@ -109,7 +109,8 @@
                                 <td align='center'><h:outputText id="qtdEstAtual" value="#{followUpSolicitacoesController.getEstoqueAtual(si.insumo)}" /></td>
                                 <td align='center'><h:outputText id="qtdEstUsina" value="#{followUpSolicitacoesController.getEstoqueUsina(si.insumo)}" /></td>
                                 <td align='center'>
-                                    <p:calendar  value="#{si.dataEntrega}" style="width: 70px"  size="11" maxlength="10" id="dataEntrega" onkeypress="AtalhoData(event, this)"
+                                    <p:calendar  value="#{si.dataEntrega}" style="width: 70px"  size="11" maxlength="10" id="dataEntrega" 
+                                                 onkeypress="AtalhoData(event, this)" onchange="AtualizaData(this)"
                                                  title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
                                                  navigator="true" immediate="true"
                                                  timeZone="#{initParam['timezone']}" rendered="#{followUpSolicitacoesController.enableEdicaoSolicitacao}" >

@@ -28,7 +28,8 @@
                         <f:converter converterId="nucleoConverter" />
                     </p:selectOneMenu>
 
-                    <p:calendar  value="#{posicaoCredorController.data}" required="true" size="11" maxlength="10"  id="dataInicial" onkeypress="AtalhoData(event, this)"
+                    <p:calendar  value="#{posicaoCredorController.data}" required="true" size="11" maxlength="10"  id="dataInicial" 
+                                 onkeypress="AtalhoData(event, this)" onchange="AtualizaData(this)"
                                  title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
                                  navigator="true" immediate="true"
                                  timeZone="#{initParam['timezone']}" >

@@ -23,7 +23,8 @@
                             </td>
                             <td>
                                 <h:outputText value="#{msg.dataTransf}: " style="font-weight: bolder" /> <br/>
-                                <p:calendar value="#{materialSaidaController.saidaDataT}" id="saidaDataT" size="11" maxlength="10" onkeypress="AtalhoData(event, this)"
+                                <p:calendar value="#{materialSaidaController.saidaDataT}" id="saidaDataT" size="11" maxlength="10" 
+                                            onkeypress="AtalhoData(event, this)" onchange="AtualizaData(this)"
                                             title="#{msg.dataSaida}" pattern="dd/MM/yyyy" pagedate="#{utilsController.getDate()}" locale="pt" mode="popup"
                                             navigator="true" immediate="true"
                                             timeZone="#{initParam['timezone']}" >

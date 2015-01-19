@@ -4,7 +4,7 @@
  */
 //<! [CDATA [
 //onkeypress="return(MascaraMoeda(this,'.',',',event))"
-function MascaraMoeda(objTextBox, SeparadorMilesimo, SeparadorDecimal, e) 
+function MascaraMoeda(objTextBox, SeparadorMilesimo, SeparadorDecimal, e)
 {
     var sep = 0;
     var key = '';
@@ -34,10 +34,10 @@ function MascaraMoeda(objTextBox, SeparadorMilesimo, SeparadorDecimal, e)
         objTextBox.value = '0' + SeparadorDecimal + '0' + aux;
     if (len == 2)
         objTextBox.value = '0' + SeparadorDecimal + aux;
-    if (len > 2) 
+    if (len > 2)
     {
         aux2 = '';
-        for (j = 0, i = len - 3; i >= 0; i--) 
+        for (j = 0, i = len - 3; i >= 0; i--)
         {
             if (j == 3) {
                 aux2 += SeparadorMilesimo;
@@ -60,7 +60,7 @@ function MascaraMoeda(objTextBox, SeparadorMilesimo, SeparadorDecimal, e)
  * impedindo a entrada se o valor informado for menor que o valor2.
  **/
 //onkeypress="return(MascaraMoedaComparando(this, #{mi.estoqueAtual},'','.', event))"
-function MascaraMoedaComparando(objTextBox, valor2, SeparadorMilesimo, SeparadorDecimal, e) 
+function MascaraMoedaComparando(objTextBox, valor2, SeparadorMilesimo, SeparadorDecimal, e)
 {
     var objFinal = objTextBox.value;
     var sep = 0;
@@ -88,28 +88,28 @@ function MascaraMoedaComparando(objTextBox, valor2, SeparadorMilesimo, Separador
 
     if (len == 0)
         objFinal = '';
-    if (objFinal > valor2) 
+    if (objFinal > valor2)
     {
         return false;
     }
     if (len == 1)
         objFinal = '0' + SeparadorDecimal + '0' + aux;
-    if (objFinal > valor2) 
+    if (objFinal > valor2)
     {
         return false;
     }
     if (len == 2)
         objFinal = '0' + SeparadorDecimal + aux;
-    if (objFinal > valor2) 
+    if (objFinal > valor2)
     {
         return false;
     }
-    if (len > 2) 
+    if (len > 2)
     {
         aux2 = '';
-        for (j = 0, i = len - 3; i >= 0; i--) 
+        for (j = 0, i = len - 3; i >= 0; i--)
         {
-            if (j == 3) 
+            if (j == 3)
             {
                 aux2 += SeparadorMilesimo;
                 j = 0;
@@ -122,7 +122,7 @@ function MascaraMoedaComparando(objTextBox, valor2, SeparadorMilesimo, Separador
         for (i = len2 - 1; i >= 0; i--)
             objFinal += aux2.charAt(i);
         objFinal += SeparadorDecimal + aux.substr(len - 2, len);
-        if (objFinal > valor2) 
+        if (objFinal > valor2)
         {
             return false;
         }
@@ -142,21 +142,21 @@ function getInternetExplorer()
     return true;
 }
 
-function infIE(idmsg) 
+function infIE(idmsg)
 {
     if (navigator.appName == 'Microsoft Internet Explorer') {
         document.getElementById(idmsg).innerText = "Desculpe, este site não suporta o Internet Explorer.\nPor favor, use o Google Chrome ou Mozilla FireFox";
     }
 }
 
-function confirme(msg) 
+function confirme(msg)
 {
     apagar = confirm(msg);//a variavel apagar aguarda um comando ok ou cancelar retornando assim false ou true
     return apagar;
 }
 
 
-function Contar(Campo, idmsg, limite) 
+function Contar(Campo, idmsg, limite)
 {
     //alert(document.getElementById(idmsg).id);
     var max = parseInt(limite);
@@ -168,13 +168,13 @@ function Contar(Campo, idmsg, limite)
     }
 }
 
-function esconder(id) 
+function esconder(id)
 {
     document.getElementById(id).style.visibility = "hidden";
     return true;
 }
 
-function mostrar(id) 
+function mostrar(id)
 {
     document.getElementById(id).style.visibility = "visible";
     return true;
@@ -194,7 +194,7 @@ function preencheZeros(param, tamanho)
     }
 }
 
-function formatar(src, mask, e) 
+function formatar(src, mask, e)
 {
     var whichCode = (window.Event) ? e.which : e.keyCode;
     if (whichCode == 13 || whichCode == 8 || whichCode == 0)
@@ -209,7 +209,7 @@ function formatar(src, mask, e)
 }
 
 //onkeypress='return SomenteNumero(event)'
-function SomenteNumero(e) 
+function SomenteNumero(e)
 {
     var tecla = (window.event) ? event.keyCode : e.which;
     if ((tecla > 47 && tecla < 58))
@@ -223,7 +223,7 @@ function SomenteNumero(e)
 }
 
 
-function mudaCor(element, cor) 
+function mudaCor(element, cor)
 {
     element.style.backgroundColor = cor;
 }
@@ -310,22 +310,22 @@ PrimeFaces.locales['de'] = {
 };
 
 //onkeyup="mascara(this,soNumeros)"
-function mascara(o, f) 
+function mascara(o, f)
 {
     v_obj = o
     v_fun = f
     setTimeout("execmascara()", 1)
 }
-function execmascara() 
+function execmascara()
 {
     v_obj.value = v_fun(v_obj.value)
 }
-function soNumeros(v) 
+function soNumeros(v)
 {
     return v.replace(/\D/g, "")
 }
 
-function telefone(v) 
+function telefone(v)
 {
     v = v.replace(/\D/g, "")                 //Remove tudo o que não é dígito
     v = v.replace(/^(\d\d)(\d)/g, "($1) $2") //Coloca parênteses em volta dos dois primeiros dígitos
@@ -333,7 +333,7 @@ function telefone(v)
     return v
 }
 
-function cpf(v) 
+function cpf(v)
 {
     v = v.replace(/\D/g, "")                    //Remove tudo o que não é dígito
     v = v.replace(/(\d{3})(\d)/, "$1.$2")       //Coloca um ponto entre o terceiro e o quarto dígitos
@@ -343,14 +343,14 @@ function cpf(v)
     return v
 }
 
-function cep(v) 
+function cep(v)
 {
     v = v.replace(/D/g, "")                //Remove tudo o que não é dígito
     v = v.replace(/^(\d{5})(\d)/, "$1-$2") //Esse é tão fácil que não merece explicações
     return v
 }
 
-function cnpj(v) 
+function cnpj(v)
 {
     v = v.replace(/\D/g, "")                           //Remove tudo o que não é dígito
     v = v.replace(/^(\d{2})(\d)/, "$1.$2")             //Coloca ponto entre o segundo e o terceiro dígitos
@@ -441,5 +441,15 @@ function mascaraData(campoData)
         data = data + '/';
         campoData.value = data;
         return true;
+    }
+}
+
+function AtualizaData(campoData)
+{
+    if (campoData.length === 8)
+    {
+        var yy = parseInt(new Date().getFullYear().toString().substr(2, 2));
+        var a = parseInt(campoData.value.substr(6, 2)) >= yy + 6 ? "19" : "20";
+        campoData.value = campoData.value.substr(0, 6) + a + campoData.value.substr(6, 2);
     }
 }

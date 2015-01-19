@@ -16,7 +16,8 @@
                         <h:outputText value="#{msg.periodoSaidas}:" style="font-weight: bold" />
                         <p:inputText value="#{materialSaidaController.centroSelecionado.nomeCompleto}" readonly="true"  style="width: 90%" />
                         <h:panelGroup>
-                            <p:calendar  value="#{materialSaidaController.dataInicial}" size="11" maxlength="10"  id="dataInicialMatSai" onkeypress="AtalhoData(event, this)"
+                            <p:calendar  value="#{materialSaidaController.dataInicial}" size="11" maxlength="10"  id="dataInicialMatSai" 
+                                         onkeypress="AtalhoData(event, this)" onchange="AtualizaData(this)"
                                          title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
                                          navigator="true" immediate="true"
                                          timeZone="#{initParam['timezone']}" >

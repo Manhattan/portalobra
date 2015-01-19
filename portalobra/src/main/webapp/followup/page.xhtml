@@ -581,13 +581,15 @@
                         <p:commandButton id="desItemBtn"      rendered="#{loginController.autorizaSolicitacao}"   disabled="#{followUpSolicitacoesController.disableButtonRejItem}"   title="#{msg.desfazAutItemSolicitacao}" tabindex="7" icon="ui-icon-arrowreturnthick-1-w" iconPos="left" value="" styleClass="button-only-icon" update="panelFollowUpItens, :panelMain"  action="#{followUpSolicitacoesController.desfazAutorizacao()}"   oncomplete="#{insumoController.limparInsumosSelecionados()}" style="margin-right: 10px" />
 
                         <h:outputText value="#{msg.periodoSolic}: " style="font-weight: bold" />
-                        <p:calendar  value="#{followUpSolicitacoesController.dataInicial}" size="11" maxlength="10"  id="dataInicial" onkeypress="AtalhoData(event, this)"
+                        <p:calendar  value="#{followUpSolicitacoesController.dataInicial}" size="11" maxlength="10"  id="dataInicial" 
+                                     onkeypress="AtalhoData(event, this)" onchange="AtualizaData(this)"
                                      title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" maxdate="utilsController.getDate()" locale="pt" mode="popup"
                                      navigator="true" immediate="true"
                                      timeZone="#{initParam['timezone']}" >
                         </p:calendar>
                         <h:outputText value=" a " />
-                        <p:calendar value="#{followUpSolicitacoesController.dataFinal}" size="11" maxlength="10"  id="dataFinal"
+                        <p:calendar value="#{followUpSolicitacoesController.dataFinal}" size="11" maxlength="10"  id="dataFinal" 
+                                    onkeypress="AtalhoData(event, this)" onchange="AtualizaData(this)"
                                     title="#{msg.dataFinal}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
                                     navigator="true" immediate="true"
                                     timeZone="#{initParam['timezone']}" >

@@ -24,13 +24,15 @@
                     <h:outputText value="#{msg.especificacao}:" style="font-weight: bold" />
                     <h:outputText value="" />
                     <h:panelGroup>
-                        <p:calendar  value="#{materialSaidaItensController.dataInicial}" size="11" maxlength="10"  id="dataInicialMatSaiI" onkeypress="AtalhoData(event, this);"
+                        <p:calendar  value="#{materialSaidaItensController.dataInicial}" size="11" maxlength="10"  id="dataInicialMatSaiI" 
+                                     onkeypress="AtalhoData(event, this);" onchange="AtualizaData(this)"
                                      title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
                                      navigator="true" immediate="true"
                                      timeZone="#{initParam['timezone']}" >
                         </p:calendar>
                         <h:outputText value="a" style="margin-left: 4px; margin-right: 4px" />
-                        <p:calendar value="#{materialSaidaItensController.dataFinal}" size="11" maxlength="10"  id="dataFinalMatSaiI" onkeypress="AtalhoData(event, this);"
+                        <p:calendar value="#{materialSaidaItensController.dataFinal}" size="11" maxlength="10"  id="dataFinalMatSaiI" 
+                                    onkeypress="AtalhoData(event, this);" onchange="AtualizaData(this)"
                                     title="#{msg.dataFinal}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
                                     navigator="true" immediate="true" style="margin-right: 5px"
                                     timeZone="#{initParam['timezone']}" >
