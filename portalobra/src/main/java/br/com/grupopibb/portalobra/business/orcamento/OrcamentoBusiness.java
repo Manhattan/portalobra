@@ -328,22 +328,12 @@ public class OrcamentoBusiness {
      */
     public Double getSomaValores(TreeNode root) {
         Double soma = 0.0;
-        int cont = 0;
         if (root != null) {
             for (TreeNode node : root.getChildren()) {
                 for (TreeNode item : node.getChildren()) {
                     if (isItemOrcamentoInsumo(item)) {
                         if (item != null && item.getData() != null) {
-                            cont++;
-                            Double solic = 0.0;
-                            Double saldo = 0.0;
-                            saldo = NumberUtils.isNull(((SolicitacaoCompraItemOrcPlan) item.getData()).getValorSaldoOriginal(), 0.0);
-                            solic = NumberUtils.isNull(((SolicitacaoCompraItemOrcPlan) item.getData()).getValorSolic(), 0.0);
-                            if (saldo < solic) {
-                                soma += saldo;
-                            } else {
-                                soma += solic;
-                            }
+                            soma += NumberUtils.isNull(((SolicitacaoCompraItemOrcPlan) item.getData()).getValorSolic(), 0.0);
                         }
                     }
                 }
