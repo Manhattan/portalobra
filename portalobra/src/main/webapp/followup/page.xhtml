@@ -769,7 +769,7 @@
                                         </td>
 
                                         <td align='right'>
-                                            <h:commandButton value="#{item.estoqueAtualFmt}" class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" style="text-align: right;" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgKardex')}" >
+                                            <h:commandButton value="#{followUpSolicitacoesController.getEstoqueAtualFmt(item.insumo)}" class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" style="text-align: right;" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgKardex')}" >
                                                 <p:ajax oncomplete="dlgKardex.show()" update=":dialogForm" />
                                             </h:commandButton>
                                         </td>

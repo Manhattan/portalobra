@@ -763,7 +763,7 @@ public final class DateUtils {
     */
     
     public static String getYearMonth(Date refDate){
-        refDate = addDays(refDate, 1);
+       // refDate = addDays(refDate, 1);
         return getDataFormatada("YYYYMM", refDate);
     }
 }

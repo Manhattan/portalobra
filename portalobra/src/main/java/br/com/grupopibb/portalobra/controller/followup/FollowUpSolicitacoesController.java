@@ -1921,30 +1921,25 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
      * @return Quantidade em estoque.
      */
     public Double getEstoqueAtualPositivo(Insumo insumo) {
-        Double estoque = followUpSolicitacoesFacade.findEstoqueByInsumo(centroSelecionado, insumo.getCodigo());
-        if (estoque == null || estoque < 0) {
-            return 0.0;
-        } else {
-            return estoque;
-        }
+        Double estoque = getEstoqueAtual(insumo);
+        return estoque < 0 ? 0.0 : estoque;
     }
 
     public Double getEstoqueAtual(Insumo insumo) {
-        Double estoque = followUpSolicitacoesFacade.findEstoqueByInsumo(centroSelecionado, insumo.getCodigo());
-        if (estoque == null) {
-            return 0.0;
-        } else {
-            return estoque;
+        return NumberUtils.isNull(materiaisEstoqueFacade.findSaldo(centroSelecionado, insumo.getCodigo(), DateUtils.getYearMonth(new Date())), 0.0);
+    }
+
+    public String getEstoqueAtualFmt(Insumo insumo) {
+        try {
+            return NumberUtils.formatDecimalNoFinalZero(getEstoqueAtual(insumo));
+        } catch (NullPointerException | NumberFormatException e) {
+            return "0";
         }
     }
 
     public Double getEstoqueUsina(Insumo insumo) {
         Double estoque = followUpSolicitacoesFacade.findEstoqueUsinaByInsumo(centroSelecionado, insumo.getCodigo());
-        if (estoque == null) {
-            return 0.0;
-        } else {
-            return estoque;
-        }
+        return estoque == null ? 0.0 : estoque;
     }
 
     public Double getValorEstoqueSaidas(Insumo insumo) {

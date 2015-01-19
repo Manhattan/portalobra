@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import org.apache.commons.lang3.StringUtils;
@@ -66,12 +67,12 @@ public class MateriaisEstoqueFacade extends AbstractEntityBeans<MateriaisEstoque
     public Double findSaldo(final CentroCusto centro, final Long insumoCod, final String anoMes) {
         Map<String, Object> params = getMapParams();
         paramsPesquisa(params, centro, insumoCod, anoMes);
-        Double saldo = 0.0;
-        MateriaisEstoque mat = pesqParam("MateriaisEstoque.find", params);
-        if (mat != null) {
-            saldo = NumberUtils.isNull(mat.getEstoqueQuantidade(), 0.0);
+        try {
+            MateriaisEstoque mat = pesqParam("MateriaisEstoque.find", params);
+            return NumberUtils.isNull(mat.getEstoqueQuantidade(), 0.0);
+        } catch (NullPointerException | NoResultException e) {
+            return 0.0;
         }
-        return saldo;
     }
 
     /**
