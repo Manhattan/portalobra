@@ -74,7 +74,7 @@ public class EstoqueBusiness {
         q = null;
         atualizaEstoqueFollowUp(centroOrigem, insumoCod);
     }
-
+    
     /**
      * Atualiza os dados de estoque que são exibidos no FollowUp.
      *
@@ -96,7 +96,7 @@ public class EstoqueBusiness {
     }
 
     /**
-     * Atualiza apenas o saldo de movimentações do material atual.
+     * Atualiza apenas o saldo de movimentações do material atual ou do centro de custo completo no mês atual.
      *
      * @param centroOrigem
      * @param centroDestino
@@ -114,7 +114,7 @@ public class EstoqueBusiness {
         q.setParameter(3, centroOrigem.getCodigo());
         q.setParameter(4, new java.sql.Date(dataInicial.getTime()));
         q.setParameter(5, new java.sql.Date(dataFinal.getTime()));
-        q.setParameter(6, insumoCod.intValue());
+        q.setParameter(6, insumoCod != null ? insumoCod.intValue() : null);
         q.executeUpdate();
         q = null;
     }

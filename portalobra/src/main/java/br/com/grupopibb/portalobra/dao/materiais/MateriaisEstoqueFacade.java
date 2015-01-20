@@ -161,4 +161,10 @@ public class MateriaisEstoqueFacade extends AbstractEntityBeans<MateriaisEstoque
         params.put("centro", centro);
         params.put("anoMes", anoMes);
     }
+
+    public void clearCache() {
+        em.flush();
+        em.getEntityManagerFactory().getCache().evictAll();
+        em.clear();
+    }
 }

@@ -23,9 +23,12 @@ import br.com.grupopibb.portalobra.utils.DateUtils;
 import br.com.grupopibb.portalobra.utils.JsfUtil;
 import br.com.grupopibb.portalobra.utils.NumberUtils;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
@@ -165,6 +168,16 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
     public void mountKardex(MateriaisEstoque item) {
         estoqueBusiness.mountKardex(item, DateUtils.addDays(mesAno, 1));
         this.current = item;
+    }
+    
+    public void atualizaSaldo(){
+        try {
+            estoqueBusiness.atualizaSaldoMaterial(centroSelecionado, new Date(), null);
+            getFacade().clearCache();
+            recreateTable();
+        } catch (SQLException ex) {
+            Logger.getLogger(MateriaisEstoqueController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
