@@ -86,6 +86,10 @@ public class Funcionario implements EntityInterface<Funcionario> {
     private String login;
     /*
      */
+    @Column(name = "Fun_Email")
+    private String email;
+    /*
+     */
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "Fun_Ativo")
     private EnumHabilitado ativo;
@@ -145,6 +149,14 @@ public class Funcionario implements EntityInterface<Funcionario> {
 
     public void setLogin(String login) {
         this.login = login;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getSenha() {

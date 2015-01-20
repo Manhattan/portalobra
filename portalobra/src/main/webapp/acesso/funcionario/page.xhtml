@@ -69,6 +69,9 @@
                                 <f:selectItems value="#{funcionarioController.empresaSelect}" />
                             </p:selectOneMenu>
                         </th>
+                        <th align='center' style="padding: 5px">
+                            <h:outputText value="#{msg.email}" />
+                        </th>
                     </tr>
                     <ui:repeat value="#{funcionarioController.items}"  var="item" varStatus="x">
                         <tr class="hovered" style="font-size: 110%">
@@ -103,6 +106,9 @@
                             </td>
                             <td align='center'>
                                 #{item.empresa.codigo}
+                            </td>
+                            <td align='center'>
+                                #{item.email}
                             </td>
                         </tr>
                     </ui:repeat>

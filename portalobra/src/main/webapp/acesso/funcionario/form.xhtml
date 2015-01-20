@@ -39,6 +39,11 @@
                             </p:selectOneMenu>
                         </td>
                         <td>
+                            <h:outputText value="#{msg.email}: " style="font-weight: bolder;" />
+                            <br/>
+                            <p:inputText value="#{funcionarioController.current.email}" size="60" />
+                        </td>
+                        <td>
                             <h:selectBooleanCheckbox id="chkCadFuncAtivo" value="#{funcionarioController.current.ativo}" label="#{msg.ativo}" style="margin-top: 15px"/>
                             <h:outputLabel for="chkCadFuncAtivo" value="#{msg.ativo}" style="font-weight: bold" />
                         </td>

@@ -223,6 +223,7 @@ public class FuncionarioController extends EntityController<Funcionario> impleme
         return pagination;
     }
 
+    @Override
     public void pesquisar() {
         recreateTable();
     }
