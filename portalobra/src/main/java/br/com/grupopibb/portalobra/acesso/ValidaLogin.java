@@ -37,7 +37,9 @@ public class ValidaLogin {
             }
             try (PreparedStatement stmt = con.prepareStatement("select top 1 UserName from UserObjectAccess")) {
                 stmt.execute();
+                stmt.close();
             }
+            con.close();
             return StatusLogin.ATIVO;
         } catch (SQLException e) {
             return StatusLogin.INATIVO;
