@@ -10,7 +10,6 @@ import br.com.grupopibb.portalobra.model.tipos.EnumEspecieCentroCusto;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -24,6 +23,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -126,7 +126,10 @@ public class CentroCusto implements EntityInterface<CentroCusto> {
      */
     @Column(name = "UF_Sigla")
     private String estado;
-
+    /*
+     */
+    @OneToMany(targetEntity = CentroComunicacao.class, mappedBy = "centro")
+    private List<CentroComunicacao> contatos;
     /*
      @Size(min = 1, max = 40)
      @Column(name = "Centro_Endereco", nullable = false, length = 40)
@@ -179,6 +182,46 @@ public class CentroCusto implements EntityInterface<CentroCusto> {
      private EnumsGeral autorizaPedidoFaixa;
      private String matCei;
      */
+
+    public CentroComunicacao getComunicacaoAlmoxarifado() {
+        for (CentroComunicacao com : contatos) {
+            if (com.getDepartamento().startsWith("Almox")) {
+                return com;
+            }
+        }
+        return new CentroComunicacao("","","","","");
+    }
+
+    public String getTelefoneAlmoxarifado() {
+        try {
+            return getComunicacaoAlmoxarifado().getTelefone();
+        } catch (NullPointerException e) {
+            return "";
+        }
+    }
+
+    /**
+     * Retorna o nome do primeiro contato da lista de contatos.
+     */
+    public String getContatoAlmoxarifado() {
+        try {
+            return getComunicacaoAlmoxarifado().getContato();
+        } catch (NullPointerException e) {
+            return "";
+        }
+    }
+
+    /**
+     * Retorna o e-mail do primeiro contato da lista de contatos.
+     */
+    public String getEmailAlmoxarifado() {
+        try {
+            return getComunicacaoAlmoxarifado().getEmail();
+        } catch (NullPointerException e) {
+            return "";
+        }
+    }
+
     public String getCodigo() {
         return codigo;
     }
