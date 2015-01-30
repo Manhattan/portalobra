@@ -595,7 +595,7 @@
                                     timeZone="#{initParam['timezone']}" >
                         </p:calendar>
 
-                        <p:commandButton tabindex="1" value="#{msg.executar}" widgetVar="mainExecutar" id="mainExecutarButton" style="margin-left: 10px; margin-right: 5px" icon="ui-icon-search" update=":formMain" actionListener="#{followUpSolicitacoesController.pesquisa()}" >
+                        <p:commandButton tabindex="1" value="#{msg.executar}" widgetVar="mainExecutar" id="mainExecutarButton" style="margin-left: 10px; margin-right: 5px" icon="ui-icon-search" update=":formMain" actionListener="#{followUpSolicitacoesController.pesquisa()}" action="#{followUpSolicitacoesController.updateFollowup()}" >
                         </p:commandButton>
 
                         <p:commandButton value="#{msg.filtrosShow}" immediate="true" icon="filterIco" actionListener="#{followUpSolicitacoesController.showPanelFiltros()}" rendered="#{!followUpSolicitacoesController.showPanelFiltros}" update=":formMain:panelFollowUpItens" style="margin-right: 20px" />
