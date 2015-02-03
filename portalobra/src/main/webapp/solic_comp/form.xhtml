@@ -76,16 +76,36 @@
                         <tr class="cabecalhoDiscreto">
                             <th style="width: 10px"></th>
                             <th style="width: 10px"></th>
-                            <th align='center' style="width: auto">#{msg.item}</th>
-                            <th align='center' style="width: auto">#{msg.insumo}</th>
-                            <th>#{msg.descricao}</th>
-                            <th>#{msg.especificacao}</th>
-                            <th>#{msg.unidadeAbrevidada}</th>
-                            <th style="width: 70px">#{msg.quantidade}</th>
-                            <th>#{msg.estoqueAtual}</th>
-                            <th title="#{msg.estoqueUsina}">#{msg.estoqueUsinaAbrev}</th>
-                            <th style="width: 75px">#{msg.dataEntrega}</th>
-                            <th><h:outputText value="#{msg.observacao} (#{msg.comunicacaoInternaSetorCompras})" /></th>
+                            <th align='center' style="width: auto">
+                                #{msg.item}
+                            </th>
+                            <th align='center' style="width: auto">
+                                #{msg.insumo}
+                            </th>
+                            <th>
+                                #{msg.descricao}
+                            </th>
+                            <th>
+                                #{msg.especificacao}
+                            </th>
+                            <th>
+                                #{msg.unidadeAbrevidada}
+                            </th>
+                            <th style="width: 70px">
+                                #{msg.quantidade}
+                            </th>
+                            <th>
+                                #{msg.estoqueAtual}
+                            </th>
+                            <th title="#{msg.estoqueUsina}">
+                                #{msg.estoqueUsinaAbrev}
+                            </th>
+                            <th style="width: 75px">
+                                <p:commandLink value="#{msg.dataEntrega}" oncomplete="dlgDataEntrega.show()" />
+                            </th>
+                            <th>
+                                <h:outputText value="#{msg.observacao} (#{msg.comunicacaoInternaSetorCompras})" />
+                            </th>
                         </tr>
                         <ui:repeat rendered="#{followUpSolicitacoesController.solicitacaoTemItens}" value="#{followUpSolicitacoesController.itensSolicitacao}" var="si" varStatus="s">
                             <tr class="noborder" id="itensList">
@@ -131,6 +151,19 @@
                         </tr>
                     </table>
                 </p:panel>
+
+                <p:dialog id="dlgDataEntrega" header="#{msg.dataEntrega}" widgetVar="dlgDataEntrega" resizable="false" style="text-align: center">
+                    <h:outputText value="#{msg.atualizaDataEntregaTodos}." style="font-weight: bold" />
+                    <br/><br/>
+                    <p:calendar  value="#{followUpSolicitacoesController.dataEntregaT}" style="width: 70px; margin-right: 10px"  size="11" maxlength="10" id="dtEntT" 
+                                 onkeypress="AtalhoData(event, this);" onchange="AtualizaData(this);"
+                                 title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
+                                 navigator="true" immediate="true"
+                                 timeZone="#{initParam['timezone']}" >
+                    </p:calendar>
+                    <p:commandButton value="#{msg.ok}" icon="ui-icon-circle-check" iconPos="left" style="min-width: 60px" actionListener="#{followUpSolicitacoesController.atualizaDataEntregaTodos()}" update=":form-solicitacao:solicCompraForm:solicCompraTable" oncomplete="dlgDataEntrega.hide()" />
+                </p:dialog>
+
             </h:form>
         </h:panelGroup>
 

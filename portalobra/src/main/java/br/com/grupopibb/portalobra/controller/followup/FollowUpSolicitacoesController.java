@@ -213,6 +213,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     //----------- SOLICITACAO COMPRA ---------------
     private SolicitacaoCompra solicitacaoCompra;
     private boolean obraLinkadaOrcamento = false;
+    private Date dataEntregaT;
     private List<SolicitacaoCompraItem> itensSolicitacaoRemovidos;
     //----------------- MATERIAIS ------------------
     private MaterialEntrada materialEntrada;
@@ -1351,6 +1352,14 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         this.solicitacaoCompra = solicitacaoCompra;
     }
 
+    public Date getDataEntregaT() {
+        return dataEntregaT;
+    }
+
+    public void setDataEntregaT(Date dataEntregaT) {
+        this.dataEntregaT = dataEntregaT;
+    }
+
     public ListDataModel getItensSolicitacao() {
         if (solicitacaoCompra == null || solicitacaoCompra.getItens() == null) {
             return null;
@@ -2104,6 +2113,14 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     private void atualizaSequenciaisSolicitacaoCompra(Integer seqNumero, Integer seqId) {
         sequenciaisFacade.update(sequenciaisFacade.getSequencialSolicitacaoCompra().initNumber(seqNumero));
         sequenciaisRangeFacade.update(sequenciaisRangeFacade.getSequencialSolicitacaoCompra(centroSelecionado).initNumber(seqId));
+    }
+
+    public void atualizaDataEntregaTodos() {
+        if (dataEntregaT != null) {
+            for (SolicitacaoCompraItem item : solicitacaoCompra.getItens()) {
+                item.setDataEntrega(dataEntregaT);
+            }
+        }
     }
 
     /**
