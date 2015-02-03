@@ -446,7 +446,7 @@ function mascaraData(campoData)
 
 function AtualizaData(campoData)
 {
-    if (campoData.length === 8)
+    if (campoData.value.length === 8)
     {
         var yy = parseInt(new Date().getFullYear().toString().substr(2, 2));
         var a = parseInt(campoData.value.substr(6, 2)) >= yy + 6 ? "19" : "20";
