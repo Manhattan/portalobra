@@ -11,7 +11,8 @@ package br.com.grupopibb.portalobra.model.tipos;
 public enum EnumSistemaMonitor {
     
     POBRA("Portal Obra"), 
-    PRH("Portal RH");
+    PRH("Portal RH"),
+    POM("Portal Mobile");
     
     private String label;
     
