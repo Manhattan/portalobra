@@ -83,7 +83,7 @@
                                 </td>
                                 <td align='right'>
                                     <h:outputText value="#{materialSaidaItensController.getEstoqueAtual(item.insumo)}">
-                                        <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" />
+                                        <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
                                     </h:outputText>
                                 </td>
                                 <td>

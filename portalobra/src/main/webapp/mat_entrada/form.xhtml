@@ -123,7 +123,9 @@
                                     #{mi.insumo.unidade.codigo}
                                 </td>
                                 <td align='center'>
-                                    <h:outputText value="#{followUpSolicitacoesController.getEstoqueAtual(mi.insumo)}" />
+                                    <h:outputText value="#{followUpSolicitacoesController.getEstoqueAtual(mi.insumo)}">
+                                        <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
+                                    </h:outputText>
                                 </td>
                                 <td>
                                     <pe:inputNumber value="#{mi.quantidade}" style="width: 60px">

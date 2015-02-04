@@ -121,15 +121,35 @@
                                 <td>
                                     <p:commandButton id="btnRemoveItemSM" actionListener="#{followUpSolicitacoesController.removerItemMatSaida(mi)}" disabled="#{!followUpSolicitacoesController.enableEdicaoMatSaida}" update=":form-saidamaterial:saidaMaterialForm:saidaMaterialTable, :form-saidamaterial:saidaMaterialForm:btnConfirmarMatSai" icon="ui-icon-closethick" />
                                 </td>
-                                <td>#{mi.itemItem}</td>
-                                <td>#{mi.insumo.codigo}</td>
-                                <td>#{mi.insumo.especificacao}</td>
-                                <td>#{mi.insumo.unidade.codigo}</td>
-                                <td><pe:inputNumber id="quantidadeSaidaInsert" rendered="#{followUpSolicitacoesController.newMovSaida}"  value="#{mi.quantidade}" style="width: 70px" decimalPlaces="4" maxValue="#{followUpSolicitacoesController.getEstoqueAtual(mi.insumo)}" />
-                                    <pe:inputNumber id="quantidadeSaidaEdit"   rendered="#{!followUpSolicitacoesController.newMovSaida}" value="#{mi.quantidade}" style="width: 70px" decimalPlaces="4" maxValue="#{followUpSolicitacoesController.getEstoqueAtualPositivo(mi.insumo) + mi.quantidade}" /></td>
-                                <td align='center'><h:outputText id="estoqueDisp" value="#{followUpSolicitacoesController.getEstoqueAtualPositivo(mi.insumo) + mi.quantidade}" /></td>
-                                <td align='center'><h:outputText id="estoqueAtual" value="#{followUpSolicitacoesController.getEstoqueAtual(mi.insumo)}" /></td>
-                                <td><p:inputTextarea maxlength="250" rows="1" cols="80" value="#{mi.observacao}" /></td>
+                                <td>
+                                    #{mi.itemItem}
+                                </td>
+                                <td>
+                                    #{mi.insumo.codigo}
+                                </td>
+                                <td>
+                                    #{mi.insumo.especificacao}
+                                </td>
+                                <td>
+                                    #{mi.insumo.unidade.codigo}
+                                </td>
+                                <td>
+                                    <pe:inputNumber id="quantidadeSaidaInsert" rendered="#{followUpSolicitacoesController.newMovSaida}"  value="#{mi.quantidade}" style="width: 70px" decimalPlaces="4" maxValue="#{followUpSolicitacoesController.getEstoqueAtual(mi.insumo)}" />
+                                    <pe:inputNumber id="quantidadeSaidaEdit"   rendered="#{!followUpSolicitacoesController.newMovSaida}" value="#{mi.quantidade}" style="width: 70px" decimalPlaces="4" maxValue="#{followUpSolicitacoesController.getEstoqueAtualPositivo(mi.insumo) + mi.quantidade}" />
+                                </td>
+                                <td align='center'>
+                                    <h:outputText id="estoqueDisp" value="#{followUpSolicitacoesController.getEstoqueAtualPositivo(mi.insumo) + mi.quantidade}">
+                                        <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
+                                    </h:outputText>
+                                </td>
+                                <td align='center'>
+                                    <h:outputText id="estoqueAtual" value="#{followUpSolicitacoesController.getEstoqueAtual(mi.insumo)}">
+                                        <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
+                                    </h:outputText>
+                                </td>
+                                <td>
+                                    <p:inputTextarea maxlength="250" rows="1" cols="80" value="#{mi.observacao}" />
+                                </td>
                             </tr>
                         </ui:repeat>
                         <tr class="noborder">

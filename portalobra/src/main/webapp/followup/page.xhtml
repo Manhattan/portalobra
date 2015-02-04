@@ -457,7 +457,11 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td class="valored">#{followUpSolicitacoesController.current.materiaisEstoqueInicial.estoqueQuantidade}</td>
+                            <td class="valored">
+                                <h:outputText value="#{followUpSolicitacoesController.current.materiaisEstoqueInicial.estoqueQuantidade}">
+                                    <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
+                                </h:outputText>
+                            </td>
                         </tr>
                         <ui:repeat value="#{followUpSolicitacoesController.materialEntradasESaidas}" var="mat" varStatus="e">
                             <tr>
@@ -472,7 +476,11 @@
                                 <td>#{mat.numeroDocumento}</td>
                                 <td><p:commandLink value="#{mat.numero}" action="#{followUpSolicitacoesController.prepareEditEntradaOrSaida(mat.classe, mat.numero)}" update=":panelMain, :dialogForm" /></td>
                                 <td>#{mat.itemItem}</td>
-                                <td class="valored">#{mat.quantidade}</td>
+                                <td class="valored">
+                                    <h:outputText value="#{mat.quantidade}">
+                                        <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
+                                    </h:outputText>
+                                </td>
                             </tr>
                         </ui:repeat>
 
@@ -484,7 +492,11 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td class="valored">#{followUpSolicitacoesController.current.materiaisEstoqueFinal.estoqueQuantidade}</td>
+                            <td class="valored">
+                                <h:outputText value="#{followUpSolicitacoesController.current.materiaisEstoqueFinal.estoqueQuantidade}">
+                                    <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
+                                </h:outputText>
+                            </td>
                         </tr>
                     </table>
                 </h:form>
@@ -646,13 +658,19 @@
                                         #{msg.saldoAReceberAbrev}
                                     </th>
                                     <th align='center' rowspan="2">
-                                        #{msg.estoqueAtual}
+                                        <h:outputText value="#{msg.estoqueAtual}">
+                                            <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
+                                        </h:outputText>
                                     </th>
                                     <th align='center' rowspan="2" style="max-width: 80px">
-                                        #{msg.estoqueUsina}
+                                        <h:outputText value="#{msg.estoqueUsina}">
+                                            <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
+                                        </h:outputText>
                                     </th>
                                     <th align='center' rowspan="2">
-                                        #{msg.quantidadeOrcamentoAbrev}
+                                        <h:outputText value="#{msg.quantidadeOrcamentoAbrev}">
+                                            <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
+                                        </h:outputText>
                                     </th>
                                     <th align='center' colspan="3"> 
                                         #{msg.solicitacao}
@@ -777,7 +795,7 @@
                                         </td>
                                         <td align='right'>
                                             <h:outputText value="#{item.estoqueUsina}" >
-                                                <f:convertNumber type="number" maxFractionDigits="5" />
+                                                <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
                                             </h:outputText>
                                         </td>
                                         <td align='right'>

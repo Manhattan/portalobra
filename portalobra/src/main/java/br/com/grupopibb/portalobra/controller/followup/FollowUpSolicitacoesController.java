@@ -1935,14 +1935,14 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     }
 
     public Double getEstoqueAtual(Insumo insumo) {
-        return NumberUtils.isNull(materiaisEstoqueFacade.findSaldo(centroSelecionado, insumo.getCodigo(), DateUtils.getYearMonth(new Date())), 0.0);
+        return NumberUtils.arredondarHalfUp(NumberUtils.isNull(materiaisEstoqueFacade.findSaldo(centroSelecionado, insumo.getCodigo(), DateUtils.getYearMonth(new Date())), 0.0), 4);
     }
 
     public String getEstoqueAtualFmt(Insumo insumo) {
         try {
-            return NumberUtils.formatDecimalNoFinalZero(getEstoqueAtual(insumo));
-        } catch (NullPointerException | NumberFormatException e) {
-            return "0";
+            return NumberUtils.formatDecimal(getEstoqueAtual(insumo), 4);
+        } catch (NullPointerException | NumberFormatException | NoResultException e) {
+            return "0,0000";
         }
     }
 

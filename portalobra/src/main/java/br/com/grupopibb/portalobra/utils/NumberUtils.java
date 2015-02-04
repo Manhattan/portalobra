@@ -115,8 +115,8 @@ public final class NumberUtils {
     }
 
     /**
-     * Formata o valor passado separando grupo de milhares com ponto e não
-     * mostra zeros no final. Se o valor passado for nulo, retorna 0. Ex: 1000.0
+     * Formata o valor passado separando grupo de milhares com ponto. 
+     * Se o valor passado for nulo, retorna 0. Ex: 1000.0
      * é formatado para 1.000; Ex: 1000.1 é formatado para 1.000,1.
      *
      * @param valor Double a ser formatado.
@@ -124,9 +124,10 @@ public final class NumberUtils {
      */
     public static String formatDecimal(Double valor, int decimalPlaces) {
         if (valor == null || valor == 0) {
-            return "0";
+            return "0," + StringUtils.repeat("0", decimalPlaces);
         } else {
-            DecimalFormat df = new DecimalFormat(",##0.0000");
+            
+            DecimalFormat df = new DecimalFormat(",##0." + StringUtils.repeat("0", decimalPlaces));
             return df.format(valor);
         }
     }

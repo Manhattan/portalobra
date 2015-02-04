@@ -134,7 +134,7 @@ public class InsumoController extends EntityController<Insumo> implements Serial
      * @return Saldo orçado a realizar.
      */
     public String getValorOrcado(Insumo insumo) {
-        return NumberUtils.formatDecimalNoFinalZero(projPlanFacade.getValorOrc(projCod, orcCod, planCod, insumo.getCodigo().intValue()));
+        return NumberUtils.formatDecimal(projPlanFacade.getValorOrc(projCod, orcCod, planCod, insumo.getCodigo().intValue()), 4);
     }
 
     /**
@@ -149,7 +149,7 @@ public class InsumoController extends EntityController<Insumo> implements Serial
         if (projCod == 0) {
             initCentroSelecionado(centro); 
         }
-        return NumberUtils.formatDecimalNoFinalZero(projPlanFacade.getValorOrc(projCod, orcCod, planCod, insumo.getCodigo().intValue()));
+        return NumberUtils.formatDecimal(projPlanFacade.getValorOrc(projCod, orcCod, planCod, insumo.getCodigo().intValue()), 4);
     }
 
     /**
