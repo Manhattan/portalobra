@@ -97,7 +97,7 @@
                     </h:panelGrid>  
                 </h:form>  
             </p:dialog> 
-            <!--Dialog /-->
+            <!--Dialog AC /-->
             <p:dialog header="#{msg.coleta}" closeOnEscape="true" widgetVar="dlgAC" resizable="false" rendered="#{followUpSolicitacoesController.showDialogAC == true}">  
                 <h:form>  
                     <h:panelGrid columns="2" style="margin-bottom:10px; border-style: solid; width: 700px" border="1" columnClasses="itemColumEspaco">  
@@ -411,24 +411,93 @@
                                 <th style="width: 50px">#{msg.numeroPagAbrev}</th>
                                 <th>#{msg.parcelaAbrev}</th>
                                 <th style="width: 80px">#{msg.dataVenc}</th>
+                                <th>#{msg.valorTotal}</th>
                                 <th style="width: 80px">#{msg.dataPagamentoAbrev}</th>
+                                <th>#{msg.valorPago}</th>
                                 <th>#{msg.usuario}</th>
+                                <th>#{msg.conciliado}</th>
                                 <th>#{msg.atraso}</th>
                             </tr>
                             <ui:repeat value="#{followUpSolicitacoesController.current.titulosAPagar}" var="tit" varStatus="d">
                                 <tr>
-                                    <td>#{tit.numero}</td>
-                                    <td>#{tit.numeroParcela}</td>
-                                    <td><h:outputText value="#{tit.dataVencimento}">
+                                    <td>
+                                        #{tit.numero}
+                                    </td>
+                                    <td>
+                                        #{tit.numeroParcela}
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{tit.dataVencimento}">
                                             <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
                                         </h:outputText>
                                     </td>
-                                    <td><h:outputText value="#{tit.dataPagamento}">
+                                    <td>
+                                        <h:outputText value="#{tit.valorTotal}" />
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{tit.dataPagamento}">
                                             <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
                                         </h:outputText>
                                     </td>
-                                    <td><h:outputText value="#{tit.usuarioInstrucao}" rendered="#{tit.dataPagamento != null}" /></td>
-                                    <td><h:outputText value="#{tit.diasVencidos}" /></td>
+                                    <td>
+                                        <h:outputText value="#{tit.totalPago}" />
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{tit.usuarioInstrucao}" rendered="#{tit.dataPagamento != null}" />
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{followUpSolicitacoesController.isTituloConciliado(tit.numero)}" />
+                                    </td>                                    
+                                    <td>
+                                        <h:outputText value="#{tit.diasVencidos}" />
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </table>
+                    </p:scrollPanel>
+                </h:form>
+            </p:dialog>
+            <!--Dialog OK /-->
+            <p:dialog header="#{msg.ok}" closeOnEscape="true" widgetVar="dlgOK" resizable="false" rendered="#{followUpSolicitacoesController.showDialogOK == true}">  
+                <h:form>  
+                    <p:scrollPanel style="height: auto" >
+                        <table class="dialogtable">
+                            <tr>
+                                <th style="width: 50px">
+                                    #{msg.numeroPagAbrev}
+                                </th>
+                                <th style="width: 50px">
+                                    #{msg.numeroParcelaAbrev}
+                                </th>
+                                <th>
+                                    #{msg.valorTotal}
+                                </th>
+                                <th style="width: 80px">
+                                    #{msg.data}
+                                </th>
+                                <th>
+                                    #{msg.conciliado}
+                                </th>
+                            </tr>
+                            <ui:repeat value="#{followUpSolicitacoesController.current.titulosAPagar}" var="tit" varStatus="d">
+                                <tr>
+                                    <td>
+                                        #{tit.numero}
+                                    </td>
+                                    <td>
+                                        #{tit.numeroParcela}
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{tit.valorTotal}" />
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{followUpSolicitacoesController.getDataConcilicacao(tit.numero)}">
+                                            <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{followUpSolicitacoesController.isTituloConciliado(tit.numero)}" />
+                                    </td>                                    
                                 </tr>
                             </ui:repeat>
                         </table>
@@ -874,7 +943,7 @@
                                             </h:commandButton>
                                         </td>
                                         <td align='center'>
-                                            <h:commandButton disabled="true" class="button-field" value="#{item.situacao}" rendered="#{item.situacao == 'OK'}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgOK')}" >
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field'" onmousemove="this.className = 'button-field-over'" value="#{item.situacao}" rendered="#{item.situacao == 'OK'}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgOK')}" >
                                                 <p:ajax oncomplete="dlgOK.show()" update=":dialogForm" />
                                             </h:commandButton>
                                         </td>

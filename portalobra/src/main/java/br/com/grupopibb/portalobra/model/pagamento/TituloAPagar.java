@@ -283,6 +283,10 @@ public class TituloAPagar implements EntityInterface<TituloAPagar> {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "Pag_DataLiberacao")
     private Date dataLiberacaoPagamento;
+    
+    public Float getValorTotal(){
+        return valorTitulo + acrescimos - descontos - descontoAdiantamento + multa + encargosFinanceiros;
+    }
 
     /**
      * Calcula a diferença de dias entre a data de vencimento e a data de

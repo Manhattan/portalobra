@@ -24,6 +24,7 @@ import br.com.grupopibb.portalobra.dao.materiais.MaterialEntradaFacade;
 import br.com.grupopibb.portalobra.dao.materiais.MaterialEntradaItensFacade;
 import br.com.grupopibb.portalobra.dao.materiais.MaterialSaidaFacade;
 import br.com.grupopibb.portalobra.dao.materiais.MaterialSaidaItensFacade;
+import br.com.grupopibb.portalobra.dao.pagamento.TituloAPagarFacade;
 import br.com.grupopibb.portalobra.dao.projeto.ProjetoPlanejamentoFacade;
 import br.com.grupopibb.portalobra.dao.solicitacaocompra.SolicitacaoCompraFacade;
 import br.com.grupopibb.portalobra.dao.solicitacaocompra.SolicitacaoCompraItemFacade;
@@ -134,6 +135,8 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     private ProjetoPlanejamentoFacade projPlanFacade;
     @EJB
     private OrcamentoBusiness orcamentoBusiness;
+    @EJB
+    private TituloAPagarFacade tituloAPagarFacade;
     //------------------------------
     private Funcionario funcionario;
     private Solicitante solicitante;
@@ -192,6 +195,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     private Boolean showDialogRA;
     private Boolean showDialogAA;
     private Boolean showDialogPG;
+    private Boolean showDialogOK;
     private Boolean showDialogKardex;
     private Boolean showDialogCentroCusto;
     private boolean showDialogAjuda = false;
@@ -348,6 +352,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         showDialogRA = null;
         showDialogAA = null;
         showDialogPG = null;
+        showDialogOK = null;
         showDialogKardex = null;
         showDialogCentroCusto = null;
         //----------------------------------------------
@@ -504,6 +509,14 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         if (dataFinal == null) {
             dataFinal = new Date();
         }
+    }
+
+    public String isTituloConciliado(int numeroTitulo) {
+        return tituloAPagarFacade.isTituloConciliado(numeroTitulo) ? "Sim" : "Não";
+    }
+
+    public Date getDataConcilicacao(int numeroTitulo) {
+        return tituloAPagarFacade.getDataConcilicacao(numeroTitulo);
     }
 
     /**
@@ -768,6 +781,10 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
             mountTitulosAPagar();
             changeDialogStatus(false);
             showDialogPG = true;
+        } else if (dialog.equals(getDialogOK())) {
+            mountTitulosAPagar();
+            changeDialogStatus(false);
+            showDialogOK = true;
         } else if (dialog.equals(getDialogKardex())) {
             changeDialogStatus(false);
             showDialogKardex = true;
@@ -811,6 +828,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         showDialogRA = status;
         showDialogAA = status;
         showDialogPG = status;
+        showDialogOK = status;
         showDialogKardex = status;
         showDialogCentroCusto = status;
         showDialogAjuda = status;
@@ -818,7 +836,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
 
     public boolean isShowingDialog() {
         if (showDialogInsumo || showDialogRS || showDialogCS || showDialogAS || showDialogAC || showDialogRP || showDialogAP
-                || showDialogENF || showDialogEMO || showDialogRA || showDialogAA || showDialogPG || showDialogKardex) {
+                || showDialogENF || showDialogEMO || showDialogRA || showDialogAA || showDialogPG || showDialogOK || showDialogKardex) {
             return true;
         } else {
             return false;
@@ -904,6 +922,10 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
 
     public Boolean getShowDialogPG() {
         return showDialogPG;
+    }
+
+    public Boolean getShowDialogOK() {
+        return showDialogOK;
     }
 
     public Boolean getShowDialogKardex() {
@@ -2819,6 +2841,11 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     /*Pagamento Dialog*/
     public String getDialogPG() {
         return "dlgPG";
+    }
+    
+    /*OK Dialog*/
+    public String getDialogOK() {
+        return "dlgOK";
     }
 
     /*Kardex do Material Dialog*/
