@@ -95,10 +95,14 @@
                                 #{msg.quantidade}
                             </th>
                             <th>
-                                #{msg.estoqueAtual}
+                                <h:outputText value="#{msg.estoqueAtual}">
+                                    <f:convertNumber maxFractionDigits="4" minFractionDigits="4" locale="pt-br" />
+                                </h:outputText>
                             </th>
                             <th title="#{msg.estoqueUsina}">
-                                #{msg.estoqueUsinaAbrev}
+                                <h:outputText value="#{msg.estoqueUsinaAbrev}">
+                                    <f:convertNumber maxFractionDigits="4" minFractionDigits="4" locale="pt-br" />
+                                </h:outputText>
                             </th>
                             <th style="width: 75px">
                                 <p:commandLink value="#{msg.dataEntrega}" oncomplete="dlgDataEntrega.show()" />
