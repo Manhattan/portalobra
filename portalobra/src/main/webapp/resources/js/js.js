@@ -453,3 +453,8 @@ function AtualizaData(campoData)
         campoData.value = campoData.value.substr(0, 6) + a + campoData.value.substr(6, 2);
     }
 }
+
+function solicitadoIgualSaldo(element)
+{
+    element.value = document.getElementById(element.id.substr(0, 46) + "saldoSolic").innerHTML;
+}

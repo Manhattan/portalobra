@@ -30,15 +30,15 @@
                                 <f:convertNumber maxFractionDigits="4" minFractionDigits="4" locale="pt-br" />
                             </h:outputText>
                         </p:column>
-                        
+
                         <p:column headerText="#{msg.solicitado}" style="background-color: #{root.backgroundColor}; width: 70px">
                             <pe:inputNumber id="inputValorSolicAtual" value="#{root.valorSolic}" decimalPlaces="4" onclick="this.select();"
                                             disabled="#{root.insumoCod == 0}" rendered="#{root.classeItem == 'IN' and orcamentoController.solicitacao}" 
-                                            maxValue="#{utilsController.somarNumerosPositivos(root.valorSaldo, root.valorSolic, 4)}"
+                                            maxValue="#{utilsController.somarNumerosPositivos(root.valorSaldo, root.valorSolic, 4)}" ondblclick="solicitadoIgualSaldo(this);"
                                             style="font-size: smaller; height: 10px; width: 70px; background: #{root.valorSolic == null or root.valorSolic > 0 ? 'blue' : 'white'}; color: #{root.valorSolic == null or root.valorSolic > 0 ? 'white' : '#585b57'}">
                                 <p:ajax listener="#{orcamentoController.getSomaValores()}" update=":form-solicitacao:form-orc:formOrc:btnOrcOk, :form-solicitacao:form-orc:formOrc:treeOrc:inputValorSolicAtual" /> 
                             </pe:inputNumber>
-                            
+
                             <h:outputText value="#{root.valorSolic}" rendered="#{root.valorSolic != null and root.classeItem == 'IN' and !orcamentoController.solicitacao}" style="color: #{root.valorSolic > 0 ? 'blue' : '#585b57'}; font-size: smaller">
                                 <f:convertNumber maxFractionDigits="4" minFractionDigits="4" locale="pt-br" />
                             </h:outputText>
