@@ -9,7 +9,7 @@
                 >
     <ui:param name="titulomenu" value="#{msg.solicitacoesCompra}" />
     <ui:define name="content" >
-        <h:panelGroup rendered="#{loginController.statusLogin == 0 or followUpSolicitacoesController.funcionario == null or followUpSolicitacoesController.funcionario.login == null}">
+        <h:panelGroup rendered="#{loginController.statusLogin == 0 or loginController.funcionario == null or loginController.funcionario.login == null}">
             <ui:include src="../semPermissao.xhtml" />
         </h:panelGroup>
         <h:panelGroup id="pngRelPed">
@@ -24,7 +24,7 @@
                         <h:outputText value="#{msg.codigo}:"/>
                         <h:outputText value="#{followUpSolicitacoesController.current.insumo.codigo}" />
                         <h:outputText value="#{msg.especificacao}:"/> 
-                        <h:outputText value="#{followUpSolicitacoesController.current.insumo.especificacao} "/>
+                        <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.especificacaoCompleta} "/>
                         <h:outputText value="#{msg.unidade}: "/>
                         <h:outputText value="#{followUpSolicitacoesController.current.insumo.unidade.unidade} "/>
                         <h:outputText value="#{msg.classe}: "/>
@@ -117,17 +117,17 @@
                         <h:outputText value="#{msg.usuarioRegistro}: " />
                         <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.usuarioInstrucaoEdit}"/>
                         <h:outputText value="#{msg.dataConclusao}: " />
-                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.dataConcluido}">
+                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.concluido eq 'S' ? followUpSolicitacoesController.current.coletaPreco.dataConcluido : ''}">
                             <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
                         </h:outputText>
                         <h:outputText value="#{msg.usuarioConclusao}: " />
-                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.usuarioConcluido}"/>
+                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.concluido eq 'S' ? followUpSolicitacoesController.current.coletaPreco.usuarioConcluido : ''}"/>
                         <h:outputText value="#{msg.dataAutorizacao}: "  />
-                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPrecoItem.instrucaoData}">
+                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPrecoItem.instrucaoCodigo != '' ? followUpSolicitacoesController.current.coletaPrecoItem.instrucaoData : ''}">
                             <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
                         </h:outputText>
                         <h:outputText value="#{msg.usuarioAutorizacao}: " />
-                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPrecoItem.usuarioInstrucao}"/>
+                        <h:outputText value="#{followUpSolicitacoesController.current.coletaPrecoItem.instrucaoCodigo != '' ? followUpSolicitacoesController.current.coletaPrecoItem.usuarioInstrucao : ''}"/>
                     </h:panelGrid>  
 
                     <h:panelGrid rendered="#{followUpSolicitacoesController.current.pedidoIDSis != null}" columns="2" style="margin-bottom:10px; border: 1px double #c3c3c3; width: 700px" border="3" columnClasses="itemColumEspaco">  
@@ -137,7 +137,7 @@
                         <h:outputText value="#{msg.numeroPedidoAbrev}: " />
                         <h:panelGroup>
                             <h:outputText value="#{followUpSolicitacoesController.current.pedidoIDSis} "/>
-                            (<p:commandLink disabled="#{followUpSolicitacoesController.current.situacao eq 'R'}" value="#{msg.imprimir}" oncomplete="dlgRelPed.show()" actionListener="#{pedidoController.initPedido(followUpSolicitacoesController.current.pedido)}" update=":pngRelPed" />)
+                            (<p:commandLink disabled="#{followUpSolicitacoesController.current.situacao eq 'R'}" rendered="#{followUpSolicitacoesController.current.pedido != null}" value="#{msg.imprimir}" oncomplete="dlgRelPed.show()" actionListener="#{pedidoController.initPedido(followUpSolicitacoesController.current.pedido)}" update=":pngRelPed" />)
                         </h:panelGroup>
                         <h:outputText value="#{msg.numeroItemAbrev}: " />
                         <h:outputText value="#{followUpSolicitacoesController.current.pedidoItem.itemNumero} "/>
@@ -191,7 +191,7 @@
             </p:dialog>
             <!--Dialog AP /-->
             <p:dialog header="#{msg.AP}" closeOnEscape="true" widgetVar="dlgAP" resizable="false" rendered="#{followUpSolicitacoesController.showDialogAP == true}">  
-                <h:form>  
+                <h:form >  
                     <table class="dialogtable" style="max-width: 500px">
                         <tr>
                             <td align='left'>
@@ -199,7 +199,7 @@
                             </td>
                             <td colspan="2" align='left'>
                                 #{followUpSolicitacoesController.current.pedidoIDSis}
-                                (<p:commandLink disabled="#{followUpSolicitacoesController.current.situacao eq 'R'}" value="#{msg.imprimir}" oncomplete="dlgRelPed.show()" actionListener="#{pedidoController.initPedido(followUpSolicitacoesController.current.pedido)}" update=":pngRelPed" />)
+                                (<p:commandLink disabled="#{followUpSolicitacoesController.current.situacao eq 'R'}" value="#{msg.imprimir}" oncomplete="dlgRelPed.show()" actionListener="#{pedidoController.initPedido(followUpSolicitacoesController.current.pedido)}" update=":pngRelPed" rendered="#{followUpSolicitacoesController.current.pedido.situacao != null}" />)
                             </td>
                         </tr>
                         <tr>
@@ -207,7 +207,7 @@
                                 #{msg.valorTotalItemAbrev}:
                             </td>
                             <td colspan="2" align='left'>
-                                #{followUpSolicitacoesController.current.pedidoItem.valorTotalItemFormatado}
+                                <h:outputText value="#{followUpSolicitacoesController.current.pedidoItem.valorTotalItemFormatado}" rendered="#{followUpSolicitacoesController.current.pedido.situacao != null}" />
                             </td>
                         </tr>
                         <tr>
@@ -215,7 +215,7 @@
                                 #{msg.fornecedor}
                             </td>
                             <td align='left' colspan="2">                    
-                                <h:commandLink class="button-field2" value="#{followUpSolicitacoesController.current.pedido.credor.razaoSocial}" style="text-align: left; text-decoration: none" >
+                                <h:commandLink class="button-field2" value="#{followUpSolicitacoesController.current.pedido.credor.razaoSocial}" style="text-align: left; text-decoration: none" rendered="#{followUpSolicitacoesController.current.pedido.situacao != null}">
                                     <p:ajax oncomplete="dlgFornecedor.show()" listener="#{credorController.initCurrent(followUpSolicitacoesController.current.pedido.credor)}" update=":menuApp:pnlFornecedor" />
                                 </h:commandLink>
                             </td>
@@ -230,7 +230,7 @@
                             <td></td>
                             <td><h:outputText value="#{msg.PENDENTE}" rendered="#{(followUpSolicitacoesController.current.pedido.situacao eq 'A' || followUpSolicitacoesController.current.pedido.situacao eq 'R') ? false : true}" /></td>
                         </tr>
-                        <ui:repeat value="#{followUpSolicitacoesController.pedidoAutorizantes}" var="aut" varStatus="a">
+                        <ui:repeat value="#{followUpSolicitacoesController.pedidoAutorizantes}" var="aut" varStatus="a" rendered="#{followUpSolicitacoesController.current.pedido.situacao != null}">
                             <tr>
                                 <td>#{aut.usuario}</td>
                                 <td>
@@ -610,7 +610,7 @@
             </h:panelGroup>
 
             <!-- ************************* FORM PRINCIPAL DO FOLLOWUP ************************************************************ /-->
-            <h:form id="formMain" rendered="#{loginController.statusLogin == 1 and followUpSolicitacoesController.funcionario != null and followUpSolicitacoesController.funcionario.login != null}">
+            <h:form id="formMain" rendered="#{loginController.statusLogin == 1 and loginController.funcionario != null and loginController.funcionario.login != null}">
                 <p:hotkey bind="return" update=":formMain" actionListener="#{followUpSolicitacoesController.pesquisa()}" global="false" />
                 <p:defaultCommand target="mainExecutarButton" />
                 <h:panelGroup id="panelFollowUp" >
@@ -757,24 +757,24 @@
                                         #{msg.pagamentoAbrev}
                                     </th>
                                     <th align='center' colspan="1" rowspan="2">
-                                        #{msg.okInterrog} <br/>
-                                        <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroOK}" />
+                                        <h:outputLabel value="#{msg.okInterrog}" title="#{msg.okInterrog}" for="chkOK" /> <br/>
+                                        <h:selectBooleanCheckbox id="chkOK" value="#{followUpSolicitacoesController.filtroOK}" />
                                     </th>
                                     <tr align='center'>
                                         <th>
                                             #{msg.data}
                                         </th>
                                         <th>
-                                            <h:outputText value="#{msg.situacaoCS}" title="#{msg.CS}" /><br/>
-                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroCS}" title="#{msg.CS}" />
+                                            <h:outputLabel value="#{msg.situacaoCS}" title="#{msg.CS}" for="chkCS" /><br/>
+                                            <h:selectBooleanCheckbox id="chkCS" value="#{followUpSolicitacoesController.filtroCS}" title="#{msg.CS}" />
                                         </th>
                                         <th>
-                                            <h:outputText value="#{msg.situacaoAS}" title="#{msg.AS}" /><br/>
-                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroAS}" title="#{msg.AS}" />
+                                            <h:outputLabel value="#{msg.situacaoAS}" title="#{msg.AS}" for="chkAS" /><br/>
+                                            <h:selectBooleanCheckbox id="chkAS" value="#{followUpSolicitacoesController.filtroAS}" title="#{msg.AS}" />
                                         </th>
                                         <th>
-                                            <h:outputText value="#{msg.situacaoCO}" title="#{msg.CO}" /><br/>
-                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroAC}" title="#{msg.CO}" />
+                                            <h:outputLabel value="#{msg.situacaoCO}" title="#{msg.CO}" for="chkCO" /><br/>
+                                            <h:selectBooleanCheckbox id="chkCO" value="#{followUpSolicitacoesController.filtroAC}" title="#{msg.CO}" />
                                         </th>
                                         <!--th>
                                             <h:outputText value="# {msg.situacaoRP}" title="# {msg.RP}" /><br/>
@@ -784,28 +784,28 @@
                                             <h:outputText value="# {msg.situacaoPE}" />
                                         </th!-->
                                         <th>
-                                            <h:outputText value="#{msg.situacaoAP}" title="#{msg.AP}" /><br/>
-                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroAP}" title="#{msg.AP}" />
+                                            <h:outputLabel value="#{msg.situacaoAP}" title="#{msg.AP}" for="chkAP" /><br/>
+                                            <h:selectBooleanCheckbox id="chkAP" value="#{followUpSolicitacoesController.filtroAP}" title="#{msg.AP}" />
                                         </th>
                                         <th>
-                                            <h:outputText value="#{msg.situacaoENF}" title="#{msg.ENF}" /><br/>
-                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroENF}" title="#{msg.ENF}" />
+                                            <h:outputLabel value="#{msg.situacaoENF}" title="#{msg.ENF}" for="chkENF" /><br/>
+                                            <h:selectBooleanCheckbox id="chkENF" value="#{followUpSolicitacoesController.filtroENF}" title="#{msg.ENF}" />
                                         </th>
                                         <th>
-                                            <h:outputText value="#{msg.situacaoEMO}" title="#{msg.EMO}" /><br/>
-                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroEMO}" title="#{msg.EMO}" />
+                                            <h:outputLabel value="#{msg.situacaoEMO}" title="#{msg.EMO}" for="chkEMO" /><br/>
+                                            <h:selectBooleanCheckbox id="chkEMO" value="#{followUpSolicitacoesController.filtroEMO}" title="#{msg.EMO}" />
                                         </th>
                                         <th>
-                                            <h:outputText value="#{msg.situacaoRA}" title="#{msg.RA}" /><br/>
-                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroRA}" title="#{msg.RA}" />
+                                            <h:outputLabel value="#{msg.situacaoRA}" title="#{msg.RA}" for="chkRA" /><br/>
+                                            <h:selectBooleanCheckbox id="chkRA" value="#{followUpSolicitacoesController.filtroRA}" title="#{msg.RA}" />
                                         </th>
                                         <th>
-                                            <h:outputText value="#{msg.situacaoAA}" title="#{msg.AA}" /><br/>
-                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroAA}" title="#{msg.AA}" />
+                                            <h:outputLabel value="#{msg.situacaoAA}" title="#{msg.AA}" for="chkAA" /><br/>
+                                            <h:selectBooleanCheckbox id="chkAA" value="#{followUpSolicitacoesController.filtroAA}" title="#{msg.AA}" />
                                         </th>
                                         <th>
-                                            <h:outputText value="#{msg.situacaoPG}" title="#{msg.PG}" /><br/>
-                                            <h:selectBooleanCheckbox value="#{followUpSolicitacoesController.filtroPG}" title="#{msg.PG}" />
+                                            <h:outputLabel value="#{msg.situacaoPG}" title="#{msg.PG}" for="chkPG" /><br/>
+                                            <h:selectBooleanCheckbox id="chkPG" value="#{followUpSolicitacoesController.filtroPG}" title="#{msg.PG}" />
                                         </th>
                                     </tr>
 
@@ -868,7 +868,7 @@
                                             </h:outputText>
                                         </td>
                                         <td align='right'>
-                                            <h:commandButton value="#{insumoController.getValorOrcadoCentro(item.insumo, item.centro)}" class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" style="text-align: right;" >
+                                            <h:commandButton value="#{insumoController.getValorOrcado(item.insumo)}" class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" style="text-align: right;" >
                                                 <p:ajax oncomplete="dlgOrc.show()" listener="#{orcamentoController.openOrcamentoGrid(item.solicitacaoCompraItem, false)}" update=":panelOrc" />
                                             </h:commandButton>
                                         </td>

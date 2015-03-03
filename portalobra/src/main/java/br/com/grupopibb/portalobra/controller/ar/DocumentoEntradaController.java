@@ -167,7 +167,7 @@ public class DocumentoEntradaController extends EntityController<DocumentoEntrad
      */
     private void initAvisoRecebimento() {
         if (this.avisoRecebimento == null) {
-            avisoRecebimento = new AvisoRecebimento(0L, 0, new Date(), centroSelecionado, credor, EnumsGeral.N, "", "NR", EnumTipoEntrada.SM.toString());
+            avisoRecebimento = new AvisoRecebimento(0L, 0, new Date(), loginController.getCentroSelecionado(), credor, EnumsGeral.N, "", "NR", EnumTipoEntrada.SM.toString());
         }
     }
 
@@ -661,8 +661,8 @@ public class DocumentoEntradaController extends EntityController<DocumentoEntrad
      * partir da tabela de Sequenciais.
      */
     private void mountCurrentAR() {
-        current.getAvisoRecebimento().rebuildFields(0L, centroSelecionado, current.getCredor(), EnumsGeral.N, current.getObservacao(), "NR", "SM");
-        current.getAvisoRecebimento().setIdSistema(avisoRecebimentoFacade.findMaxCentroNumero(centroSelecionado));
+        current.getAvisoRecebimento().rebuildFields(0L, loginController.getCentroSelecionado(), current.getCredor(), EnumsGeral.N, current.getObservacao(), "NR", "SM");
+        current.getAvisoRecebimento().setIdSistema(avisoRecebimentoFacade.findMaxCentroNumero(loginController.getCentroSelecionado()));
         Long sequencial = sequenciaisFacade.getSequencialAvisoRecebimento().getNumero().longValue();
         while (current.getAvisoRecebimento().getNumero() <= sequencial) {
             current.getAvisoRecebimento().setNumero(sequencial + 1L);

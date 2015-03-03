@@ -32,7 +32,7 @@ public final class DateUtils {
     public static void addMonths(Date date, int i) {
         date = set(date, Calendar.MONTH, getMonth(date) + i);
     }
-    
+
     /**
      * Adiciona dia(s) a uma data especifica.
      *
@@ -180,7 +180,11 @@ public final class DateUtils {
      * @return
      */
     public static String getDataFormatada(String pattern, Date data) {
-        return getFormatter(pattern).format(data);
+        try {
+            return getFormatter(pattern).format(data);
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     /**
@@ -747,23 +751,14 @@ public final class DateUtils {
      *
      * @param refDate
      * @return
-     
+     *
+     * public static String getYearMonth(Date refDate) { if (refDate != null) {
+     * String year = Integer.valueOf(getDataFormatada("YYYY", refDate)) + "";
+     * int month = getMonth(refDate); if (month == 13) { month = 1; } return
+     * year + StringUtils.right("0" + month, 2); } else { return null; } }
+     */
     public static String getYearMonth(Date refDate) {
-        if (refDate != null) {
-            String year = Integer.valueOf(getDataFormatada("YYYY", refDate)) + "";
-            int month = getMonth(refDate);
-            if (month == 13) {
-                month = 1;
-            }
-            return year + StringUtils.right("0" + month, 2);
-        } else {
-            return null;
-        }
-    }
-    */
-    
-    public static String getYearMonth(Date refDate){
-       // refDate = addDays(refDate, 1);
+        // refDate = addDays(refDate, 1);
         return getDataFormatada("YYYYMM", refDate);
     }
 }

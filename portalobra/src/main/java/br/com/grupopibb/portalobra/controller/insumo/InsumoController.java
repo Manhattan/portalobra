@@ -4,6 +4,7 @@
  */
 package br.com.grupopibb.portalobra.controller.insumo;
 
+import br.com.grupopibb.portalobra.acesso.controller.LoginController;
 import br.com.grupopibb.portalobra.controller.common.EntityController;
 import br.com.grupopibb.portalobra.controller.common.EntityPagination;
 import br.com.grupopibb.portalobra.dao.followup.FollowUpSolicitacoesFacade;
@@ -26,6 +27,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
@@ -66,14 +68,17 @@ public class InsumoController extends EntityController<Insumo> implements Serial
     private List<Long> insumosSelecionados;
     //---------------------------------------------------
     private Insumo current;
-    private CentroCusto centroSelecionado;
     private boolean obraLinkadaOrcamento = false;
-    private boolean desconsideraLinkOrcamento = false;
-    private int projCod = 0;
-    private int orcCod = 0;
-    private int planCod = 0;
+    private boolean desconsideraLinkOrcamento = true;
     //---------------------------------------------------
     private int registrosPorPagina = 10;
+    //----------------------------------------------
+    @ManagedProperty(value = "#{loginController}")
+    private LoginController loginController;
+
+    public void setLoginController(LoginController loginContronller) {
+        this.loginController = loginContronller;
+    }
 
     /**
      * Executado após o bean JSF ser criado.
@@ -121,20 +126,9 @@ public class InsumoController extends EntityController<Insumo> implements Serial
     public boolean isObraLinkadaOrcamento() {
         return obraLinkadaOrcamento;
     }
-    
-    public boolean isDesconsideraLinkOrcamento(){
-        return desconsideraLinkOrcamento;
-    }
 
-    /**
-     * Pesquisa o valor orçado a realizar de um determinado insumo em um centro
-     * de custo.
-     *
-     * @param insumo Insumo a ser calculado o saldo a realizar.
-     * @return Saldo orçado a realizar.
-     */
-    public String getValorOrcado(Insumo insumo) {
-        return NumberUtils.formatDecimal(projPlanFacade.getValorOrc(projCod, orcCod, planCod, insumo.getCodigo().intValue()), 4);
+    public boolean isDesconsideraLinkOrcamento() {
+        return desconsideraLinkOrcamento;
     }
 
     /**
@@ -146,51 +140,52 @@ public class InsumoController extends EntityController<Insumo> implements Serial
      * @return Saldo orçado a realizar.
      */
     public String getValorOrcadoCentro(Insumo insumo, CentroCusto centro) {
-        if (projCod == 0) {
-            initCentroSelecionado(centro); 
-        }
-        return NumberUtils.formatDecimal(projPlanFacade.getValorOrc(projCod, orcCod, planCod, insumo.getCodigo().intValue()), 4);
+        return NumberUtils.formatDecimal(projPlanFacade.getValorOrc(centro.getProjCod(), centro.getOrcCod(), centro.getPlanCod(), insumo.getCodigo().intValue()), 4);
     }
 
     /**
-     * Inicia o insumoController com o centro de custo atual do loginController.
+     * Pesquisa o valor orçado a realizar de um determinado insumo no centro de
+     * custo atual.
      *
-     * @param centro Centro de custo atual.
+     * @param insumo Insumo a ser calculado o saldo a realizar.
+     * @return Saldo orçado a realizar.
      */
-    public void initCentroSelecionado(CentroCusto centro) {
-        this.centroSelecionado = centro;
-        this.obraLinkadaOrcamento = projPlanFacade.isCentroLinkOrcamento(centroSelecionado);
-        this.projCod = projPlanFacade.findProjetoCod(centro).get("ProjCod");
-        this.orcCod = projPlanFacade.findProjetoCod(centro).get("OrcCod");
-        this.planCod = projPlanFacade.findProjetoCod(centro).get("PlanCod");
+    public String getValorOrcado(Insumo insumo) {
+        try {
+            return NumberUtils.formatDecimal(projPlanFacade.getValorOrc(loginController.getCentroSelecionado().getProjCod(), loginController.getCentroSelecionado().getOrcCod(), loginController.getCentroSelecionado().getPlanCod(), insumo.getCodigo().intValue()), 4);
+        } catch (NullPointerException e) {
+            return "";
+        }
     }
+
 
     /**
      * Pesquisa a quantidade orçada a realizar de um Insumo no centro de custo
-     * atual selecionado.
+     * atual selecionado dentro da tabela de FollowUp das Solicitações de
+     * Compra.
      *
      * @param insumo
      * @return Quantidade orçada a realizar.
      */
     public Double getQuantidadeOrcamento(Insumo insumo) {
-        if (centroSelecionado != null && insumo != null && insumo.getCodigo() != null) {
-            return NumberUtils.isNull(followUpSolicitacoesFacade.findQuantidadeOrcamentoByInsumo(centroSelecionado, insumo.getCodigo()), 0.0);
+        if (loginController.getCentroSelecionado() != null && insumo != null && insumo.getCodigo() != null) {
+            return NumberUtils.isNull(followUpSolicitacoesFacade.findQuantidadeOrcamentoByInsumo(loginController.getCentroSelecionado(), insumo.getCodigo()), 0.0);
         } else {
             return 0.0;
         }
     }
-    
+
     /**
-     * 
+     *
      */
-    public void desconsiderarLinkOrcamento(){
+    public void desconsiderarLinkOrcamento() {
         this.desconsideraLinkOrcamento = true;
     }
-    
-    public void considerarLinkOrcamento(){
+
+    public void considerarLinkOrcamento() {
         this.desconsideraLinkOrcamento = false;
     }
- 
+
     @Override
     public EntityPagination getPagination() {
         if (pagination == null) {
@@ -201,12 +196,20 @@ public class InsumoController extends EntityController<Insumo> implements Serial
 
                 @Override
                 public int getItemsCount() {
-                    return getFacade().countParam(filtroSolicInsumoCod, filtroSolicInsumoEspec, codigoCarac, codigoClasse, codigoGrupo, obraLinkadaOrcamento, desconsideraLinkOrcamento, planCod).intValue();
+                    try {
+                        return getFacade().countParam(filtroSolicInsumoCod, filtroSolicInsumoEspec, codigoCarac, codigoClasse, codigoGrupo, obraLinkadaOrcamento, desconsideraLinkOrcamento, loginController.getCentroSelecionado().getPlanCod()).intValue();
+                    } catch (NullPointerException e) {
+                        return 0;
+                    }
                 }
 
                 @Override
                 public DataModel createPageDataModel() {
-                    return new ListDataModel(getFacade().findRangeParam(filtroSolicInsumoCod, filtroSolicInsumoEspec, codigoCarac, codigoClasse, codigoGrupo, obraLinkadaOrcamento, desconsideraLinkOrcamento, planCod, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    try {
+                        return new ListDataModel(getFacade().findRangeParam(loginController.getCentroSelecionado(), filtroSolicInsumoCod, filtroSolicInsumoEspec, codigoCarac, codigoClasse, codigoGrupo, obraLinkadaOrcamento, desconsideraLinkOrcamento, loginController.getCentroSelecionado().getPlanCod(), new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    } catch (NullPointerException e) {
+                        return null;
+                    }
                 }
             };
         }
@@ -232,7 +235,7 @@ public class InsumoController extends EntityController<Insumo> implements Serial
     }
 
     public void addOrRemoveInsumo(Long codigoInsumo, boolean marcado) {
-        projPlanFacade.findProjetoCod(centroSelecionado);
+        projPlanFacade.findProjetoCod(loginController.getCentroSelecionado());
         if (insumosSelecionados == null) {
             insumosSelecionados = new ArrayList<>();
         }

@@ -84,7 +84,7 @@
                         </p:confirmDialog>
                     </h:panelGroup>
 
-                    <p:commandButton id="btnPesquisarMatSai" update=":panelSaidaMaterialP" icon="ui-icon-search" value="#{msg.pesquisar}" actionListener="#{materialSaidaController.initCentroSelecionado(loginController.centroSelecionado)}" oncomplete="dlgMatSai.show()" style="margin-right: 10px" />
+                    <p:commandButton id="btnPesquisarMatSai" update=":panelSaidaMaterialP" icon="ui-icon-search" value="#{msg.pesquisar}" oncomplete="dlgMatSai.show()" style="margin-right: 10px" />
                     <p:commandButton id="cancelarSaidaMaterial" value="#{msg.cancelar}" style="width: 95px" icon="ui-icon-cancel" update=":panelMain, :panelMain" actionListener="#{followUpSolicitacoesController.limparMovimentacaoMaterial()}" oncomplete="#{insumoController.limparInsumos()}" />
                     <p:commandButton id="btnConfirmarMatSai" value="#{msg.ok}" style="width: 95px;" update=":panelMain" oncomplete="#{insumoController.limparInsumos()}" icon="ui-icon-circle-check" disabled="#{!followUpSolicitacoesController.enableInsercaoMatSaida}"  actionListener="#{followUpSolicitacoesController.createOrEditMovimentacaoSaida()}" action="#{materialSaidaController.clean()}" />
                 </h:panelGrid>
@@ -134,11 +134,10 @@
                                     #{mi.insumo.unidade.codigo}
                                 </td>
                                 <td>
-                                    <pe:inputNumber id="quantidadeSaidaInsert" rendered="#{followUpSolicitacoesController.newMovSaida}"  value="#{mi.quantidade}" style="width: 70px" decimalPlaces="4" maxValue="#{followUpSolicitacoesController.getEstoqueAtual(mi.insumo)}" />
-                                    <pe:inputNumber id="quantidadeSaidaEdit"   rendered="#{!followUpSolicitacoesController.newMovSaida}" value="#{mi.quantidade}" style="width: 70px" decimalPlaces="4" maxValue="#{followUpSolicitacoesController.getEstoqueAtualPositivo(mi.insumo) + mi.quantidade}" />
+                                    <pe:inputNumber id="qtdSaida" value="#{mi.quantidade}" style="width: 70px" decimalPlaces="4" maxValue="#{followUpSolicitacoesController.getLimiteMovSaida(mi)}" />
                                 </td>
                                 <td align='center'>
-                                    <h:outputText id="estoqueDisp" value="#{followUpSolicitacoesController.getEstoqueAtualPositivo(mi.insumo) + mi.quantidade}">
+                                    <h:outputText id="estoqueDisp" value="#{followUpSolicitacoesController.getLimiteMovSaida(mi)}">
                                         <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
                                     </h:outputText>
                                 </td>

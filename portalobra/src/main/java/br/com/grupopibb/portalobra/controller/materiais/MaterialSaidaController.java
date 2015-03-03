@@ -4,6 +4,7 @@
  */
 package br.com.grupopibb.portalobra.controller.materiais;
 
+import br.com.grupopibb.portalobra.acesso.controller.LoginController;
 import br.com.grupopibb.portalobra.controller.common.EntityController;
 import br.com.grupopibb.portalobra.controller.common.EntityPagination;
 import br.com.grupopibb.portalobra.dao.geral.CentroCustoFacade;
@@ -24,6 +25,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
@@ -45,7 +47,6 @@ public class MaterialSaidaController extends EntityController<MaterialSaida> imp
     @EJB
     private CentroCustoFacade centroCustoFacade;
     private MaterialSaida current;
-    private CentroCusto centroSelecionado;
     private Date dataInicial;
     private Date dataFinal;
     private Long numeroSaida;
@@ -59,6 +60,14 @@ public class MaterialSaidaController extends EntityController<MaterialSaida> imp
     private List<MaterialSaidaItens> selecionadosT;
 //-------------------------------
     private boolean transfMarcado = false;
+    //----------------------------------------------
+    @ManagedProperty(value = "#{loginController}")
+    private LoginController loginController;
+
+    public void setLoginController(LoginController loginContronller) {
+        this.loginController = loginContronller;
+    }
+
     /**
      * Executado após o bean JSF ser criado.
      */
@@ -90,12 +99,12 @@ public class MaterialSaidaController extends EntityController<MaterialSaida> imp
             pagination = new EntityPagination(15) {
                 @Override
                 public int getItemsCount() {
-                    return getFacade().countParam(centroSelecionado, numeroSaida, dataInicial, dataFinal, insumoCod, especificacao).intValue();
+                    return getFacade().countParam(loginController.getCentroSelecionado(), numeroSaida, dataInicial, dataFinal, insumoCod, especificacao).intValue();
                 }
 
                 @Override
                 public DataModel createPageDataModel() {
-                    return new ListDataModel(getFacade().findRangeParam(centroSelecionado, numeroSaida, dataInicial, dataFinal, insumoCod, especificacao, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    return new ListDataModel(getFacade().findRangeParam(loginController.getCentroSelecionado(), numeroSaida, dataInicial, dataFinal, insumoCod, especificacao, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
                 }
             };
         }
@@ -145,11 +154,11 @@ public class MaterialSaidaController extends EntityController<MaterialSaida> imp
         if (selecionadosT != null) {
             selecionadosT.clear();
         }
-        transferencias = materialSaidaItensFacade.findTransferencias(centroOrigemT, centroSelecionado, docNumeroT, saidaDataT);
+        transferencias = materialSaidaItensFacade.findTransferencias(centroOrigemT, loginController.getCentroSelecionado(), docNumeroT, saidaDataT);
     }
-    
-    public void transfMarcado(){
-        for (MaterialSaidaItens item : getTransferencias()){
+
+    public void transfMarcado() {
+        for (MaterialSaidaItens item : getTransferencias()) {
             item.setMarcado(transfMarcado);
             addOrRemoveItemT(item);
         }
@@ -203,18 +212,6 @@ public class MaterialSaidaController extends EntityController<MaterialSaida> imp
     }
 
     /**
-     * Inicia o centro de custo atual utilizado para as consultas e inserções
-     * desse controller.
-     *
-     * @param centroSelecionado Centro de Custo que está selecionado no
-     * loginController.
-     */
-    public void initCentroSelecionado(CentroCusto centroSelecionado) {
-        this.centroSelecionado = centroSelecionado;
-        recreateTable();
-    }
-
-    /**
      * SelectItem[] com os tipos de sistema de origem de saidas: SIMAT e SISUP.
      *
      * @return SelectItem[]{SISUP, SIMAT}
@@ -249,14 +246,6 @@ public class MaterialSaidaController extends EntityController<MaterialSaida> imp
 
     public void setCurrent(MaterialSaida current) {
         this.current = current;
-    }
-
-    public CentroCusto getCentroSelecionado() {
-        return centroSelecionado;
-    }
-
-    public void setCentroSelecionado(CentroCusto centroSelecionado) {
-        this.centroSelecionado = centroSelecionado;
     }
 
     public Date getDataInicial() {

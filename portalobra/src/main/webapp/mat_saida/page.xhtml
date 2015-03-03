@@ -9,12 +9,12 @@
 
     <f:subview id="form-mat-sai">
         <p:dialog widgetVar="dlgMatSai" resizable="false" styleClass="dialog" header="#{msg.saidaMateriais}" closeOnEscape="true" >
-            <p:panel id="dialogPanelMatSai" style="margin-right: 0px; width: auto" rendered="#{materialSaidaController.centroSelecionado != null}">
+            <p:panel id="dialogPanelMatSai" style="margin-right: 0px; width: auto" rendered="#{loginController.centroSelecionado != null}">
                 <h:form id="formMatSai">
                     <h:panelGrid columns="2">
                         <h:outputText value="#{msg.centroNegocioAbrev}:" style="font-weight: bold" />
                         <h:outputText value="#{msg.periodoSaidas}:" style="font-weight: bold" />
-                        <p:inputText value="#{materialSaidaController.centroSelecionado.nomeCompleto}" readonly="true"  style="width: 90%" />
+                        <p:inputText value="#{loginController.centroSelecionado.nomeCompleto}" readonly="true"  style="width: 90%" />
                         <h:panelGroup>
                             <p:calendar  value="#{materialSaidaController.dataInicial}" size="11" maxlength="10"  id="dataInicialMatSai" 
                                          onkeypress="AtalhoData(event, this)" onchange="AtualizaData(this)"

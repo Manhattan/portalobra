@@ -4,6 +4,7 @@
  */
 package br.com.grupopibb.portalobra.controller.materiais;
 
+import br.com.grupopibb.portalobra.acesso.controller.LoginController;
 import br.com.grupopibb.portalobra.business.materiais.EstoqueBusiness;
 import br.com.grupopibb.portalobra.business.solicitacaocompra.SolicitacaoCompraBusiness;
 import br.com.grupopibb.portalobra.controller.common.EntityController;
@@ -33,6 +34,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
@@ -63,7 +65,6 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
     private String insumoCod;
     private Date mesAno;
     private int registrosPorPagina = 20;
-    private CentroCusto centroSelecionado;
     private boolean modoSimples = false;
     private SelectItem[] insumoClasseSelect;
     private SelectItem[] insumoGrupoSelect;
@@ -73,6 +74,13 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
     private CaracterizacaoInsumos filtroCaracInsumo;
     private EnumOrderMatEstField orderBy;
     private String valorTotal;
+    //----------------------------------------------
+    @ManagedProperty(value = "#{loginController}")
+    private LoginController loginController;
+
+    public void setLoginController(LoginController loginContronller) {
+        this.loginController = loginContronller;
+    }
 
     /**
      * Executado após o bean JSF ser criado.
@@ -82,16 +90,15 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
         //  mesAno = new Date();
     }
 
+    private void initMesAno() {
+        mesAno = mesAno == null ? new Date() : mesAno;
+    }
+
     /**
      * Executado antes do bean JSF ser destruído.
      */
     @PreDestroy
     public void end() {
-    }
-
-    public void initCentroSelecionado(CentroCusto centroSelecionado) {
-        this.centroSelecionado = centroSelecionado;
-        mesAno = DateUtils.zerarHora(new Date());
     }
 
     @Override
@@ -105,10 +112,12 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
     }
 
     public String getDataSaldoInicial() {
+        initMesAno();
         return DateUtils.getDataFormatada("dd/MM/yyyy", DateUtils.toFirstDate(DateUtils.addDays(mesAno, 1)));
     }
 
     public String getDataSaldoFinal() {
+        initMesAno();
         return DateUtils.getDataFormatada("dd/MM/yyyy", DateUtils.toLastDate(DateUtils.addDays(mesAno, 1)));
     }
 
@@ -143,14 +152,18 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
      * @return Valor encontrado formatado como moeda.
      */
     public String getValorTotal() {
-        if (valorTotal == null) {
-            valorTotal = NumberUtils.formatCurrencyNoSymbol(getFacade().findValorTotal(centroSelecionado, mesAno));
+        try {
+            if (valorTotal == null) {
+                valorTotal = NumberUtils.formatCurrencyNoSymbol(getFacade().findValorTotal(loginController.getCentroSelecionado(), mesAno));
+            }
+        } catch (NullPointerException e) {
+            valorTotal = "0,0000";
         }
         return valorTotal;
     }
 
     public Double getTotalCompras(Insumo insumo) {
-        return solicitacaoCompraBusiness.getTotalComprasInsumo(centroSelecionado, insumo);
+        return solicitacaoCompraBusiness.getTotalComprasInsumo(loginController.getCentroSelecionado(), insumo);
     }
 
     /**
@@ -169,10 +182,10 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
         estoqueBusiness.mountKardex(item, DateUtils.addDays(mesAno, 1));
         this.current = item;
     }
-    
-    public void atualizaSaldo(){
+
+    public void atualizaSaldo() {
         try {
-            estoqueBusiness.atualizaSaldoMaterial(centroSelecionado, new Date(), null);
+            estoqueBusiness.atualizaSaldoMaterial(loginController.getCentroSelecionado(), new Date(), null);
             getFacade().clearCache();
             recreateTable();
         } catch (SQLException ex) {
@@ -218,14 +231,14 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
                 @Override
                 public int getItemsCount() {
                     if (itensCount == 0) {
-                        itensCount = getFacade().pesqCount(centroSelecionado, insumoCod, mesAno, filtroCaracInsumo, filtroClasseInsumo, filtroGrupoInsumo).intValue();
+                        itensCount = getFacade().pesqCount(loginController.getCentroSelecionado(), insumoCod, mesAno, filtroCaracInsumo, filtroClasseInsumo, filtroGrupoInsumo).intValue();
                     }
                     return itensCount;
                 }
 
                 @Override
                 public DataModel createPageDataModel() {
-                    return new ListDataModel(getFacade().listPesqParamRange(centroSelecionado, insumoCod, mesAno, filtroCaracInsumo, filtroClasseInsumo, filtroGrupoInsumo, orderBy, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    return new ListDataModel(getFacade().listPesqParamRange(loginController.getCentroSelecionado(), insumoCod, mesAno, filtroCaracInsumo, filtroClasseInsumo, filtroGrupoInsumo, orderBy, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
                 }
             };
         }
@@ -254,14 +267,6 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
 
     public void setRegistrosPorPagina(int registrosPorPagina) {
         this.registrosPorPagina = registrosPorPagina;
-    }
-
-    public CentroCusto getCentroSelecionado() {
-        return centroSelecionado;
-    }
-
-    public void setCentroSelecionado(CentroCusto centroSelecionado) {
-        this.centroSelecionado = centroSelecionado;
     }
 
     public MateriaisEstoque getCurrent() {

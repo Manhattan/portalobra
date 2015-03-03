@@ -19,7 +19,7 @@
                 <h:outputText value="#{msg.senha}:" styleClass="textLabel" />
                 <p:password value="#{loginController.senha}" required="true" style="padding: 6px 4px 6px 3px; color: #7D0000; font-size: 16px; width: 100%; margin-bottom: 4px;"/>
 
-                <p:commandButton id="btnLogin" action="#{followUpSolicitacoesController.initFuncionario(loginController.performLogin, loginController.statusLogin)}" 
+                <p:commandButton id="btnLogin" action="followup" actionListener="#{loginController.performLogin()}"
                                  update="btnLogin" value="#{msg.entrar}" styleClass="btnLogin" />
             </h:panelGrid>
         </h:form>

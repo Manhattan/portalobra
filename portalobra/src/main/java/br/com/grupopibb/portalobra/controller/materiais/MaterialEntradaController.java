@@ -4,10 +4,10 @@
  */
 package br.com.grupopibb.portalobra.controller.materiais;
 
+import br.com.grupopibb.portalobra.acesso.controller.LoginController;
 import br.com.grupopibb.portalobra.controller.common.EntityController;
 import br.com.grupopibb.portalobra.controller.common.EntityPagination;
 import br.com.grupopibb.portalobra.dao.materiais.MaterialEntradaFacade;
-import br.com.grupopibb.portalobra.model.geral.CentroCusto;
 import br.com.grupopibb.portalobra.model.materiais.MaterialEntrada;
 import br.com.grupopibb.portalobra.model.tipos.EnumSistemaOrigemEstoque;
 import br.com.grupopibb.portalobra.utils.DateUtils;
@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
@@ -36,13 +37,19 @@ public class MaterialEntradaController extends EntityController<MaterialEntrada>
     @EJB
     private MaterialEntradaFacade materialEntradaFacade;
     private MaterialEntrada current;
-    private CentroCusto centroSelecionado;
     private Date dataInicial;
     private Date dataFinal;
     private Long numeroEntrada;
     private Long insumoCod;
     private EnumSistemaOrigemEstoque origem = EnumSistemaOrigemEstoque.SIMAT;
     private String especificacao;
+    //----------------------------------------------
+    @ManagedProperty(value = "#{loginController}")
+    private LoginController loginController;
+
+    public void setLoginController(LoginController loginContronller) {
+        this.loginController = loginContronller;
+    }
 
     /**
      * Executado após o bean JSF ser criado.
@@ -70,12 +77,12 @@ public class MaterialEntradaController extends EntityController<MaterialEntrada>
             pagination = new EntityPagination(15) {
                 @Override
                 public int getItemsCount() {
-                    return getFacade().countParam(centroSelecionado, numeroEntrada, dataInicial, dataFinal, origem, insumoCod, especificacao).intValue();
+                    return getFacade().countParam(loginController.getCentroSelecionado(), numeroEntrada, dataInicial, dataFinal, origem, insumoCod, especificacao).intValue();
                 }
 
                 @Override
                 public DataModel createPageDataModel() {
-                    return new ListDataModel(getFacade().findRangeParam(centroSelecionado, numeroEntrada, dataInicial, dataFinal, origem, insumoCod, especificacao, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    return new ListDataModel(getFacade().findRangeParam(loginController.getCentroSelecionado(), numeroEntrada, dataInicial, dataFinal, origem, insumoCod, especificacao, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
                 }
             };
         }
@@ -142,18 +149,6 @@ public class MaterialEntradaController extends EntityController<MaterialEntrada>
         }
     }
 
-    /**
-     * Inicia o centro de custo atual utilizado para as consultas e inserções
-     * desse controller.
-     *
-     * @param centroSelecionado Centro de Custo que está selecionado no
-     * loginController.
-     */
-    public void initCentroSelecionado(CentroCusto centroSelecionado) {
-        this.centroSelecionado = centroSelecionado;
-        recreateTable();
-    }
-
     public SelectItem[] getOrigemSelect() {
         return JsfUtil.getEnumSelectItems(EnumSistemaOrigemEstoque.class, false, FacesContext.getCurrentInstance());
     }
@@ -164,14 +159,6 @@ public class MaterialEntradaController extends EntityController<MaterialEntrada>
 
     public void setCurrent(MaterialEntrada current) {
         this.current = current;
-    }
-
-    public CentroCusto getCentroSelecionado() {
-        return centroSelecionado;
-    }
-
-    public void setCentroSelecionado(CentroCusto centroSelecionado) {
-        this.centroSelecionado = centroSelecionado;
     }
 
     public Date getDataInicial() {
@@ -223,8 +210,7 @@ public class MaterialEntradaController extends EntityController<MaterialEntrada>
     }
 
     /**
-     * Limpa o cache da tabela do MaterialEntradaController da request
-     * atual.
+     * Limpa o cache da tabela do MaterialEntradaController da request atual.
      */
     public void updateDataModel() {
         clean();

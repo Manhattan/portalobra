@@ -22,7 +22,7 @@
                         <p:commandButton style="width: 300px; text-align: left; background-color: #fbfcfc;" value="#{c.nomeCompleto}" action="#{loginController.mudaCentro(c, cc.attrs.pageRender)}" oncomplete="#{cc.attrs.entityBean.recreateTable()}">
                             <f:ajax render="#{cc.attrs.formName}" immediate="true" />
                         </p:commandButton> <br/>
-                    </ui:repeat>                   
+                    </ui:repeat>    
                 </h:form>
             </p:dialog>
         </h:panelGroup>

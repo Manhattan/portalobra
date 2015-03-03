@@ -9,12 +9,12 @@
 
     <f:subview id="form-mat-ent">
         <p:dialog widgetVar="dlgMatEnt" resizable="false" styleClass="dialog" header="#{msg.entradaMateriais}" closeOnEscape="true" >
-            <p:panel id="dialogPanelMatEnt" style="margin-right: 0px; width: auto" rendered="#{materialEntradaController.centroSelecionado != null}">
+            <p:panel id="dialogPanelMatEnt" style="margin-right: 0px; width: auto" rendered="#{loginController.centroSelecionado != null}">
                 <h:form id="formMatEnt">
                     <h:panelGrid columns="2">
                         <h:outputText value="#{msg.centroNegocioAbrev}:" style="font-weight: bold" />
                         <h:outputText value="#{msg.periodoEntradas}:" style="font-weight: bold" />
-                        <p:inputText value="#{materialEntradaController.centroSelecionado.nomeCompleto}" readonly="true"  style="width: 90%" />
+                        <p:inputText value="#{loginController.centroSelecionado.nomeCompleto}" readonly="true"  style="width: 90%" />
                         <h:panelGroup>
                             <p:calendar  value="#{materialEntradaController.dataInicial}" size="11" maxlength="10"  id="dataInicialMatEnt"
                                          title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"

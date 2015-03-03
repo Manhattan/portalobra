@@ -49,7 +49,6 @@ public class CredorController extends EntityController<Credor> implements Serial
     private boolean semEspecificidade;
     private String cidade;
     private String estado;
-    private CentroCusto centroSelecionado;
 
     /**
      * Executado após o bean JSF ser criado.
@@ -89,18 +88,6 @@ public class CredorController extends EntityController<Credor> implements Serial
      */
     public void initCurrent(Credor credor) {
         this.current = credor;
-    }
-
-    /**
-     * Inicia o centro de custo atual do loginController no controller atual.
-     *
-     * @param centroSelecionado Centro de custo atual do loginController.
-     */
-    public void initCentroSelecionario(CentroCusto centroSelecionado) {
-        this.centroSelecionado = centroSelecionado;
-        if (centroSelecionado != null) {
-            this.estado = centroSelecionado.getEstado();
-        }
     }
 
     /**

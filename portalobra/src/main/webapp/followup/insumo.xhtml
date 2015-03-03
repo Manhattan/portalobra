@@ -93,7 +93,7 @@
                                     <td><h:outputText value="#{ins.caracterizacaoInsumo.grupoInsumos.tituloAbreviado}" /></td>
                                     <td><h:outputText value="#{ins.caracterizacaoInsumo.grupoInsumos.classeInsumos.tituloAbreviado}" /></td>
                                     <td align='right'>
-                                        <h:outputText value="#{insumoController.getValorOrcado(ins)}" id="qtdARealizar" rendered="#{insumoController.obraLinkadaOrcamento}">
+                                        <h:outputText value="#{ins.valorOrcado}" id="qtdARealizar" rendered="#{insumoController.obraLinkadaOrcamento}">
                                             <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
                                         </h:outputText>
                                     </td>

@@ -14,6 +14,7 @@ import br.com.grupopibb.portalobra.acesso.dao.MonitorFacade;
 import br.com.grupopibb.portalobra.acesso.status.StatusLogin;
 import br.com.grupopibb.portalobra.dao.acesso.FuncionarioCentroFacade;
 import br.com.grupopibb.portalobra.dao.funcionario.FuncionarioFacade;
+import br.com.grupopibb.portalobra.dao.projeto.ProjetoPlanejamentoFacade;
 import br.com.grupopibb.portalobra.dao.solicitacaocompra.SolicitanteFacade;
 import br.com.grupopibb.portalobra.exceptions.EntityException;
 import br.com.grupopibb.portalobra.model.funcionario.Funcionario;
@@ -32,6 +33,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -56,6 +58,8 @@ public class LoginController implements Serializable {
     private MonitorBusiness monitorBusiness;
     @EJB
     private MonitorScheduler monitorScheduler;
+    @EJB
+    private ProjetoPlanejamentoFacade projPlanFacade;
     private String login = "";
     private String senha = "";
     private String erroLogin = "Erro ao efetuar Login.";
@@ -66,7 +70,6 @@ public class LoginController implements Serializable {
     private PerfilAcesso perfil;
     private Monitor monitor;
     private MonitorTask monitorTask;
-    
     private final String LOGIN_SENHA_INVALIDOS = "Login e/ou senha inválidos.";
     private final String USUARIO_DESATIVADO = "Usuário desativado.";
     private final String USUARIO_SEM_CENTRO_VINCULADO = "Usuário sem centro(s) de custo vinculado(s).";
@@ -145,6 +148,18 @@ public class LoginController implements Serializable {
         return JsfUtil.LOGIN_PAGE;
     }
 
+    public void performLogin() {
+        getPerformLogin();
+    }
+
+    public SelectItem[] getCentrosFuncionarioSelect() {
+        try {
+            return JsfUtil.getSelectItems(funcionario.getCentros(), false, FacesContext.getCurrentInstance());
+        } catch (NullPointerException e) {
+            return new SelectItem[0];
+        }
+    }
+
     public Funcionario getPerformLogin() {
         if (isLoggedUser()) {
             closeLoggedUser();
@@ -152,13 +167,13 @@ public class LoginController implements Serializable {
         int result = validaLogin.performLogin(login, senha);
         if (result == StatusLogin.ATIVO) {
             funcionario = funcionarioFacade.findByLogin(login);
-            if (!funcionario.isAtivo()){
+            if (!funcionario.isAtivo()) {
                 statusLogin = StatusLogin.INATIVO;
                 funcionario = null;
                 erroLogin = USUARIO_DESATIVADO;
                 return null;
             }
-            
+
             statusLogin = StatusLogin.ATIVO;
             solicitante = solicitanteFacade.findByName(login);
 
@@ -175,6 +190,7 @@ public class LoginController implements Serializable {
                     return null;
                 }
                 centroSelecionado = funcionario.getCentros().get(0);
+                pesqProjOrcPlanCentro();
             }
 
             funcionario.setSenha(senha);
@@ -204,7 +220,23 @@ public class LoginController implements Serializable {
     public String mudaCentro(CentroCusto c, String destino) {
         this.centroSelecionado = c;
         this.perfil = funcionarioCentroFacade.find(funcionario, centroSelecionado).getPerfil();
+        pesqProjOrcPlanCentro();
         return destino;
+    }
+
+    /**
+     * Inicia o insumoController com o centro de custo atual do loginController.
+     *
+     * @param centro Centro de custo atual.
+     */
+    public void pesqProjOrcPlanCentro() {
+        try {
+            this.centroSelecionado.setObraLinkadaOrcamento(projPlanFacade.isCentroLinkOrcamento(this.centroSelecionado));
+            this.centroSelecionado.setProjCod(projPlanFacade.findProjetoCod(this.centroSelecionado).get("ProjCod"));
+            this.centroSelecionado.setOrcCod(projPlanFacade.findProjetoCod(this.centroSelecionado).get("OrcCod"));
+            this.centroSelecionado.setPlanCod(projPlanFacade.findProjetoCod(this.centroSelecionado).get("PlanCod"));
+        } catch (NullPointerException e) {
+        }
     }
 
     /**
@@ -252,7 +284,7 @@ public class LoginController implements Serializable {
     public boolean isIncluiEntradaMaterial() {
         return (perfil != null && perfil.getIncluiEntradaMaterial());
     }
-   
+
     public boolean isAlteraEntradaMaterial() {
         return (perfil != null && perfil.getAlteraEntradaMaterial());
     }
@@ -267,8 +299,8 @@ public class LoginController implements Serializable {
 
     public boolean isAlteraSaidaMaterial() {
         return (perfil != null && perfil.getAlteraSaidaMaterial());
-    } 
-   
+    }
+
     public boolean isRemoveSaidaMaterial() {
         return (perfil != null && perfil.getRemoveSaidaMaterial());
     }
@@ -280,42 +312,42 @@ public class LoginController implements Serializable {
     public boolean isVerUsuariosConectados() {
         return (perfil != null && perfil.getVerUsuariosConectados());
     }
-    
-    public boolean isVerUsuario(){
+
+    public boolean isVerUsuario() {
         return (perfil != null && perfil.getVerUsuario());
     }
-   
-    public boolean isIncluiUsuario(){
+
+    public boolean isIncluiUsuario() {
         return (perfil != null && perfil.getIncluiUsuario());
     }
-    
-    public boolean isAlteraUsuario(){
+
+    public boolean isAlteraUsuario() {
         return (perfil != null && perfil.getAlteraUsuario());
     }
-    
-    public boolean isRemoveUsuario(){
+
+    public boolean isRemoveUsuario() {
         return (perfil != null && perfil.getRemoveUsuario());
     }
-    
-    public boolean isVerPerfil(){
+
+    public boolean isVerPerfil() {
         return (perfil != null && perfil.getVerPerfilAcesso());
     }
-   
-    public boolean isIncluiPerfil(){
+
+    public boolean isIncluiPerfil() {
         return (perfil != null && perfil.getIncluiPerfilAcesso());
     }
-    
-    public boolean isAlteraPerfil(){
+
+    public boolean isAlteraPerfil() {
         return (perfil != null && perfil.getAlteraPerfilAcesso());
     }
-    
-    public boolean isRemovePerfil(){
+
+    public boolean isRemovePerfil() {
         return (perfil != null && perfil.getRemovePerfilAcesso());
     }
-    
-    public boolean isRenderMenuSeguranca(){
-        return isIncluiPerfil() || isAlteraPerfil() || isRemovePerfil() 
-                || isIncluiUsuario() || isAlteraUsuario() || isRemoveUsuario() 
+
+    public boolean isRenderMenuSeguranca() {
+        return isIncluiPerfil() || isAlteraPerfil() || isRemovePerfil()
+                || isIncluiUsuario() || isAlteraUsuario() || isRemoveUsuario()
                 || isVerPerfil() || isVerUsuario() || isVerUsuariosConectados();
     }
 
@@ -370,5 +402,4 @@ public class LoginController implements Serializable {
     public String getErroLogin() {
         return erroLogin;
     }
-    
 }

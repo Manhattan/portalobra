@@ -9,13 +9,13 @@
                 >
     <ui:param name="titulomenu" value="#{msg.movimentacoesSaidaItens}" />
     <ui:define name="content" >
-        <h:panelGroup rendered="#{loginController.statusLogin == 0 or materialSaidaItensController.centroSelecionado == null or loginController.funcionario.login == null}">
+        <h:panelGroup rendered="#{loginController.statusLogin == 0 or loginController.centroSelecionado == null or loginController.funcionario.login == null}">
             <ui:include src="../semPermissao.xhtml" />
         </h:panelGroup>
 
         <p:dialog widgetVar="dlgNovoInsumo" visible="false" />
 
-        <h:panelGroup id="panelMain" rendered="#{loginController.statusLogin == 1  and materialSaidaItensController.centroSelecionado != null and loginController.funcionario.login != null}">
+        <h:panelGroup id="panelMain" rendered="#{loginController.statusLogin == 1  and loginController.centroSelecionado != null and loginController.funcionario.login != null}">
             <h:form id="formMain">
                 <h:panelGrid columns="5">
                     <h:outputText value="#{msg.periodoSaidas}:" style="font-weight: bold" />

@@ -4,6 +4,7 @@
  */
 package br.com.grupopibb.portalobra.controller.materiais;
 
+import br.com.grupopibb.portalobra.acesso.controller.LoginController;
 import br.com.grupopibb.portalobra.controller.common.EntityController;
 import br.com.grupopibb.portalobra.controller.common.EntityPagination;
 import br.com.grupopibb.portalobra.dao.geral.CentroCustoFacade;
@@ -21,6 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
@@ -42,14 +44,19 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
     @EJB
     private MateriaisEstoqueFacade materiaisEstoqueFacade;
     private MaterialSaidaItens current;
-    private CentroCusto centroSelecionado;
     private Date dataInicial;
     private Date dataFinal;
     private String numeroDoc;
     private Long insumoCod;
     private String especificacao;
     private Integer registrosPorPagina = 20;
-//-------------------------------
+    //----------------------------------------------
+    @ManagedProperty(value = "#{loginController}")
+    private LoginController loginController;
+
+    public void setLoginController(LoginController loginContronller) {
+        this.loginController = loginContronller;
+    }
 
     /**
      * Executado após o bean JSF ser criado.
@@ -77,12 +84,12 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
             pagination = new EntityPagination(registrosPorPagina) {
                 @Override
                 public int getItemsCount() {
-                    return getFacade().countParam(centroSelecionado, numeroDoc, dataInicial, dataFinal, insumoCod, especificacao).intValue();
+                    return getFacade().countParam(loginController.getCentroSelecionado(), numeroDoc, dataInicial, dataFinal, insumoCod, especificacao).intValue();
                 }
 
                 @Override
                 public DataModel createPageDataModel() {
-                    return new ListDataModel(getFacade().findRangeParam(centroSelecionado, numeroDoc, dataInicial, dataFinal, insumoCod, especificacao, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    return new ListDataModel(getFacade().findRangeParam(loginController.getCentroSelecionado(), numeroDoc, dataInicial, dataFinal, insumoCod, especificacao, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
                 }
             };
         }
@@ -150,19 +157,7 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
 
     public Double getEstoqueAtual(Insumo insumo) {
         String anoMes = DateUtils.getDataFormatada("YYYYMM", new Date());
-        return materiaisEstoqueFacade.findSaldo(centroSelecionado, insumo != null ? insumo.getCodigo() : 0L, anoMes);
-    }
-
-    /**
-     * Inicia o centro de custo atual utilizado para as consultas e inserções
-     * desse controller.
-     *
-     * @param centroSelecionado Centro de Custo que está selecionado no
-     * loginController.
-     */
-    public void initCentroSelecionado(CentroCusto centroSelecionado) {
-        this.centroSelecionado = centroSelecionado;
-        recreateTable();
+        return materiaisEstoqueFacade.findSaldo(loginController.getCentroSelecionado(), insumo != null ? insumo.getCodigo() : 0L, anoMes);
     }
 
     /**
@@ -181,14 +176,6 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
 
     public void setCurrent(MaterialSaidaItens current) {
         this.current = current;
-    }
-
-    public CentroCusto getCentroSelecionado() {
-        return centroSelecionado;
-    }
-
-    public void setCentroSelecionado(CentroCusto centroSelecionado) {
-        this.centroSelecionado = centroSelecionado;
     }
 
     public Date getDataInicial() {

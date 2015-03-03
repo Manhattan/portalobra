@@ -9,13 +9,13 @@
                 >
     <ui:param name="titulomenu" value="#{msg.estoqueMateriais}" />
     <ui:define name="content" >
-        <h:panelGroup rendered="#{loginController.statusLogin == 0 or materiaisEstoqueController.centroSelecionado == null or loginController.funcionario.login == null}">
+        <h:panelGroup rendered="#{loginController.statusLogin == 0 or loginController.centroSelecionado == null or loginController.funcionario.login == null}">
             <ui:include src="../semPermissao.xhtml" />
         </h:panelGroup>
 
         <p:dialog widgetVar="dlgNovoInsumo" visible="false" />
 
-        <h:panelGroup id="panelMain" rendered="#{loginController.statusLogin == 1 and materiaisEstoqueController.centroSelecionado != null and loginController.funcionario.login != null }">
+        <h:panelGroup id="panelMain" rendered="#{loginController.statusLogin == 1 and loginController.centroSelecionado != null and loginController.funcionario.login != null }">
             <h:form id="formMain">
                 <p:panel >
                     <h:outputText value="#{msg.estoqueMateriais}" style="font-weight: bold" />
@@ -173,7 +173,7 @@
             </h:panelGroup>
 
             <h:panelGroup id="dialogForm">
-                <p:dialog header="#{msg.extratoMateriais}" closeOnEscape="true" widgetVar="dlgKardex" resizable="false">
+                <p:dialog header="#{msg.extratoMateriais}" closeOnEscape="true" widgetVar="dlgKardex" resizable="false" style="position: absolute; float: top" position="left">
                     <h:form>
                         <h:outputText value="Insumo: #{materiaisEstoqueController.current.insumo}" style="font-weight: bold" />
                         <table class="dialogtable">

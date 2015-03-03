@@ -17,8 +17,8 @@
                 <p:submenu label="#{msg.consultas}" icon="ui-icon-search" >
                     <p:menuitem value="#{msg.insumos}" icon="ui-icon-cart" actionListener="#{insumoController.desconsiderarLinkOrcamento()}" oncomplete="dlgConsultaInsumo.show()" />
                     <p:menuitem value="#{msg.fornecedores}" icon="ui-icon-person" oncomplete="dlgConsultaCredor.show()" />
-                    <p:menuitem value="#{msg.estoqueMateriais}" icon="ui-icon-pin-s"  oncomplete="#{materiaisEstoqueController.initCentroSelecionado(loginController.centroSelecionado)}" action="materiais_estoque" />
-                    <p:menuitem value="#{msg.saidaMateriais}" icon="ui-icon-circle-arrow-s"  oncomplete="#{materialSaidaItensController.initCentroSelecionado(loginController.centroSelecionado)}" action="material_saida_itens" />
+                    <p:menuitem value="#{msg.estoqueMateriais}" icon="ui-icon-pin-s" action="materiais_estoque" />
+                    <p:menuitem value="#{msg.saidaMateriais}" icon="ui-icon-circle-arrow-s" action="material_saida_itens" />
                 </p:submenu>
 
                 <p:submenu label="#{msg.seguranca}" icon="ui-icon-locked" rendered="#{loginController.renderMenuSeguranca}" >
@@ -39,7 +39,7 @@
                     <p:menuitem value="#{msg.manualCompras}" id="manCom" url="#{msg.manualComprasLink}" target="_blank" />
                 </p:submenu>
 
-                <p:menuitem oncomplete="#{credorController.initCentroSelecionario(loginController.centroSelecionado)} dlgCentroCusto.show()" update=":panelCentroCusto" value="#{loginController.centroSelecionado.nomeCompleto}" style="margin-left: 30%; width: 300px; font-size: small" />
+                <p:menuitem oncomplete="dlgCentroCusto.show()" update=":panelCentroCusto" value="#{loginController.centroSelecionado.nomeCompleto}" style="margin-left: 30%; width: 300px; font-size: small" />
             </p:menubar>
         </h:form>
         <ui:include src="/ajuda.xhtml" />

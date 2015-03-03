@@ -149,6 +149,10 @@ public class MaterialSaidaItens implements EntityInterface<MaterialSaidaItens> {
     /*
      */
     @Transient
+    private Double limiteSaida;
+    /*
+     */
+    @Transient
     private boolean marcado = false;
 
     @Override
@@ -273,6 +277,14 @@ public class MaterialSaidaItens implements EntityInterface<MaterialSaidaItens> {
             estoqueAtual = 0.0;
         }
         return estoqueAtual;
+    }
+
+    public Double getLimiteSaida() {
+        return limiteSaida;
+    }
+
+    public void setLimiteSaida(Double limiteSaida) {
+        this.limiteSaida = limiteSaida;
     }
 
     public void setEstoqueAtual(Double estoqueAtual) {

@@ -25,6 +25,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -130,6 +131,23 @@ public class CentroCusto implements EntityInterface<CentroCusto> {
      */
     @OneToMany(targetEntity = CentroComunicacao.class, mappedBy = "centro")
     private List<CentroComunicacao> contatos;
+    /*
+     */
+    @Transient
+    private Integer projCod = 0;
+    /*
+     */
+    @Transient
+    private Integer orcCod = 0;
+    /*
+     */
+    @Transient
+    private Integer planCod = 0;
+    /*
+     */
+    @Transient
+    private boolean obraLinkadaOrcamento = false;
+    
     /*
      @Size(min = 1, max = 40)
      @Column(name = "Centro_Endereco", nullable = false, length = 40)
@@ -300,6 +318,38 @@ public class CentroCusto implements EntityInterface<CentroCusto> {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public Integer getProjCod() {
+        return projCod;
+    }
+
+    public void setProjCod(Integer projCod) {
+        this.projCod = projCod;
+    }
+
+    public Integer getOrcCod() {
+        return orcCod;
+    }
+
+    public void setOrcCod(Integer orcCod) {
+        this.orcCod = orcCod;
+    }
+
+    public Integer getPlanCod() {
+        return planCod;
+    }
+
+    public void setPlanCod(Integer planCod) {
+        this.planCod = planCod;
+    }
+
+    public boolean isObraLinkadaOrcamento() {
+        return obraLinkadaOrcamento;
+    }
+
+    public void setObraLinkadaOrcamento(boolean obraLinkadaOrcamento) {
+        this.obraLinkadaOrcamento = obraLinkadaOrcamento;
     }
 
     /**

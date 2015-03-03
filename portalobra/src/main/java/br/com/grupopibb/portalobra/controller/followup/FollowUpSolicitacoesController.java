@@ -138,7 +138,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     @EJB
     private TituloAPagarFacade tituloAPagarFacade;
     //------------------------------
-    private Funcionario funcionario;
+    // private Funcionario funcionario;
     private Solicitante solicitante;
     private FollowUpSolicitacoes current;
     private List<MaterialItemSelecionado> itensMaterialList;
@@ -229,7 +229,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     private EnumTipoDocumentoMaterialSaida tipoDocumentoMaterialSaida;
     private EnumTipoDocumentoMaterialEntrada tipoDocumentoMaterialEntrada;
     private Map<String, String> tipoDocumentoMaterialSelect;
-    private CentroCusto centroSelecionado;
+    // private CentroCusto centroSelecionado;
     private SelectItem[] centrosFuncionario;
     private boolean newSolicitacao = true;
     private boolean newMovEntrada = true;
@@ -252,7 +252,6 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         initDataFinal();
         preencheFiltrosSituacao();
         initDocumentoMaterialSelect();
-        initCentroSelecionado();
     }
 
     /**
@@ -314,7 +313,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     public void cleanAll() {
         clean();
         itensEntradaRemovidos = null;
-        funcionario = null;
+        //funcionario = null;
         current = null;
         itensMaterialList = null;
         solicItemSelecionados = null;
@@ -379,7 +378,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         tipoDocumentoMaterialSaida = null;
         tipoDocumentoMaterialEntrada = null;
         tipoDocumentoMaterialSelect = null;
-        centroSelecionado = null;
+        //centroSelecionado = null;
         updateFollowup();
     }
 
@@ -442,51 +441,43 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
      * @param func
      * @param statusLogin
      * @return página de acotdo com o status do login.
+     *
+     * public String initFuncionario(Funcionario func, int statusLogin) { if
+     * (statusLogin == StatusLogin.ATIVO) { this.funcionario = func;
+     * //centroSelecionado = funcionario.getCentros().get(0); return
+     * JsfUtil.FOLLOWUP; } else if (statusLogin == StatusLogin.INATIVO) { return
+     * JsfUtil.LOGIN_ERROR; } else { return JsfUtil.LOGIN_PAGE; } }
      */
-    public String initFuncionario(Funcionario func, int statusLogin) {
-        if (statusLogin == StatusLogin.ATIVO) {
-            this.funcionario = func;
-            centroSelecionado = funcionario.getCentros().get(0);
-            return JsfUtil.FOLLOWUP;
-        } else if (statusLogin == StatusLogin.INATIVO) {
-            return JsfUtil.LOGIN_ERROR;
-        } else {
-            return JsfUtil.LOGIN_PAGE;
-        }
-    }
 
-    /**
+    /* **
      * Recebe o centro de custo selecionado no loginController e o inicia no
      * FollowUpSolicitacoesController.
-     */
-    public void initCentroSelecionado() {
-        if (funcionario == null || centroSelecionado == null) {
-            if (this.loginController != null) {
-                funcionario = this.loginController.getFuncionario();
-            }
-            centroSelecionado = this.loginController.getCentroSelecionado();
-            obraLinkadaOrcamento = projPlanFacade.isCentroLinkOrcamento(centroSelecionado);
-        }
-    }
-
+     
+     public void initCentroSelecionado() {
+     if (loginController.getFuncionario() == null || centroSelecionado == null) {
+     if (this.loginController != null) {
+     funcionario = this.loginController.getFuncionario();
+     }
+     //centroSelecionado = this.loginController.getCentroSelecionado();
+     // obraLinkadaOrcamento = projPlanFacade.isCentroLinkOrcamento(centroSelecionado);
+     }
+     }*/
     public boolean isObraLinkadaOrcamento() {
-        return this.obraLinkadaOrcamento;
+        return loginController.getCentroSelecionado().isObraLinkadaOrcamento();
+        //return this.obraLinkadaOrcamento;
     }
 
     /**
      * Estabelece a lista de centros de custo do funcionário logado.
      *
      * @return lista com os centros do funcionário logado.
+     *
+     * public SelectItem[] getCentrosFuncionario() { if (funcionario == null ||
+     * funcionario.getCentros() == null) { return null; } else if
+     * (centrosFuncionario == null) { centrosFuncionario =
+     * JsfUtil.getSelectItems(this.funcionario.getCentros(), false,
+     * FacesContext.getCurrentInstance()); } return centrosFuncionario; }
      */
-    public SelectItem[] getCentrosFuncionario() {
-        if (funcionario == null || funcionario.getCentros() == null) {
-            return null;
-        } else if (centrosFuncionario == null) {
-            centrosFuncionario = JsfUtil.getSelectItems(this.funcionario.getCentros(), false, FacesContext.getCurrentInstance());
-        }
-        return centrosFuncionario;
-    }
-
     public SelectItem[] getSolicitanteSelect() {
         return JsfUtil.getSelectItems(solicitanteFacade.findAll(), false, FacesContext.getCurrentInstance());
     }
@@ -538,7 +529,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                 @Override
                 public int getItemsCount() {
                     if (itensCount == 0) {
-                        itensCount = getFacade().countParam(centroSelecionado, dataInicial, dataFinal, filtrosSituacao, filtroMesclarEstoque,
+                        itensCount = getFacade().countParam(loginController.getCentroSelecionado(), dataInicial, dataFinal, filtrosSituacao, filtroMesclarEstoque,
                                 filtroMesclarEstoqueUsina, filtroInsumoCod, filtroInsumoEspecificacao, filtroSolicId, solicitante, codigoCredor,
                                 razaoSocialCredor, nomeFantasiaCredor, cpfCnpjCredor, numeroPedido, numeroAR, filtroSolicMaiorEstoque).intValue();
                     }
@@ -547,7 +538,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
 
                 @Override
                 public DataModel createPageDataModel() {
-                    return new ListDataModel(getFacade().findRangeParam(centroSelecionado, dataInicial, dataFinal, filtrosSituacao,
+                    return new ListDataModel(getFacade().findRangeParam(loginController.getCentroSelecionado(), dataInicial, dataFinal, filtrosSituacao,
                             filtroMesclarEstoque, filtroMesclarEstoqueUsina, filtroInsumoCod, filtroInsumoEspecificacao, filtroSolicId,
                             solicitante, codigoCredor, razaoSocialCredor, nomeFantasiaCredor, cpfCnpjCredor, numeroPedido, numeroAR,
                             new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}, marcado, filtroSolicMaiorEstoque));
@@ -1521,9 +1512,9 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                     if (insumo.getGeraEstoque()) {
                         Integer itemNum = incrementItemMatEntrada();
                         String itemItem = NumberUtils.preencheZeroEsquerda(String.valueOf(itemNum), 3);
-                        Double valor = materialBusiness.getEntradaUltimoPreco(centroSelecionado, codigoInsumo);
+                        Double valor = materialBusiness.getEntradaUltimoPreco(loginController.getCentroSelecionado(), codigoInsumo);
                         valor = valor == null || valor < 0.01 ? 0.01 : valor;
-                        materialEntrada.getItens().add(new MaterialEntradaItens(materialEntrada, itemNum, itemItem, insumo, 1.0, valor, new Date(), centroSelecionado.getEmpresaCod(), centroSelecionado.getFilialCod(), centroSelecionado.getCodigo(), ""));
+                        materialEntrada.getItens().add(new MaterialEntradaItens(materialEntrada, itemNum, itemItem, insumo, 1.0, valor, new Date(), loginController.getCentroSelecionado().getEmpresaCod(), loginController.getCentroSelecionado().getFilialCod(), loginController.getCentroSelecionado().getCodigo(), ""));
                         itemNum = null;
                         itemItem = null;
                     } else {
@@ -1556,11 +1547,12 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
             for (Long codigoInsumo : insumosSelecionados) {
                 Insumo insumo = insumoFacade.find(codigoInsumo);
                 if (insumo != null) {
+                    insumo.setNovoItem(true);
                     Integer itemNum = incrementItemMatSaida();
                     String itemItem = "000" + String.valueOf(itemNum);
                     itemItem = StringUtils.substring(itemItem, (itemItem.length() - 3));
-                    Double estoqueAtual = followUpSolicitacoesFacade.findEstoqueByInsumo(centroSelecionado, insumo.getCodigo());
-                    materialSaida.getItens().add(new MaterialSaidaItens(materialSaida, itemNum, itemItem, insumo, 0.0, 1.0, new Date(), centroSelecionado.getEmpresaCod(), centroSelecionado.getFilialCod(), centroSelecionado.getCodigo(), "", estoqueAtual));
+                    Double estoqueAtual = followUpSolicitacoesFacade.findEstoqueByInsumo(loginController.getCentroSelecionado(), insumo.getCodigo());
+                    materialSaida.getItens().add(new MaterialSaidaItens(materialSaida, itemNum, itemItem, insumo, 0.0, 1.0, new Date(), loginController.getCentroSelecionado().getEmpresaCod(), loginController.getCentroSelecionado().getFilialCod(), loginController.getCentroSelecionado().getCodigo(), "", estoqueAtual));
                     codigoInsumo = null;
                     itemNum = null;
                     itemItem = null;
@@ -1733,7 +1725,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         if (solicitacaoCompra == null) {
             solicitacaoCompra = new SolicitacaoCompra(0L);
         }
-        solicitacaoCompra.rebuildFields(centroSelecionado, solicitanteFacade.findByName(funcionario.getLogin()), new Date(), EnumsGeral.AB, NumberUtils.isNull(solicitacaoCompraFacade.findMaxCentroNumero(centroSelecionado), 0) + 1, EnumsGeral.N, funcionario.getLogin(), new Date());
+        solicitacaoCompra.rebuildFields(loginController.getCentroSelecionado(), solicitanteFacade.findByName(loginController.getFuncionario().getLogin()), new Date(), EnumsGeral.AB, NumberUtils.isNull(solicitacaoCompraFacade.findMaxCentroNumero(loginController.getCentroSelecionado()), 0) + 1, EnumsGeral.N, loginController.getFuncionario().getLogin(), new Date());
         this.newSolicitacao = true;
         return JsfUtil.MANTEM;
     }
@@ -1744,7 +1736,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         if (materialEntrada == null) {
             materialEntrada = new MaterialEntrada(0L);
             Date hoje = new Date();
-            materialEntrada.rebuildFields(centroSelecionado, hoje, EnumTipoMovimentoMaterialEntrada.C, "", "", String.valueOf(DateUtils.getDay(hoje)), EnumSistemaOrigemEstoque.SIMAT, funcionario.getLogin(), hoje);
+            materialEntrada.rebuildFields(loginController.getCentroSelecionado(), hoje, EnumTipoMovimentoMaterialEntrada.C, "", "", String.valueOf(DateUtils.getDay(hoje)), EnumSistemaOrigemEstoque.SIMAT, loginController.getFuncionario().getLogin(), hoje);
         }
         this.newMovEntrada = true;
         return JsfUtil.MANTEM;
@@ -1756,7 +1748,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         if (materialSaida == null) {
             materialSaida = new MaterialSaida(0L);
             Date hoje = new Date();
-            materialSaida.rebuildFields(centroSelecionado, hoje, EnumTipoMovimentoMaterialSaida.S.name(), "", "", String.valueOf(DateUtils.getDay(hoje)), funcionario.getLogin(), hoje);
+            materialSaida.rebuildFields(loginController.getCentroSelecionado(), hoje, EnumTipoMovimentoMaterialSaida.S.name(), "", "", String.valueOf(DateUtils.getDay(hoje)), loginController.getFuncionario().getLogin(), hoje);
         }
         this.newMovSaida = true;
         return JsfUtil.MANTEM;
@@ -1786,7 +1778,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
      */
     public void prepareEditMaterialEntrada(MaterialEntrada materialEntrada) {
         this.materialEntrada = materialEntrada;
-        this.materialEntrada.setUsuarioAlteracao(funcionario.getLogin());
+        this.materialEntrada.setUsuarioAlteracao(loginController.getFuncionario().getLogin());
         this.materialEntrada.setDataAlteracao(new Date());
         this.newMovEntrada = false;
         changeDisableButtonStatus(true);
@@ -1956,8 +1948,26 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         return estoque < 0 ? 0.0 : estoque;
     }
 
+    private Double calculaLimiteMovSaida(MaterialSaidaItens item) {
+        try {
+            if (item.getInsumo().isNovoItem()) {
+                return getEstoqueAtualPositivo(item.getInsumo());
+            }
+            return getEstoqueAtualPositivo(item.getInsumo()) + item.getQuantidade();
+        } catch (NullPointerException | NoResultException e) {
+            return 0.0;
+        }
+    }
+
+    public Double getLimiteMovSaida(MaterialSaidaItens item) {
+        if (item.getLimiteSaida() == null) {
+            item.setLimiteSaida(calculaLimiteMovSaida(item));
+        }
+        return item.getLimiteSaida();
+    }
+
     public Double getEstoqueAtual(Insumo insumo) {
-        return NumberUtils.arredondarHalfUp(NumberUtils.isNull(materiaisEstoqueFacade.findSaldo(centroSelecionado, insumo.getCodigo(), DateUtils.getYearMonth(new Date())), 0.0), 4);
+        return NumberUtils.arredondarHalfUp(NumberUtils.isNull(materiaisEstoqueFacade.findSaldo(loginController.getCentroSelecionado(), insumo.getCodigo(), DateUtils.getYearMonth(new Date())), 0.0), 4);
     }
 
     public String getEstoqueAtualFmt(Insumo insumo) {
@@ -1969,16 +1979,16 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     }
 
     public Double getEstoqueUsina(Insumo insumo) {
-        Double estoque = followUpSolicitacoesFacade.findEstoqueUsinaByInsumo(centroSelecionado, insumo.getCodigo());
+        Double estoque = followUpSolicitacoesFacade.findEstoqueUsinaByInsumo(loginController.getCentroSelecionado(), insumo.getCodigo());
         return estoque == null ? 0.0 : estoque;
     }
 
     public Double getValorEstoqueSaidas(Insumo insumo) {
-        return NumberUtils.isNull(materialSaidaItensFacade.findEstoqueSaidas(insumo.getCodigo(), centroSelecionado), 0.0);
+        return NumberUtils.isNull(materialSaidaItensFacade.findEstoqueSaidas(insumo.getCodigo(), loginController.getCentroSelecionado()), 0.0);
     }
 
     public Double getValorEstoqueEntradas(Insumo insumo) {
-        return NumberUtils.isNull(materialEntradaItensFacade.findEstoqueEntradas(insumo.getCodigo(), centroSelecionado), 0.0);
+        return NumberUtils.isNull(materialEntradaItensFacade.findEstoqueEntradas(insumo.getCodigo(), loginController.getCentroSelecionado()), 0.0);
     }
 
     private boolean isItemConcluido(SolicitacaoCompraItem solicItem) {
@@ -2009,7 +2019,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                         solicItem.setUsuarioInstrucao(loginController.getLogin());
                         solicItem.setInstrucaoMotivo(motivoRejeitaSolicitacao);
                         solicitacaoCompraItemFacade.update(solicItem);
-                        followUpBusiness.atualizaFollowUp(centroSelecionado, solicItem.getSolicitacao());
+                        followUpBusiness.atualizaFollowUp(loginController.getCentroSelecionado(), solicItem.getSolicitacao());
                         msgSolicitacaoItensAutorizados();
                         marcado = false;
                         statusAS = true;
@@ -2056,7 +2066,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                         solicItem.setInstrucaoMotivo(motivoRejeitaSolicitacao);
 
                         solicitacaoCompraItemFacade.update(solicItem);
-                        followUpBusiness.atualizaFollowUp(centroSelecionado, solicItem.getSolicitacao());
+                        followUpBusiness.atualizaFollowUp(loginController.getCentroSelecionado(), solicItem.getSolicitacao());
                         motivoRejeitaSolicitacao = "";
                         msgSolicitacaoItensRejeitados();
                         marcado = false;
@@ -2091,7 +2101,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                         solicItem.setUsuarioInstrucao(loginController.getLogin());
                         solicItem.setInstrucaoMotivo(null);
                         solicitacaoCompraItemFacade.update(solicItem);
-                        followUpBusiness.atualizaFollowUp(centroSelecionado, solicItem.getSolicitacao());
+                        followUpBusiness.atualizaFollowUp(loginController.getCentroSelecionado(), solicItem.getSolicitacao());
                         motivoRejeitaSolicitacao = "";
                         msgSolicitacaoItensDesautorizados();
                         marcado = false;
@@ -2106,7 +2116,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     }
 
     public List<SolicitacaoCompraItem> atualizaItensPlanoOrcamento(EnumOpeEvtOrcamento ope, List<SolicitacaoCompraItem> itensSolic) throws SQLException {
-        if (projPlanFacade.isCentroLinkOrcamento(centroSelecionado)) {
+        if (projPlanFacade.isCentroLinkOrcamento(loginController.getCentroSelecionado())) {
             for (SolicitacaoCompraItem solicItem : itensSolic) {
                 int index = itensSolic.indexOf(solicItem);
                 solicItem.setItensPlanoOrcamento(orcamentoBusiness.insertItemOrcPlan(solicItem, ope));
@@ -2117,7 +2127,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     }
 
     public void removeItensPlanoOrcamento(List<SolicitacaoCompraItem> itensSolic) {
-        if (projPlanFacade.isCentroLinkOrcamento(centroSelecionado)) {
+        if (projPlanFacade.isCentroLinkOrcamento(loginController.getCentroSelecionado())) {
             try {
                 orcamentoBusiness.removeItemOrcPlan(itensSolic);
             } catch (SQLException ex) {
@@ -2128,13 +2138,13 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
 
     public void atualizaSaldoARealizarSolicitacao(SolicitacaoCompra solic) throws SQLException {
         for (SolicitacaoCompraItem solicItem : solic.getItens()) {
-            followUpBusiness.atualizaOrcamentoFollowUp(centroSelecionado, solicItem.getInsumo());
+            followUpBusiness.atualizaOrcamentoFollowUp(loginController.getCentroSelecionado(), solicItem.getInsumo());
         }
     }
 
     private void atualizaSequenciaisSolicitacaoCompra(Integer seqNumero, Integer seqId) {
         sequenciaisFacade.update(sequenciaisFacade.getSequencialSolicitacaoCompra().initNumber(seqNumero));
-        sequenciaisRangeFacade.update(sequenciaisRangeFacade.getSequencialSolicitacaoCompra(centroSelecionado).initNumber(seqId));
+        sequenciaisRangeFacade.update(sequenciaisRangeFacade.getSequencialSolicitacaoCompra(loginController.getCentroSelecionado()).initNumber(seqId));
     }
 
     public void atualizaDataEntregaTodos() {
@@ -2163,7 +2173,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                 msgSolicitacaoCompraSemItem();
             } else {
                 try {
-                    solicitacaoCompra.setIdSistema(solicitacaoCompraFacade.findMaxCentroNumero(centroSelecionado) + 1);
+                    solicitacaoCompra.setIdSistema(solicitacaoCompraFacade.findMaxCentroNumero(loginController.getCentroSelecionado()) + 1);
                     //Executa se o centro estiver com orçamento ativo
                     if (isObraLinkadaOrcamento()) {
                         solicitacaoCompra.setItens(atualizaItensPlanoOrcamento(EnumOpeEvtOrcamento.I, solicitacaoCompra.getItens()));
@@ -2229,7 +2239,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                 }
                 orcamentoBusiness.updateItemOrcPlan(solicitacaoCompra.getItens());
                 solicitacaoCompraFacade.update(solicitacaoCompra);
-                followUpBusiness.atualizaFollowUp(centroSelecionado, solicitacaoCompra);
+                followUpBusiness.atualizaFollowUp(loginController.getCentroSelecionado(), solicitacaoCompra);
                 atualizaSaldoARealizarSolicitacao(solicitacaoCompra);
                 msgSolicitacaoCompraAtualizada();
                 updateFollowup();
@@ -2260,7 +2270,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                 }
                 solicitacaoCompraFacade.remove(solicitacaoCompra);
                 orcamentoBusiness.removeItemOrcPlan(solicitacaoCompra.getItens());
-                followUpBusiness.atualizaFollowUp(centroSelecionado, solicitacaoCompra);
+                followUpBusiness.atualizaFollowUp(loginController.getCentroSelecionado(), solicitacaoCompra);
                 atualizaSaldoARealizarSolicitacao(solicitacaoCompra);
                 msgSolicitacaoCompraRemovida();
             } catch (SQLException | EntityException ex) {
@@ -2278,7 +2288,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         if (isEnableRemocaoMatEntrada()) {
             try {
                 materialEntradaFacade.remove(materialEntrada);
-                estoqueBusiness.atualizaEstoqueItensEntrada(materialEntrada.getItens(), centroSelecionado, materialEntrada);
+                estoqueBusiness.atualizaEstoqueItensEntrada(materialEntrada.getItens(), loginController.getCentroSelecionado(), materialEntrada);
                 msgMovimentacaoEntradaRemovida();
             } catch (EntityException ex) {
                 msgErroRemoverMovimentacaoEntrada(ex);
@@ -2295,7 +2305,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         if (isEnableRemocaoMatSaida()) {
             try {
                 materialSaidaFacade.remove(materialSaida);
-                estoqueBusiness.atualizaEstoqueItensSaida(materialSaida.getItens(), centroSelecionado, materialSaida);
+                estoqueBusiness.atualizaEstoqueItensSaida(materialSaida.getItens(), loginController.getCentroSelecionado(), materialSaida);
                 msgMovimentacaoSaidaRemovida();
             } catch (EntityException ex) {
                 msgErroRemoverMovimentacaoSaida(ex);
@@ -2377,14 +2387,6 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         return tipoDocumentoMaterialSelect;
     }
 
-    public CentroCusto getCentroSelecionado() {
-        return centroSelecionado;
-    }
-
-    public void setCentroSelecionado(CentroCusto centroSelecionado) {
-        this.centroSelecionado = centroSelecionado;
-    }
-
     /**
      * Traz todos os Centros de Custo cadastrados no sistema.
      *
@@ -2444,11 +2446,11 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
             try {
                 Integer sequencial = materialEntradaFacade.createMaterialEntrada(materialEntrada);
                 sequenciaisFacade.update(sequenciaisFacade.getSequencialMaterialEntrada().initNumber(sequencial));
-                logFollowupFacade.createLogMatEnt(materialEntrada, funcionario.getLogin(), null, null);
+                logFollowupFacade.createLogMatEnt(materialEntrada, loginController.getFuncionario().getLogin(), null, null);
                 logFollowupFacade.updateLogFollowup();
 
                 for (MaterialEntradaItens item : materialEntrada.getItens()) {
-                    estoqueBusiness.atualizaEstoque(centroSelecionado, materialEntrada.getDataEntrada(), item.getInsumo().getCodigo());
+                    estoqueBusiness.atualizaEstoque(loginController.getCentroSelecionado(), materialEntrada.getDataEntrada(), item.getInsumo().getCodigo());
                 }
                 msgMaterialEntradaCriado();
             } catch (BusinessException ex) {
@@ -2473,10 +2475,10 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
             try {
                 Integer sequencial = materialSaidaFacade.createMaterialSaida(materialSaida);
                 sequenciaisFacade.update(sequenciaisFacade.getSequencialMaterialSaida().initNumber(sequencial));
-                logFollowupFacade.createLogMatSai(materialSaida, funcionario.getLogin(), null, null);
+                logFollowupFacade.createLogMatSai(materialSaida, loginController.getFuncionario().getLogin(), null, null);
                 logFollowupFacade.updateLogFollowup();
                 for (MaterialSaidaItens item : materialSaida.getItens()) {
-                    estoqueBusiness.atualizaEstoque(centroSelecionado, materialSaida.getDataSaida(), item.getInsumo().getCodigo());
+                    estoqueBusiness.atualizaEstoque(loginController.getCentroSelecionado(), materialSaida.getDataSaida(), item.getInsumo().getCodigo());
                 }
                 msgMaterialSaidaCriado();
             } catch (BusinessException ex) {
@@ -2500,14 +2502,14 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                     MaterialEntrada mat = new MaterialEntrada(materialEntrada);
                     mat.setItens(null);
                     materialEntradaFacade.update(mat);
-                    materialEntradaItensFacade.createItens(materialEntrada.getItens(), centroSelecionado, materialEntrada);
-                    estoqueBusiness.atualizaEstoqueItensEntrada(itensEntradaRemovidos, centroSelecionado, materialEntrada);
+                    materialEntradaItensFacade.createItens(materialEntrada.getItens(), loginController.getCentroSelecionado(), materialEntrada);
+                    estoqueBusiness.atualizaEstoqueItensEntrada(itensEntradaRemovidos, loginController.getCentroSelecionado(), materialEntrada);
                     itensEntradaRemovidos = null;
                     mat = null;
                 } else {
                     materialEntradaFacade.update(materialEntrada);
                 }
-                estoqueBusiness.atualizaEstoqueItensEntrada(materialEntrada.getItens(), centroSelecionado, materialEntrada);
+                estoqueBusiness.atualizaEstoqueItensEntrada(materialEntrada.getItens(), loginController.getCentroSelecionado(), materialEntrada);
                 msgMovimentacaoEntradaAtualizada();
             } catch (EntityException ex) {
                 updateFollowup();
@@ -2527,17 +2529,17 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
             if (materialSaida.isItemRemovido()) {
                 MaterialSaida mat = new MaterialSaida(materialSaida);
                 mat.setItens(null);
-                mat.setUsuarioAlteracao(funcionario.getLogin());
+                mat.setUsuarioAlteracao(loginController.getFuncionario().getLogin());
                 mat.setDataAlteracao(new Date());
                 materialSaidaFacade.update(mat);
-                materialSaidaItensFacade.createItens(materialSaida.getItens(), centroSelecionado, materialSaida);
-                estoqueBusiness.atualizaEstoqueItensSaida(itensSaidaRemovidos, centroSelecionado, materialSaida);
+                materialSaidaItensFacade.createItens(materialSaida.getItens(), loginController.getCentroSelecionado(), materialSaida);
+                estoqueBusiness.atualizaEstoqueItensSaida(itensSaidaRemovidos, loginController.getCentroSelecionado(), materialSaida);
                 itensSaidaRemovidos = null;
                 mat = null;
             } else {
                 materialSaidaFacade.update(materialSaida);
             }
-            estoqueBusiness.atualizaEstoqueItensSaida(materialSaida.getItens(), centroSelecionado, materialSaida);
+            estoqueBusiness.atualizaEstoqueItensSaida(materialSaida.getItens(), loginController.getCentroSelecionado(), materialSaida);
             msgMovimentacaoSaidaAtualizada();
         } catch (EntityException ex) {
             throw new RuntimeException(ex);
@@ -2551,14 +2553,6 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     public void openMudaCentroCusto() {
         changeDialogStatus(false);
         showDialogCentroCusto = true;
-    }
-
-    public Funcionario getFuncionario() {
-        return funcionario;
-    }
-
-    public void setFuncionario(Funcionario funcionario) {
-        this.funcionario = funcionario;
     }
 
     public FollowUpSolicitacoes getCurrent() {
@@ -2842,7 +2836,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     public String getDialogPG() {
         return "dlgPG";
     }
-    
+
     /*OK Dialog*/
     public String getDialogOK() {
         return "dlgOK";

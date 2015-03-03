@@ -138,6 +138,14 @@ public class Insumo implements EntityInterface<Insumo> {
     /*
      */
     @Transient
+    private boolean novoItem = false;
+    /*
+     */
+    @Transient
+    private Double valorOrcado;
+    /*
+     */
+    @Transient
     private List<SolicitacaoCompraItemOrcPlan> itensPlanoOrcamento;
     /*
      */
@@ -188,6 +196,14 @@ public class Insumo implements EntityInterface<Insumo> {
 
     public void setMarcado(boolean marcado) {
         this.marcado = marcado;
+    }
+
+    public boolean isNovoItem() {
+        return novoItem;
+    }
+
+    public void setNovoItem(boolean novoItem) {
+        this.novoItem = novoItem;
     }
 
     @Override
@@ -273,6 +289,14 @@ public class Insumo implements EntityInterface<Insumo> {
 
     public void setProjetoItemOrcPlanIns(List<ProjetoItemOrcPlanIns> projetoItemOrcPlanIns) {
         this.projetoItemOrcPlanIns = projetoItemOrcPlanIns;
+    }
+
+    public Double getValorOrcado() {
+        return valorOrcado;
+    }
+
+    public void setValorOrcado(Double valorOrcado) {
+        this.valorOrcado = valorOrcado;
     }
 
     @Override
