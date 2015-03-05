@@ -145,6 +145,9 @@
                                     <h:outputText id="estoqueAtual" value="#{followUpSolicitacoesController.getEstoqueAtual(mi.insumo)}">
                                         <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
                                     </h:outputText>
+                                    <p:commandButton id="updtEstqBtn" title="#{msg.atualizarSaldo}" icon="ui-icon-refresh" iconPos="left" value="" styleClass="button-only-icon" 
+                                                     update=":form-saidamaterial:saidaMaterialForm:saidaMaterialTable"  actionListener="#{materiaisEstoqueController.atualizaSaldo(mi.insumo.codigo)}" action = "#{followUpSolicitacoesController.limpaLimiteMovSaida(mi)}"
+                                                     style = "margin-left: 10px"/>
                                 </td>
                                 <td>
                                     <p:inputTextarea maxlength="250" rows="1" cols="80" value="#{mi.observacao}" />

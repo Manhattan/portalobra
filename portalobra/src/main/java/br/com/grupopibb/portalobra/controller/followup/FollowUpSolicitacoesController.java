@@ -1965,6 +1965,10 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         }
         return item.getLimiteSaida();
     }
+    
+    public void limpaLimiteMovSaida(MaterialSaidaItens item){
+        item.setLimiteSaida(null);
+    }
 
     public Double getEstoqueAtual(Insumo insumo) {
         return NumberUtils.arredondarHalfUp(NumberUtils.isNull(materiaisEstoqueFacade.findSaldo(loginController.getCentroSelecionado(), insumo.getCodigo(), DateUtils.getYearMonth(new Date())), 0.0), 4);

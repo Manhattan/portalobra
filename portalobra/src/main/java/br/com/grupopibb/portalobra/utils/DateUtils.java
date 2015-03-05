@@ -28,9 +28,17 @@ public final class DateUtils {
      *
      * @param date
      * @param i
+     *
+     * @return Date
      */
-    public static void addMonths(Date date, int i) {
-        date = set(date, Calendar.MONTH, getMonth(date) + i);
+    public static Date addMonths(Date date, int i) {
+        if (date == null) {
+            return null;
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.MONTH, i);
+        return c.getTime();
     }
 
     /**

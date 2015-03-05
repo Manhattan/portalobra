@@ -87,7 +87,7 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
      */
     @PostConstruct
     public void init() {
-        //  mesAno = new Date();
+        initMesAno();
     }
 
     private void initMesAno() {
@@ -183,9 +183,20 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
         this.current = item;
     }
 
-    public void atualizaSaldo() {
+    public void atualizaSaldo(Long insumoCod) {
         try {
-            estoqueBusiness.atualizaSaldoMaterial(loginController.getCentroSelecionado(), new Date(), null);
+            Date dataRef = DateUtils.toFirstDate(new Date());
+            dataRef = DateUtils.addMonths(dataRef, -2);
+            estoqueBusiness.atualizaSaldoMaterial(loginController.getCentroSelecionado(), dataRef, insumoCod);
+
+            dataRef = DateUtils.addMonths(dataRef, 1);
+            estoqueBusiness.atualizaSaldoMaterial(loginController.getCentroSelecionado(), dataRef, insumoCod);
+
+            dataRef = DateUtils.addMonths(dataRef, 1);
+            estoqueBusiness.atualizaSaldoMaterial(loginController.getCentroSelecionado(), dataRef, insumoCod);
+
+            dataRef = null;
+            valorTotal = null;
             getFacade().clearCache();
             recreateTable();
         } catch (SQLException ex) {

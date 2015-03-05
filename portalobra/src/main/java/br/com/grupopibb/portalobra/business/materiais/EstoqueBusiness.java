@@ -108,13 +108,13 @@ public class EstoqueBusiness {
         Date dataInicial = DateUtils.toFirstDate(dataRef);
         Date dataFinal = DateUtils.toLastDate(dataRef);
 
-        Query q = getEntityManager().createNativeQuery("exec PO_spAtualizaEstoque ?,?,?,?,?,?");
+        Query q = getEntityManager().createNativeQuery("exec spAtualizaEstoque ?,?,?,?,?,?");
         q.setParameter(1, centroOrigem.getEmpresaCod());
         q.setParameter(2, centroOrigem.getFilialCod());
         q.setParameter(3, centroOrigem.getCodigo());
         q.setParameter(4, new java.sql.Date(dataInicial.getTime()));
         q.setParameter(5, new java.sql.Date(dataFinal.getTime()));
-        q.setParameter(6, insumoCod != null ? insumoCod.intValue() : null);
+        q.setParameter(6, insumoCod != null && insumoCod > 0 ? insumoCod.intValue() : null);
         q.executeUpdate();
         q = null;
     }
