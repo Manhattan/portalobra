@@ -76,7 +76,7 @@
                                 <th style="width: auto"><h:outputText value="#{msg.caracterizacao}" /></th>
                                 <th style="width: auto"><h:outputText value="#{msg.grupo}" /></th>
                                 <th style="width: auto"><h:outputText value="#{msg.classe}"/></th>
-                                <th style="width: auto"><h:outputText value="#{msg.aRealizar}" rendered="#{insumoController.obraLinkadaOrcamento}" /></th>
+                                <th style="width: auto"><h:outputText value="#{msg.aRealizar}" rendered="#{loginController.centroSelecionado.obraLinkadaOrcamento}" /></th>
                             </tr>
                             <ui:repeat value="#{insumoController.items}" var="ins" varStatus="s">
                                 <tr>
@@ -93,7 +93,7 @@
                                     <td><h:outputText value="#{ins.caracterizacaoInsumo.grupoInsumos.tituloAbreviado}" /></td>
                                     <td><h:outputText value="#{ins.caracterizacaoInsumo.grupoInsumos.classeInsumos.tituloAbreviado}" /></td>
                                     <td align='right'>
-                                        <h:outputText value="#{ins.valorOrcado}" id="qtdARealizar" rendered="#{insumoController.obraLinkadaOrcamento}">
+                                        <h:outputText value="#{ins.valorOrcado}" id="qtdARealizar" rendered="#{loginController.centroSelecionado.obraLinkadaOrcamento}">
                                             <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
                                         </h:outputText>
                                     </td>

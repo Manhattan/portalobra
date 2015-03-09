@@ -11,7 +11,6 @@ import br.com.grupopibb.portalobra.model.geral.CentroCusto;
 import br.com.grupopibb.portalobra.model.insumo.Insumo;
 import br.com.grupopibb.portalobra.utils.StringBeanUtils;
 import br.com.grupopibb.portalobra.utils.UtilBeans;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
@@ -77,7 +76,7 @@ public class InsumoFacade extends AbstractEntityBeans<Insumo, Long> {
                 insumo.setValorOrcado(projPlanFacade.getValorOrc(centro.getProjCod(), centro.getOrcCod(), centro.getPlanCod(), insumo.getCodigo().intValue()));
             }
             return lista;
-        } else if (obraLinkadaOrcamento && desconsideraLinkOrcamento) {
+        } else if (obraLinkadaOrcamento && desconsideraLinkOrcamento && centro != null) {
             List<Insumo> lista = listPesqParamRange("Insumo.findParam", params, range[1] - range[0], range[0]);
             for (Insumo insumo : lista) {
                 insumo.setValorOrcado(projPlanFacade.getValorOrc(centro.getProjCod(), centro.getOrcCod(), centro.getPlanCod(), insumo.getCodigo().intValue()));

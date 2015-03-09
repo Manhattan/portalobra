@@ -197,7 +197,7 @@ public class InsumoController extends EntityController<Insumo> implements Serial
                 @Override
                 public int getItemsCount() {
                     try {
-                        return getFacade().countParam(filtroSolicInsumoCod, filtroSolicInsumoEspec, codigoCarac, codigoClasse, codigoGrupo, obraLinkadaOrcamento, desconsideraLinkOrcamento, loginController.getCentroSelecionado().getPlanCod()).intValue();
+                        return getFacade().countParam(filtroSolicInsumoCod, filtroSolicInsumoEspec, codigoCarac, codigoClasse, codigoGrupo, loginController.getCentroSelecionado().isObraLinkadaOrcamento(), desconsideraLinkOrcamento, loginController.getCentroSelecionado().getPlanCod()).intValue();
                     } catch (NullPointerException e) {
                         return 0;
                     }
@@ -206,7 +206,7 @@ public class InsumoController extends EntityController<Insumo> implements Serial
                 @Override
                 public DataModel createPageDataModel() {
                     try {
-                        return new ListDataModel(getFacade().findRangeParam(loginController.getCentroSelecionado(), filtroSolicInsumoCod, filtroSolicInsumoEspec, codigoCarac, codigoClasse, codigoGrupo, obraLinkadaOrcamento, desconsideraLinkOrcamento, loginController.getCentroSelecionado().getPlanCod(), new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                        return new ListDataModel(getFacade().findRangeParam(loginController.getCentroSelecionado(), filtroSolicInsumoCod, filtroSolicInsumoEspec, codigoCarac, codigoClasse, codigoGrupo, loginController.getCentroSelecionado().isObraLinkadaOrcamento(), desconsideraLinkOrcamento, loginController.getCentroSelecionado().getPlanCod(), new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
                     } catch (NullPointerException e) {
                         return null;
                     }
