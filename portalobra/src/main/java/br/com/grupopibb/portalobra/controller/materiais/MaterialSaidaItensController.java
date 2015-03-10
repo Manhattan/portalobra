@@ -170,6 +170,14 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
         return JsfUtil.getSelectItems(centro, false, FacesContext.getCurrentInstance());
     }
 
+    /**
+     * Limpa o cache da tabela do MaterialSaidaItensController da request
+     * atual.
+     */
+    public void updateController() {
+        materialSaidaItensFacade.clearCache();
+    }
+
     public MaterialSaidaItens getCurrent() {
         return current;
     }

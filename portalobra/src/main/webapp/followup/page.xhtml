@@ -21,17 +21,17 @@
             <p:dialog header="#{msg.insumo}" closeOnEscape="true" widgetVar="dlgInsumo" resizable="false" rendered="#{followUpSolicitacoesController.showDialogInsumo == true}">  
                 <h:form id="formIns">  
                     <h:panelGrid columns="2" style="margin-bottom:10px; border-style: solid" border="1"  columnClasses="itemColumEspaco">  
-                        <h:outputText value="#{msg.codigo}:"/>
+                        <h:outputText value="#{msg.codigo}:" style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.insumo.codigo}" />
-                        <h:outputText value="#{msg.especificacao}:"/> 
+                        <h:outputText value="#{msg.especificacao}:" style="font-weight: bold" /> 
                         <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.especificacaoCompleta} "/>
-                        <h:outputText value="#{msg.unidade}: "/>
+                        <h:outputText value="#{msg.unidade}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.insumo.unidade.unidade} "/>
-                        <h:outputText value="#{msg.classe}: "/>
+                        <h:outputText value="#{msg.classe}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.insumo.caracterizacaoInsumo.grupoInsumos.classeInsumos.titulo} "/>
-                        <h:outputText value="#{msg.grupo}: "/>
+                        <h:outputText value="#{msg.grupo}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.insumo.caracterizacaoInsumo.grupoInsumos.titulo} "/>
-                        <h:outputText value="#{msg.caracterizacao}: "/>
+                        <h:outputText value="#{msg.caracterizacao}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.insumo.caracterizacaoInsumo.titulo} "/>
                     </h:panelGrid>  
                 </h:form>  
@@ -40,23 +40,23 @@
             <p:dialog header="#{msg.RS}" closeOnEscape="true" widgetVar="dlgRS" resizable="false" rendered="#{followUpSolicitacoesController.showDialogRS == true}">  
                 <h:form>  
                     <h:panelGrid columns="2" style="margin-bottom:10px; border-style: solid" border="1"  columnClasses="itemColumEspaco">  
-                        <h:outputText value="#{msg.numeroSolicitacaoAbreviada}: " />
+                        <h:outputText value="#{msg.numeroSolicitacaoAbreviada}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraIDSis} "/>
-                        <h:outputText value="#{msg.dataSolicitacaoAbrev}: "  />
+                        <h:outputText value="#{msg.dataSolicitacaoAbrev}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.dataRegistroSolicitacao}">    
                             <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
                         </h:outputText>
-                        <h:outputText value="#{msg.solicitante}: "  />
+                        <h:outputText value="#{msg.solicitante}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.solicitacao.solicitante.nome}"/>
-                        <h:outputText value="#{msg.numeroItemAbrev}: "  />
+                        <h:outputText value="#{msg.numeroItemAbrev}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.numero}"/>
-                        <h:outputText value="#{msg.situacao}: "  />
+                        <h:outputText value="#{msg.situacao}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.situacao.label}"/>
-                        <h:outputText value="#{msg.especificacao}: "  />
+                        <h:outputText value="#{msg.especificacao}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.especificacaoCompleta}"/>
-                        <h:outputText value="#{msg.observacao}: "  />
+                        <h:outputText value="#{msg.observacao}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoItemObservacao}"/>
-                        <h:outputText value="#{msg.dataEntrega}: "  />
+                        <h:outputText value="#{msg.dataEntrega}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoDataEntrega}">  
                             <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
                         </h:outputText>
@@ -67,13 +67,13 @@
             <p:dialog header="#{msg.CS}" closeOnEscape="true" widgetVar="dlgCS" resizable="false" rendered="#{followUpSolicitacoesController.showDialogCS == true}">  
                 <h:form>  
                     <h:panelGrid columns="2" style="margin-bottom:10px; border-style: solid" border="1"  columnClasses="itemColumEspaco">  
-                        <h:outputText value="#{msg.numeroSolicitacaoAbreviada}: " />
+                        <h:outputText value="#{msg.numeroSolicitacaoAbreviada}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraIDSis} "/>
-                        <h:outputText value="#{msg.dataConclusao}: "  />
+                        <h:outputText value="#{msg.dataConclusao}: " style="font-weight: bold"  />
                         <h:outputText value="#{followUpSolicitacoesController.current.dataConclusaoSolicitacao}">    
                             <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
                         </h:outputText>
-                        <h:outputText value="#{msg.usuario}: "  />
+                        <h:outputText value="#{msg.usuario}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.solicitacao.usuarioConcluido}"/>
                     </h:panelGrid>  
                 </h:form>  
@@ -82,17 +82,17 @@
             <p:dialog header="#{msg.AS}" closeOnEscape="true" widgetVar="dlgAS" resizable="false" rendered="#{followUpSolicitacoesController.showDialogAS == true}">  
                 <h:form>  
                     <h:panelGrid columns="2" style="margin-bottom:10px; border-style: solid" border="1"  columnClasses="itemColumEspaco">  
-                        <h:outputText value="#{msg.numeroSolicitacaoAbreviada}: " />
+                        <h:outputText value="#{msg.numeroSolicitacaoAbreviada}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraIDSis}"/>
-                        <h:outputText value="#{msg.data}: "  />
+                        <h:outputText value="#{msg.data}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.dataAutorizacaoSolicitacao}">    
                             <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
                         </h:outputText>
-                        <h:outputText value="#{msg.motivo}: " />
+                        <h:outputText value="#{msg.motivo}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.instrucaoMotivo}" style="color:red" />
-                        <h:outputText value="#{msg.usuario}: " />
+                        <h:outputText value="#{msg.usuario}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.usuarioInstrucao}"/>
-                        <h:outputText value="#{msg.situacao}: "  />
+                        <h:outputText value="#{msg.situacao}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.solicitacaoCompraItem.situacaoAutorizacao}"/>
                     </h:panelGrid>  
                 </h:form>  
@@ -104,29 +104,29 @@
                         <f:facet name="header">
                             #{msg.coleta}
                         </f:facet>
-                        <h:outputText value="#{msg.numeroColetaAbrev}: " />
+                        <h:outputText value="#{msg.numeroColetaAbrev}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.numero}"/>
-                        <h:outputText value="#{msg.fornecedor}: "  />
+                        <h:outputText value="#{msg.fornecedor}: " style="font-weight: bold"  />
                         <h:commandLink value="#{followUpSolicitacoesController.current.coletaPrecoItem.credor.razaoSocial}" style="text-align: left" >
                             <p:ajax oncomplete="dlgFornecedor.show()" listener="#{credorController.initCurrent(followUpSolicitacoesController.current.coletaPrecoItem.credor)}" update=":menuApp:pnlFornecedor" />
                         </h:commandLink>
-                        <h:outputText value="#{msg.dataRegistro}: " />
+                        <h:outputText value="#{msg.dataRegistro}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.data}">
                             <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
                         </h:outputText>
-                        <h:outputText value="#{msg.usuarioRegistro}: " />
+                        <h:outputText value="#{msg.usuarioRegistro}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.usuarioInstrucaoEdit}"/>
-                        <h:outputText value="#{msg.dataConclusao}: " />
+                        <h:outputText value="#{msg.dataConclusao}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.concluido eq 'S' ? followUpSolicitacoesController.current.coletaPreco.dataConcluido : ''}">
                             <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
                         </h:outputText>
-                        <h:outputText value="#{msg.usuarioConclusao}: " />
+                        <h:outputText value="#{msg.usuarioConclusao}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.coletaPreco.concluido eq 'S' ? followUpSolicitacoesController.current.coletaPreco.usuarioConcluido : ''}"/>
-                        <h:outputText value="#{msg.dataAutorizacao}: "  />
+                        <h:outputText value="#{msg.dataAutorizacao}: " style="font-weight: bold"  />
                         <h:outputText value="#{followUpSolicitacoesController.current.coletaPrecoItem.instrucaoCodigo != '' ? followUpSolicitacoesController.current.coletaPrecoItem.instrucaoData : ''}">
                             <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
                         </h:outputText>
-                        <h:outputText value="#{msg.usuarioAutorizacao}: " />
+                        <h:outputText value="#{msg.usuarioAutorizacao}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.coletaPrecoItem.instrucaoCodigo != '' ? followUpSolicitacoesController.current.coletaPrecoItem.usuarioInstrucao : ''}"/>
                     </h:panelGrid>  
 
@@ -134,30 +134,30 @@
                         <f:facet name="header">
                             #{msg.pedido}
                         </f:facet>
-                        <h:outputText value="#{msg.numeroPedidoAbrev}: " />
+                        <h:outputText value="#{msg.numeroPedidoAbrev}: " style="font-weight: bold" />
                         <h:panelGroup>
                             <h:outputText value="#{followUpSolicitacoesController.current.pedidoIDSis} "/>
                             (<p:commandLink disabled="#{followUpSolicitacoesController.current.situacao eq 'R'}" rendered="#{followUpSolicitacoesController.current.pedido != null}" value="#{msg.imprimir}" oncomplete="dlgRelPed.show()" actionListener="#{pedidoController.initPedido(followUpSolicitacoesController.current.pedido)}" update=":pngRelPed" />)
                         </h:panelGroup>
-                        <h:outputText value="#{msg.numeroItemAbrev}: " />
+                        <h:outputText value="#{msg.numeroItemAbrev}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.pedidoItem.itemNumero} "/>
-                        <h:outputText value="#{msg.fornecedor}: "  />
-
+                        <h:outputText value="#{msg.fornecedor}: " style="font-weight: bold" />
                         <h:commandLink class="button-field2" value="#{followUpSolicitacoesController.current.pedido.credor.razaoSocial}" style="text-align: left" >
                             <p:ajax oncomplete="dlgFornecedor.show()" listener="#{credorController.initCurrent(followUpSolicitacoesController.current.pedido.credor)}" update=":menuApp:pnlFornecedor" />
                         </h:commandLink>
-
-                        <h:outputText value="#{msg.dataRegistro}: "  />
+                        <h:outputText value="#{msg.encaminhadoAoFornecedor}: " style="font-weight: bold" />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedido.encaminhado ? 'Sim' : 'Não'}" />
+                        <h:outputText value="#{msg.dataRegistro}: " style="font-weight: bold" />
                         <h:outputText value="#{followUpSolicitacoesController.current.pedido.dataPedido}">
                             <f:convertDateTime locale="pt_BR" timeZone="#{initParam['timezone']}" pattern="dd/MM/yyyy"/>
                         </h:outputText>
-                        <h:outputText value="#{msg.valorTotalItemAbrev}: "  />
+                        <h:outputText value="#{msg.valorTotalItemAbrev}: " style="font-weight: bold"  />
                         <h:outputText value="#{followUpSolicitacoesController.current.pedidoItem.valorTotalItemFormatado} "  />
-                        <h:outputText value="#{msg.valorTotalPedidoAbrev}: "  />
+                        <h:outputText value="#{msg.valorTotalPedidoAbrev}: " style="font-weight: bold"  />
                         <h:outputText value="#{followUpSolicitacoesController.current.pedido.valorTotalFormatado} "  />
-                        <h:outputText value="#{msg.usuario}: "  />
+                        <h:outputText value="#{msg.usuario}: " style="font-weight: bold"  />
                         <h:outputText value="#{followUpSolicitacoesController.current.pedido.auditUserName}"/>
-                        <h:outputText value="#{msg.observacao}: "  />
+                        <h:outputText value="#{msg.observacao}: " style="font-weight: bold"  />
                         <h:outputText value="#{followUpSolicitacoesController.current.pedido.observacao}"/>
                     </h:panelGrid>
                 </h:form>  
@@ -186,6 +186,8 @@
                         <h:outputText value="#{followUpSolicitacoesController.current.pedido.auditUserName}"/>
                         <h:outputText value="#{msg.observacao}: "  />
                         <h:outputText value="#{followUpSolicitacoesController.current.pedido.observacao}"/>
+                        <h:outputText value="#{msg.encaminhadoAoFornecedor}: " />
+                        <h:outputText value="#{followUpSolicitacoesController.current.pedido.encaminhado ? 'Sim' : 'Não'}" />
                     </h:panelGrid>
                 </h:form>
             </p:dialog>
@@ -194,7 +196,7 @@
                 <h:form >  
                     <table class="dialogtable" style="max-width: 500px">
                         <tr>
-                            <td align='left'>
+                            <td style="font-weight: bold; text-align: left">
                                 #{msg.numeroPedidoAbrev}: 
                             </td>
                             <td colspan="2" align='left'>
@@ -203,7 +205,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td align='left'>
+                            <td style="font-weight: bold; text-align: left">
                                 #{msg.valorTotalItemAbrev}:
                             </td>
                             <td colspan="2" align='left'>
@@ -211,13 +213,21 @@
                             </td>
                         </tr>
                         <tr>
-                            <td align='left'>
+                            <td style="font-weight: bold; text-align: left">
                                 #{msg.fornecedor}
                             </td>
                             <td align='left' colspan="2">                    
                                 <h:commandLink class="button-field2" value="#{followUpSolicitacoesController.current.pedido.credor.razaoSocial}" style="text-align: left; text-decoration: none" rendered="#{followUpSolicitacoesController.current.pedido.situacao != null}">
                                     <p:ajax oncomplete="dlgFornecedor.show()" listener="#{credorController.initCurrent(followUpSolicitacoesController.current.pedido.credor)}" update=":menuApp:pnlFornecedor" />
                                 </h:commandLink>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; text-align: left">
+                                #{msg.encaminhadoAoFornecedor}
+                            </td>
+                            <td colspan="2">
+                                <h:outputText value="#{followUpSolicitacoesController.current.pedido.encaminhado ? 'Sim' : 'Não'}" />
                             </td>
                         </tr>
                         <tr align='center'>
@@ -901,7 +911,7 @@
                                             <h:outputText value="# {item.pedido.encaminhado}" />
                                         </td!-->
                                         <td align='center'>
-                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" value="#{item.diasAutorizacaoPedido + item.diasRegistroPedido}" rendered="#{item.diasAutorizacaoPedido != null}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgAP')}" >
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" value="#{item.diasAutorizacaoPedido + item.diasRegistroPedido}" rendered="#{item.diasAutorizacaoPedido != null}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgAP')}">
                                                 <p:ajax oncomplete="dlgAP.show()" update=":dialogForm" />
                                             </h:commandButton>
                                         </td>

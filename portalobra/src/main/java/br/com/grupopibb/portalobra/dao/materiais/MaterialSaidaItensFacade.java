@@ -188,4 +188,10 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
         params.put("numeroDocumento", numeroDocumento);
         params.put("dataSaida", DateUtils.zerarHora(dataMovimentacao));
     }
+
+    public void clearCache() {
+        em.flush();
+        em.getEntityManagerFactory().getCache().evictAll();
+        em.clear();
+    }
 }

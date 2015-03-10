@@ -46,7 +46,7 @@ import javax.validation.constraints.NotNull;
 @NamedQueries({
     @NamedQuery(name = "Pedido.find",
             query = " SELECT p FROM Pedido p "
-            + " WHERE p.numero = :id") 
+            + " WHERE p.numero = :id")
 })
 public class Pedido implements EntityInterface<Pedido> {
 
@@ -145,7 +145,7 @@ public class Pedido implements EntityInterface<Pedido> {
     /*
      */
     @Column(name = "Pedido_Encaminhado")
-    private String encaminhado;
+    private String pedidoEncaminhado;
     /*
      */
     @Column(name = "Pedido_DescPed")
@@ -168,6 +168,10 @@ public class Pedido implements EntityInterface<Pedido> {
     @Enumerated(EnumType.STRING)
     @Column(name = "PedForn_CTR")
     private EnumCTR ctr;
+    /*
+     */
+    @Transient
+    private boolean encaminhado;
     /*
      */
     @Transient
@@ -326,11 +330,13 @@ public class Pedido implements EntityInterface<Pedido> {
         this.situacao = situacao;
     }
 
-    public String getEncaminhado() {
+    public boolean isEncaminhado() {
+        encaminhado = pedidoEncaminhado != null && pedidoEncaminhado.equals("E");
         return encaminhado;
     }
 
-    public void setEncaminhado(String encaminhado) {
+    public void setEncaminhado(boolean encaminhado) {
+        pedidoEncaminhado = encaminhado ? "E" : null;
         this.encaminhado = encaminhado;
     }
 
