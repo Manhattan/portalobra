@@ -103,7 +103,11 @@ public class MaterialBusiness {
             Integer itemNum = incrementItemMatEntrada(materialEntrada);
             String itemItem = "000" + String.valueOf(itemNum);
             itemItem = StringUtils.substring(itemItem, (itemItem.length() - 3));
-            return new MaterialEntradaItens(materialEntrada, itemNum, itemItem, itemSaida.getInsumo(), itemSaida.getQuantidade(), itemSaida.getValor(), materialEntrada.getDataEntrada(), materialEntrada.getCentro().getEmpresaCod(), materialEntrada.getCentro().getFilialCod(), materialEntrada.getCentro().getCodigo(), itemSaida.getObservacao());
+            return new MaterialEntradaItens(materialEntrada, itemNum, itemItem, 
+                    itemSaida.getInsumo(), itemSaida.getQuantidade(), itemSaida.getValor(), 
+                    materialEntrada.getDataEntrada(), materialEntrada.getCentro().getEmpresaCod(), 
+                    materialEntrada.getCentro().getFilialCod(), materialEntrada.getCentro().getCodigo(), 
+                    itemSaida.getObservacao(), itemSaida.getMaterialSaida().getNumeroSaida(), itemSaida.getNumero());
         } else {
             return null;
         }

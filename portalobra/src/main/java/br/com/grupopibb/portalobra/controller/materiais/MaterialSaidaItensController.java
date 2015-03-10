@@ -78,6 +78,10 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
         return materialSaidaItensFacade;
     }
 
+    public MaterialSaidaItens findSaidaItem(Long saidaNumero, Integer itemNumero) {
+        return getFacade().find(saidaNumero, itemNumero);
+    }
+
     @Override
     public EntityPagination getPagination() {
         if (pagination == null) {
@@ -171,8 +175,7 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
     }
 
     /**
-     * Limpa o cache da tabela do MaterialSaidaItensController da request
-     * atual.
+     * Limpa o cache da tabela do MaterialSaidaItensController da request atual.
      */
     public void updateController() {
         materialSaidaItensFacade.clearCache();

@@ -70,7 +70,7 @@
                         <p:ajax update="btnTransf" />
                     </p:selectOneMenu>
 
-                    <p:commandButton value="" id="btnTransf" icon="ui-icon-transfer-e-w" iconPos="left" styleClass="button-only-icon" oncomplete="dlgTransfMat.show()" style="margin-right: 10px" disabled="#{followUpSolicitacoesController.materialEntrada.tipoMovimento != 'T'}" actionListener="#{materialSaidaController.initCentroSelecionado(loginController.centroSelecionado)}" />
+                    <p:commandButton value="" id="btnTransf" icon="ui-icon-transfer-e-w" iconPos="left" styleClass="button-only-icon" oncomplete="dlgTransfMat.show()" style="margin-right: 10px" disabled="#{followUpSolicitacoesController.materialEntrada.tipoMovimento != 'T'}" />
 
                     <p:selectOneMenu value="#{followUpSolicitacoesController.materialEntrada.tipoDocumento}" style="margin-right: 10px">
                         <f:selectItems value="#{followUpSolicitacoesController.tipoDocumentoMaterialEntradaSelect}" />
@@ -86,7 +86,7 @@
                         </p:confirmDialog>
                     </h:panelGroup>
 
-                    <p:commandButton id="btnPesquisarMatEnt" update=":panelEntradaMaterialP" icon="ui-icon-search" value="#{msg.pesquisar}" actionListener="#{materialEntradaController.initCentroSelecionado(loginController.centroSelecionado)}" oncomplete="dlgMatEnt.show()" style="margin-right: 10px" />
+                    <p:commandButton id="btnPesquisarMatEnt" update=":panelEntradaMaterialP" icon="ui-icon-search" value="#{msg.pesquisar}" oncomplete="dlgMatEnt.show()" style="margin-right: 10px" />
                     <p:commandButton id="cancelarEntradaMaterial" value="#{msg.cancelar}" style="width: 95px" icon="ui-icon-cancel" update=":panelMain" actionListener="#{followUpSolicitacoesController.limparMovimentacaoMaterial()}" oncomplete="#{insumoController.limparInsumos()}" />
                     <p:commandButton id="btnConfirmarMatEnt" value="#{msg.ok}" style="width: 95px;" update=":panelMain" oncomplete="#{insumoController.limparInsumos()}" icon="ui-icon-circle-check" disabled="#{!followUpSolicitacoesController.enableInsercaoMatEntrada}" actionListener="#{followUpSolicitacoesController.createOrEditMovimentacaoEntrada()}" action="#{materialEntradaController.clean()}" />
 
@@ -104,6 +104,7 @@
                             <th>#{msg.valor}</th>
                             <th align='center' style="padding-right: 3px">#{msg.precoUnitarioAbrev}</th>
                             <th><h:outputText value="#{msg.observacao}" /></th>
+                            <th><h:outputText value="#{msg.origem}" /></th>
                         </tr>
                         <ui:repeat rendered="#{followUpSolicitacoesController.materialEntrada.itens != null}" value="#{followUpSolicitacoesController.materialEntrada.itens}" var="mi" varStatus="s">
                             <tr class="noborder">
@@ -144,6 +145,9 @@
                                 </td>
                                 <td>
                                     <p:inputTextarea maxlength="250" rows="1" cols="80" value="#{mi.observacao}" />
+                                </td>
+                                <td>
+                                    <h:outputText value="#{materialSaidaItensController.findSaidaItem(mi.saidaNumeroT, mi.saidaItemNumeroT).materialSaida.centro.nome}" />
                                 </td>
                             </tr>
                         </ui:repeat>

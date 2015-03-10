@@ -9,18 +9,17 @@ package br.com.grupopibb.portalobra.model.tipos;
  * @author administrator
  */
 public enum EnumTipoMovimentoMaterialEntrada {
+
     C("Compra"),
     T("Transferência"),
-    O("Outros"),
-    I("");
-    
+    O("Outros");
     private String label;
-    
-    private EnumTipoMovimentoMaterialEntrada(String label){
+
+    private EnumTipoMovimentoMaterialEntrada(String label) {
         this.label = label;
     }
-    
-    private String getLabel(){
+
+    private String getLabel() {
         return label;
     }
 }

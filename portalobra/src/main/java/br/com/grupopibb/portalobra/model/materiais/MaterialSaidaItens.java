@@ -55,24 +55,28 @@ import javax.persistence.Transient;
             + " AND msi.centroCod = :centroCod "
             + " AND msi.filialCod = :filialCod "
             + " AND msi.dataSaida BETWEEN :dataInicial AND :dataFinal"),
+    @NamedQuery(name = "MaterialSaidaItens.findByItem",
+            query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi JOIN msi.materialSaida ms "
+            + " WHERE (ms.numeroSaida = :numeroSaida) "
+            + " AND (msi.numero = :itemNumero)"),
     @NamedQuery(name = "MaterialSaidaItens.findSaidaNumeroByInsumo",
-            query = " SELECT DISTINCT (m.numeroSaida) FROM MaterialSaidaItens mi join mi.materialSaida m"
-            + " WHERE (:insumoCod2 = 'todos' OR mi.insumo.codigo = :insumoCod) "
-            + " AND (:insumoEspecificacao2 = 'todos' OR mi.insumo.especificacao LIKE :insumoEspecificacao) "
-            + " AND (mi.empresaCod = :empresaCod) "
-            + " AND (mi.centroCod = :centroCod) "
-            + " AND (mi.filialCod = :filialCod) "),
+            query = " SELECT DISTINCT (ms.numeroSaida) FROM MaterialSaidaItens msi JOIN msi.materialSaida ms"
+            + " WHERE (:insumoCod2 = 'todos' OR msi.insumo.codigo = :insumoCod) "
+            + " AND (:insumoEspecificacao2 = 'todos' OR msi.insumo.especificacao LIKE :insumoEspecificacao) "
+            + " AND (msi.empresaCod = :empresaCod) "
+            + " AND (msi.centroCod = :centroCod) "
+            + " AND (msi.filialCod = :filialCod) "),
     @NamedQuery(name = "MaterialSaidaItens.findEstoqueSaidas",
-            query = " SELECT SUM(mi.quantidade) FROM MaterialSaidaItens mi"
-            + " WHERE (mi.insumo.codigo = :insumoCod) "
-            + " AND (mi.dataSaida BETWEEN :dataInicial AND :dataFinal) "
-            + " AND (mi.empresaCod = :empresaCod) "
-            + " AND (mi.centroCod = :centroCod) "
-            + " AND (mi.filialCod = :filialCod) "),
+            query = " SELECT SUM(msi.quantidade) FROM MaterialSaidaItens msi"
+            + " WHERE (msi.insumo.codigo = :insumoCod) "
+            + " AND (msi.dataSaida BETWEEN :dataInicial AND :dataFinal) "
+            + " AND (msi.empresaCod = :empresaCod) "
+            + " AND (msi.centroCod = :centroCod) "
+            + " AND (msi.filialCod = :filialCod) "),
     @NamedQuery(name = "MaterialSaidaItens.findTransferencias",
-            query = " SELECT DISTINCT mi FROM MaterialSaidaItens mi join mi.materialSaida ms "
+            query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi join msi.materialSaida ms "
             + " WHERE ms.centro = :centroOrigem "
-            + " AND mi.dataSaida = :dataSaida "
+            + " AND msi.dataSaida = :dataSaida "
             + " AND ms.numeroDocumento = :numeroDocumento "
             + " AND ms.centroDestino = :centroDestino ")
 })

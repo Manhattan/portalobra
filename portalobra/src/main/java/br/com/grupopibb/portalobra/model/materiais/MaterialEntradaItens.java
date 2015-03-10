@@ -71,6 +71,24 @@ public class MaterialEntradaItens implements EntityInterface<MaterialEntradaIten
         this.centroCod = centroCod;
         this.observacao = observacao;
     }
+    
+    public MaterialEntradaItens(MaterialEntrada materialEntrada, Integer numero, String itemItem,
+            Insumo insumo, Double quantidade, Double valor, Date dataEntrada, String empresaCod, String filialCod,
+            String centroCod, String observacao, Long saidaNumeroT, Integer saidaItemNumeroT) {
+        this.materialEntrada = materialEntrada;
+        this.numero = numero;
+        this.itemItem = itemItem;
+        this.insumo = insumo;
+        this.quantidade = quantidade;
+        this.valor = valor;
+        this.dataEntrada = dataEntrada;
+        this.empresaCod = empresaCod;
+        this.filialCod = filialCod;
+        this.centroCod = centroCod;
+        this.observacao = observacao;
+        this.saidaNumeroT = saidaNumeroT;
+        this.saidaItemNumeroT = saidaItemNumeroT;
+    }
     @Id
     @ManyToOne(targetEntity = MaterialEntrada.class)
     @JoinColumn(name = "Entrada_Numero")
@@ -118,7 +136,16 @@ public class MaterialEntradaItens implements EntityInterface<MaterialEntradaIten
      */
     @Column(name = "EntradaItem_Obs")
     private String observacao;
-
+    /*
+     */
+    @Column(name = "Transf_Saida_Numero")
+    private Long saidaNumeroT;
+    /*
+     */
+    @Column(name = "Transf_SaidaItem_Numero")
+    private Integer saidaItemNumeroT;
+    /*
+     */
     @Override
     public Serializable getId() {
         return materialEntrada.getNumeroEntrada().toString() + '-' + numero.toString();
@@ -230,5 +257,21 @@ public class MaterialEntradaItens implements EntityInterface<MaterialEntradaIten
 
     public void setObservacao(String observacao) {
         this.observacao = observacao;
+    }
+
+    public Long getSaidaNumeroT() {
+        return saidaNumeroT;
+    }
+
+    public void setSaidaNumeroT(Long saidaNumeroT) {
+        this.saidaNumeroT = saidaNumeroT;
+    }
+
+    public Integer getSaidaItemNumeroT() {
+        return saidaItemNumeroT;
+    }
+
+    public void setSaidaItemNumeroT(Integer saidaItemNumeroT) {
+        this.saidaItemNumeroT = saidaItemNumeroT;
     }
 }

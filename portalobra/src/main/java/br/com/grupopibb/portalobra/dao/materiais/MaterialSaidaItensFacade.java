@@ -125,6 +125,12 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
 
     }
 
+    public MaterialSaidaItens find(final Long numeroSaida, final Integer itemNumero) {
+        Map<String, Object> params = getMapParams();
+        paramsSaidaItem(params, numeroSaida, itemNumero);
+        return pesqParam("MaterialSaidaItens.findByItem", params);
+    }
+
     public List<MaterialSaidaItens> findRangeParam(final CentroCusto centro, final String numeroDoc, final Date dataInicial,
             final Date dataFinal, final Long insumoCod, final String insumoEspecificacao, final int[] range) {
         Map<String, Object> params = getMapParams();
@@ -187,6 +193,11 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
         params.put("centroDestino", centroDestino);
         params.put("numeroDocumento", numeroDocumento);
         params.put("dataSaida", DateUtils.zerarHora(dataMovimentacao));
+    }
+
+    private void paramsSaidaItem(Map<String, Object> params, final Long numeroSaida, final Integer itemNumero) {
+        params.put("numeroSaida", numeroSaida);
+        params.put("itemNumero", itemNumero);
     }
 
     public void clearCache() {
