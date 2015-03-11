@@ -143,15 +143,15 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
     }
 
     public List<MaterialSaidaItens> findRangeParam(final CentroCusto centro, final String numeroDoc, final Date dataInicial,
-            final Date dataFinal, final Long insumoCod, final String insumoEspecificacao, final int[] range) {
+            final Date dataFinal, final Long insumoCod, final String insumoEspecificacao, final String tipoMovimento, final int[] range) {
         Map<String, Object> params = getMapParams();
-        paramsPaginacao(params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoEspecificacao);
+        paramsPaginacao(params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoEspecificacao, tipoMovimento);
         return listPesqParamRange("MaterialSaidaItens.selectRange", params, range[1] - range[0], range[0]);
     }
 
-    public Long countParam(final CentroCusto centro, final String numeroDoc, final Date dataInicial, final Date dataFinal, final Long insumoCod, final String insumoEspecificacao) {
+    public Long countParam(final CentroCusto centro, final String numeroDoc, final Date dataInicial, final Date dataFinal, final Long insumoCod, final String insumoEspecificacao, final String tipoMovimento) {
         Map<String, Object> params = getMapParams();
-        paramsPaginacao(params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoEspecificacao);
+        paramsPaginacao(params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoEspecificacao, tipoMovimento);
         return pesqCount("MaterialSaidaItens.countRange", params);
     }
 
@@ -172,7 +172,7 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
     }
 //params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoEspecificacao
 
-    private void paramsPaginacao(Map<String, Object> params, final CentroCusto centro, final String numeroDoc, final Date dataInicial, final Date dataFinal, final Long insumoCod, final String insumoEspecificacao) {
+    private void paramsPaginacao(Map<String, Object> params, final CentroCusto centro, final String numeroDoc, final Date dataInicial, final Date dataFinal, final Long insumoCod, final String insumoEspecificacao, final String tipoMovimento) {
         params.put("empresaCod", centro != null ? centro.getEmpresaCod() : "");
         params.put("filialCod", centro != null ? centro.getFilialCod() : "");
         params.put("centroCod", centro != null ? centro.getCodigo() : "");
@@ -180,11 +180,13 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
         params.put("dataInicial", dataInicial);
         params.put("dataFinal", dataFinal);
         params.put("insumoCod", insumoCod);
-        params.put("insumoEspecificacao", insumoEspecificacao);
+        params.put("insumoEspecificacao", StringBeanUtils.acertaNomeParaLike(insumoEspecificacao, StringBeanUtils.LIKE_END));
+        params.put("tipoMovimento", tipoMovimento);
 
         params.put("numeroDoc2", StringUtils.isBlank(numeroDoc) ? "todos" : "filtro");
         params.put("insumoCod2", insumoCod == null ? "todos" : "filtro");
         params.put("insumoEspecificacao2", StringUtils.isBlank(insumoEspecificacao) ? "todos" : "filtro");
+        params.put("tipoMovimento2", StringUtils.isBlank(tipoMovimento) ? "todos" : "filtro");
     }
 
     private void paramsPaginacao1(Map<String, Object> params, final String empresaCod, final String filialCod, final String centroCod, final Long insumoCod, final Date dataMesRef) {

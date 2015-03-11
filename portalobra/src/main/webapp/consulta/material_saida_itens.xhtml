@@ -17,11 +17,12 @@
 
         <h:panelGroup id="panelMain" rendered="#{loginController.statusLogin == 1  and loginController.centroSelecionado != null and loginController.funcionario.login != null}">
             <h:form id="formMain">
-                <h:panelGrid columns="5">
+                <h:panelGrid columns="6">
                     <h:outputText value="#{msg.periodoSaidas}:" style="font-weight: bold" />
                     <h:outputText value="#{msg.numeroDoc}:" style="font-weight: bold" />
                     <h:outputText value="#{msg.insumo}:" style="font-weight: bold" />
                     <h:outputText value="#{msg.especificacao}:" style="font-weight: bold" />
+                    <h:outputText value="#{msg.tipoMovimento}:" style="font-weight: bold" />
                     <h:outputText value="" />
                     <h:panelGroup>
                         <p:calendar  value="#{materialSaidaItensController.dataInicial}" size="11" maxlength="10"  id="dataInicialMatSaiI" 
@@ -41,7 +42,11 @@
 
                     <p:inputText value="#{materialSaidaItensController.numeroDoc}" style="width: 80px" />
                     <p:inputText value="#{materialSaidaItensController.insumoCod}" style="width: 80px" />
-                    <p:inputText value="#{materialSaidaController.especificacao}" style="width: 160px"/>
+                    <p:inputText value="#{materialSaidaItensController.especificacao}" style="width: 160px"/>
+                    <p:selectOneMenu value="#{materialSaidaItensController.tipoMovimento}" style="margin-right: 10px" >
+                        <f:selectItem value="#{null}" itemLabel="" />
+                        <f:selectItems value="#{followUpSolicitacoesController.tipoMovimentoMaterialSaidaSelect}" var="i" itemLabel="#{i.label}" />
+                    </p:selectOneMenu>
                     <p:commandButton value="#{msg.executar}" actionListener="#{materialSaidaItensController.pesquisar()}" update=":formMain:panelTableMatSaiIPaginador" />
 
                 </h:panelGrid>
@@ -56,6 +61,7 @@
                             <th align='center' style="padding: 3px">#{msg.qtdSaida}</th>
                             <th align='center' style="padding: 3px">#{msg.estoqueAtual}</th>
                             <th align='center' style="padding: 3px">#{msg.usuario}</th>
+                            <th align='center' style="padding: 3px">#{msg.tipoMovimentoAbrev}</th>
                         </tr>
                         <ui:repeat value="#{materialSaidaItensController.items}" var="item" varStatus="s">
                             <tr>
@@ -88,6 +94,9 @@
                                 </td>
                                 <td>
                                     <h:outputText value="#{item.materialSaida.usuarioInsercao}" />
+                                </td>
+                                <td align='center'>
+                                    <h:outputText value="#{item.materialSaida.tipoMovimento}" />
                                 </td>
                             </tr>
                         </ui:repeat>

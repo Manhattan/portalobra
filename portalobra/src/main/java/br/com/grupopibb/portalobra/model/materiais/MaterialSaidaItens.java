@@ -37,7 +37,8 @@ import javax.persistence.Transient;
             + " AND ( :numeroDoc2 = 'todos' OR msi.materialSaida.numeroDocumento = :numeroDoc ) "
             + " AND ( msi.dataSaida BETWEEN :dataInicial AND :dataFinal ) "
             + " AND ( :insumoCod2 = 'todos' OR msi.insumo.codigo = :insumoCod ) "
-            + " AND ( :insumoEspecificacao2 = 'todos' OR msi.insumo.especificacao = :insumoEspecificacao ) "
+            + " AND ( :insumoEspecificacao2 = 'todos' OR msi.insumo.especificacao LIKE :insumoEspecificacao ) "
+            + " AND ( :tipoMovimento2 = 'todos' OR msi.materialSaida.tipoMovimento = :tipoMovimento ) "
             + " ORDER BY msi.dataSaida DESC"),
     //
     @NamedQuery(name = "MaterialSaidaItens.countRange",
@@ -48,7 +49,8 @@ import javax.persistence.Transient;
             + " AND ( :numeroDoc2 = 'todos' OR msi.materialSaida.numeroDocumento = :numeroDoc ) "
             + " AND ( msi.dataSaida BETWEEN :dataInicial AND :dataFinal ) "
             + " AND ( :insumoCod2 = 'todos' OR msi.insumo.codigo = :insumoCod ) "
-            + " AND ( :insumoEspecificacao2 = 'todos' OR msi.insumo.especificacao = :insumoEspecificacao ) "),
+            + " AND ( :insumoEspecificacao2 = 'todos' OR msi.insumo.especificacao LIKE :insumoEspecificacao ) "
+            + " AND ( :tipoMovimento2 = 'todos' OR msi.materialSaida.tipoMovimento = :tipoMovimento ) "),
     //
     @NamedQuery(name = "MaterialSaidaItens.find",
             query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi "

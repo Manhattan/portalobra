@@ -49,6 +49,7 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
     private String numeroDoc;
     private Long insumoCod;
     private String especificacao;
+    private String tipoMovimento;
     private Integer registrosPorPagina = 20;
     //----------------------------------------------
     @ManagedProperty(value = "#{loginController}")
@@ -88,12 +89,12 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
             pagination = new EntityPagination(registrosPorPagina) {
                 @Override
                 public int getItemsCount() {
-                    return getFacade().countParam(loginController.getCentroSelecionado(), numeroDoc, dataInicial, dataFinal, insumoCod, especificacao).intValue();
+                    return getFacade().countParam(loginController.getCentroSelecionado(), numeroDoc, dataInicial, dataFinal, insumoCod, especificacao, tipoMovimento).intValue();
                 }
 
                 @Override
                 public DataModel createPageDataModel() {
-                    return new ListDataModel(getFacade().findRangeParam(loginController.getCentroSelecionado(), numeroDoc, dataInicial, dataFinal, insumoCod, especificacao, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    return new ListDataModel(getFacade().findRangeParam(loginController.getCentroSelecionado(), numeroDoc, dataInicial, dataFinal, insumoCod, especificacao, tipoMovimento, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
                 }
             };
         }
@@ -223,6 +224,14 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
 
     public String getEspecificacao() {
         return especificacao;
+    }
+
+    public String getTipoMovimento() {
+        return tipoMovimento;
+    }
+
+    public void setTipoMovimento(String tipoMovimento) {
+        this.tipoMovimento = tipoMovimento;
     }
 
     public Integer getRegistrosPorPagina() {
