@@ -1960,13 +1960,15 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     }
 
     public Double getLimiteMovSaida(MaterialSaidaItens item) {
-        if (item.getLimiteSaida() == null) {
+        if (materialSaida.getTipoMovimento().equals(EnumTipoMovimentoMaterialSaida.D.toString())) {
+            item.setLimiteSaida(getEstoqueSaidasSemDevolucoes(item.getInsumo()));
+        } else {
             item.setLimiteSaida(calculaLimiteMovSaida(item));
         }
         return item.getLimiteSaida();
     }
-    
-    public void limpaLimiteMovSaida(MaterialSaidaItens item){
+
+    public void limpaLimiteMovSaida(MaterialSaidaItens item) {
         item.setLimiteSaida(null);
     }
 
@@ -1987,11 +1989,15 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         return estoque == null ? 0.0 : estoque;
     }
 
-    public Double getValorEstoqueSaidas(Insumo insumo) {
+    public Double getEstoqueSaidas(Insumo insumo) {
         return NumberUtils.isNull(materialSaidaItensFacade.findEstoqueSaidas(insumo.getCodigo(), loginController.getCentroSelecionado()), 0.0);
     }
 
-    public Double getValorEstoqueEntradas(Insumo insumo) {
+    public Double getEstoqueSaidasSemDevolucoes(Insumo insumo) {
+        return NumberUtils.isNull(materialSaidaItensFacade.findEstoqueSaidasSemDevolucoes(insumo.getCodigo(), loginController.getCentroSelecionado()), 0.0);
+    }
+
+    public Double getEstoqueEntradas(Insumo insumo) {
         return NumberUtils.isNull(materialEntradaItensFacade.findEstoqueEntradas(insumo.getCodigo(), loginController.getCentroSelecionado()), 0.0);
     }
 

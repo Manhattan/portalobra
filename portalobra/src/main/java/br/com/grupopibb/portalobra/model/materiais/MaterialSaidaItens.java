@@ -39,6 +39,7 @@ import javax.persistence.Transient;
             + " AND ( :insumoCod2 = 'todos' OR msi.insumo.codigo = :insumoCod ) "
             + " AND ( :insumoEspecificacao2 = 'todos' OR msi.insumo.especificacao = :insumoEspecificacao ) "
             + " ORDER BY msi.dataSaida DESC"),
+    //
     @NamedQuery(name = "MaterialSaidaItens.countRange",
             query = " SELECT COUNT(DISTINCT msi) FROM MaterialSaidaItens msi "
             + " WHERE ( msi.empresaCod = :empresaCod ) "
@@ -48,6 +49,7 @@ import javax.persistence.Transient;
             + " AND ( msi.dataSaida BETWEEN :dataInicial AND :dataFinal ) "
             + " AND ( :insumoCod2 = 'todos' OR msi.insumo.codigo = :insumoCod ) "
             + " AND ( :insumoEspecificacao2 = 'todos' OR msi.insumo.especificacao = :insumoEspecificacao ) "),
+    //
     @NamedQuery(name = "MaterialSaidaItens.find",
             query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi "
             + " WHERE msi.insumo.codigo = :insumoCod "
@@ -55,10 +57,12 @@ import javax.persistence.Transient;
             + " AND msi.centroCod = :centroCod "
             + " AND msi.filialCod = :filialCod "
             + " AND msi.dataSaida BETWEEN :dataInicial AND :dataFinal"),
+    //
     @NamedQuery(name = "MaterialSaidaItens.findByItem",
             query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi JOIN msi.materialSaida ms "
             + " WHERE (ms.numeroSaida = :numeroSaida) "
             + " AND (msi.numero = :itemNumero)"),
+    //
     @NamedQuery(name = "MaterialSaidaItens.findSaidaNumeroByInsumo",
             query = " SELECT DISTINCT (ms.numeroSaida) FROM MaterialSaidaItens msi JOIN msi.materialSaida ms"
             + " WHERE (:insumoCod2 = 'todos' OR msi.insumo.codigo = :insumoCod) "
@@ -66,6 +70,7 @@ import javax.persistence.Transient;
             + " AND (msi.empresaCod = :empresaCod) "
             + " AND (msi.centroCod = :centroCod) "
             + " AND (msi.filialCod = :filialCod) "),
+    //
     @NamedQuery(name = "MaterialSaidaItens.findEstoqueSaidas",
             query = " SELECT SUM(msi.quantidade) FROM MaterialSaidaItens msi"
             + " WHERE (msi.insumo.codigo = :insumoCod) "
@@ -73,12 +78,21 @@ import javax.persistence.Transient;
             + " AND (msi.empresaCod = :empresaCod) "
             + " AND (msi.centroCod = :centroCod) "
             + " AND (msi.filialCod = :filialCod) "),
+    //
+    @NamedQuery(name = "MaterialSaidaItens.findEstoqueSaidasSemDevolucoes",
+            query = " SELECT SUM(msi.quantidade) FROM MaterialSaidaItens msi"
+            + " WHERE ( msi.insumo.codigo = :insumoCod ) "
+            + " AND ( msi.empresaCod = :empresaCod ) "
+            + " AND ( msi.centroCod = :centroCod ) "
+            + " AND ( msi.filialCod = :filialCod ) "
+            + " AND ( msi.materialSaida.tipoMovimento <> 'D' )"),
+    //
     @NamedQuery(name = "MaterialSaidaItens.findTransferencias",
             query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi join msi.materialSaida ms "
-            + " WHERE ms.centro = :centroOrigem "
-            + " AND msi.dataSaida = :dataSaida "
-            + " AND ms.numeroDocumento = :numeroDocumento "
-            + " AND ms.centroDestino = :centroDestino ")
+            + " WHERE (ms.centro = :centroOrigem) "
+            + " AND (msi.dataSaida = :dataSaida) "
+            + " AND (ms.numeroDocumento = :numeroDocumento) "
+            + " AND (ms.centroDestino = :centroDestino) ")
 })
 public class MaterialSaidaItens implements EntityInterface<MaterialSaidaItens> {
 

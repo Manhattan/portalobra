@@ -99,8 +99,19 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Double findEstoqueSaidas(final Long insumoCod, final CentroCusto centro) {
         Map<String, Object> params = getMapParams();
-        paramsValorSaidas(params, insumoCod, centro.getEmpresaCod(), centro.getFilialCod(), centro.getCodigo());
+        paramsEstoqueSaidas(params, insumoCod, centro.getEmpresaCod(), centro.getFilialCod(), centro.getCodigo());
         Query q = getEntityManager().createNamedQuery("MaterialSaidaItens.findEstoqueSaidas");
+        for (String chave : params.keySet()) {
+            q.setParameter(chave, params.get(chave));
+        }
+        return (Double) q.getSingleResult();
+    }
+
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Double findEstoqueSaidasSemDevolucoes(final Long insumoCod, final CentroCusto centro) {
+        Map<String, Object> params = getMapParams();
+        paramsEstoqueSaidasSemDevolucoes(params, insumoCod, centro.getEmpresaCod(), centro.getFilialCod(), centro.getCodigo());
+        Query q = getEntityManager().createNamedQuery("MaterialSaidaItens.findEstoqueSaidasSemDevolucoes");
         for (String chave : params.keySet()) {
             q.setParameter(chave, params.get(chave));
         }
@@ -144,13 +155,20 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
         return pesqCount("MaterialSaidaItens.countRange", params);
     }
 
-    private void paramsValorSaidas(Map<String, Object> params, final Long insumoCod, final String empresaCod, final String filialCod, final String centroCod) {
+    private void paramsEstoqueSaidas(Map<String, Object> params, final Long insumoCod, final String empresaCod, final String filialCod, final String centroCod) {
         params.put("insumoCod", insumoCod);
         params.put("empresaCod", empresaCod);
         params.put("filialCod", filialCod);
         params.put("centroCod", centroCod);
         params.put("dataInicial", DateUtils.setDay(new Date(), 1));
         params.put("dataFinal", new Date());
+    }
+
+    private void paramsEstoqueSaidasSemDevolucoes(Map<String, Object> params, final Long insumoCod, final String empresaCod, final String filialCod, final String centroCod) {
+        params.put("insumoCod", insumoCod);
+        params.put("empresaCod", empresaCod);
+        params.put("filialCod", filialCod);
+        params.put("centroCod", centroCod);
     }
 //params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoEspecificacao
 
