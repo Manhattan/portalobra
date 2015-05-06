@@ -6,6 +6,7 @@ package br.com.grupopibb.portalobra.business.materiais;
 
 import br.com.grupopibb.portalobra.model.geral.CentroCusto;
 import br.com.grupopibb.portalobra.model.insumo.Insumo;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import br.com.grupopibb.portalobra.model.materiais.MaterialEntrada;
 import br.com.grupopibb.portalobra.model.materiais.MaterialEntradaItens;
 import br.com.grupopibb.portalobra.model.materiais.MaterialSaida;
@@ -77,15 +78,32 @@ public class MaterialBusiness {
 
     /**
      * Verifica se a lista de itens do Material de Entrada contém o Insumo
-     * passado.
+     * passado como parâmetro.
      *
      * @param matEnt Material de Entrada que contém a lista de itens.
      * @param insumo Insumo a ser comparado.
      * @return Verdadeiro ou falso.
-     */
+ 
     public boolean isContainsInsumo(MaterialEntrada matEnt, Insumo insumo) {
         for (MaterialEntradaItens item : matEnt.getItens()) {
             if (item.getInsumo().getCodigo() == insumo.getCodigo()) {
+                return true;
+            }
+        }
+        return false;
+    }    */
+
+    /**
+     * Verifica se a lista de itens do Material de Entrada contém o SubInsumo
+     * passado como parâmetro.
+     *
+     * @param matEnt Material de Entrada que contém a lista de itens.
+     * @param insumoSub InsumoSub a ser comparado.
+     * @return Verdadeiro ou falso.
+     */
+    public boolean isContainsInsumoSub(MaterialEntrada matEnt, InsumoSub insumoSub) {
+        for (MaterialEntradaItens item : matEnt.getItens()) {
+            if (item.getInsumoSub().getId().toString().equals(insumoSub.getId().toString())) {
                 return true;
             }
         }
@@ -104,7 +122,7 @@ public class MaterialBusiness {
             String itemItem = "000" + String.valueOf(itemNum);
             itemItem = StringUtils.substring(itemItem, (itemItem.length() - 3));
             return new MaterialEntradaItens(materialEntrada, itemNum, itemItem, 
-                    itemSaida.getInsumo(), itemSaida.getQuantidade(), itemSaida.getValor(), 
+                    itemSaida.getInsumoSub(), itemSaida.getQuantidade(), itemSaida.getValor(), 
                     materialEntrada.getDataEntrada(), materialEntrada.getCentro().getEmpresaCod(), 
                     materialEntrada.getCentro().getFilialCod(), materialEntrada.getCentro().getCodigo(), 
                     itemSaida.getObservacao(), itemSaida.getMaterialSaida().getNumeroSaida(), itemSaida.getNumero());
@@ -134,13 +152,14 @@ public class MaterialBusiness {
         }
     }
 
-    public Double getEntradaUltimoPreco(CentroCusto centro, Long insumoCod) {
+    public Double getEntradaUltimoPreco(CentroCusto centro, InsumoSub insumoSub) {
         try {
-            Query q = getEntityManager().createNativeQuery("exec sp_PO_EntradaUltimoPreco ?, ?, ?, ?");
+            Query q = getEntityManager().createNativeQuery("exec sp_PO_EntradaUltimoPreco ?, ?, ?, ?, ?");
             q.setParameter(1, centro.getEmpresaCod());
             q.setParameter(2, centro.getFilialCod());
             q.setParameter(3, centro.getCodigo());
-            q.setParameter(4, insumoCod.intValue());
+            q.setParameter(4, insumoSub.getInsumoCod().intValue());
+            q.setParameter(5, insumoSub.getCodigo().intValue());
             Object value = q.getSingleResult();
             if (value == null) {
                 return 0.0;

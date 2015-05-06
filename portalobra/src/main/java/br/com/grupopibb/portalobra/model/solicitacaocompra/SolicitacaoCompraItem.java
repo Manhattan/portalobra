@@ -5,7 +5,7 @@
 package br.com.grupopibb.portalobra.model.solicitacaocompra;
 
 import br.com.grupopibb.portalobra.model.common.EntityInterface;
-import br.com.grupopibb.portalobra.model.insumo.Insumo;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import br.com.grupopibb.portalobra.model.tipos.EnumsGeral;
 import br.com.grupopibb.portalobra.utils.NumberUtils;
 import java.io.Serializable;
@@ -20,6 +20,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -58,12 +59,12 @@ public class SolicitacaoCompraItem implements EntityInterface<SolicitacaoCompraI
         }
     }
 
-    public SolicitacaoCompraItem(SolicitacaoCompra solicitacao, Integer numero, String itemItem, Insumo insumo, Double quantidade, Date dataEntrega,
+    public SolicitacaoCompraItem(SolicitacaoCompra solicitacao, Integer numero, String itemItem, InsumoSub insumoSub, Double quantidade, Date dataEntrega,
             EnumsGeral situacao, String especificacaoComplemento, String observacao) {
         this.solicitacao = solicitacao;
         this.numero = numero;
         this.itemItem = itemItem;
-        this.insumo = insumo;
+        this.insumoSub = insumoSub;
         this.quantidade = quantidade;
         this.dataEntrega = dataEntrega;
         this.situacao = situacao;
@@ -95,9 +96,11 @@ public class SolicitacaoCompraItem implements EntityInterface<SolicitacaoCompraI
     private String itemItem;
     /*
      */
-    @OneToOne(targetEntity = Insumo.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "Insumo_Cod")
-    private Insumo insumo;
+    @OneToOne(targetEntity = InsumoSub.class, fetch = FetchType.EAGER)
+    @JoinColumns(value = {
+        @JoinColumn(name = "Insumo_Cod", referencedColumnName = "Insumo_Cod"),
+        @JoinColumn(name = "SubInsumo_Cod", referencedColumnName = "SubInsumo_Cod"),})
+    private InsumoSub insumoSub;
     /*
      */
     @Column(name = "SolicItem_Quantidade", nullable = false)
@@ -188,8 +191,8 @@ public class SolicitacaoCompraItem implements EntityInterface<SolicitacaoCompraI
     }
 
     public String getEspecificacaoCompleta() {
-        if (insumo != null && insumo.getEspecificacao() != null) {
-            return insumo.getEspecificacao() + " " + especificacaoComplemento;
+        if (insumoSub != null && insumoSub.getEspecificacao() != null) {
+            return insumoSub.getEspecificacao() + " " + especificacaoComplemento;
         }
         return "";
     }
@@ -289,12 +292,12 @@ public class SolicitacaoCompraItem implements EntityInterface<SolicitacaoCompraI
         this.itemItem = itemItem;
     }
 
-    public Insumo getInsumo() {
-        return insumo;
+    public InsumoSub getInsumoSub() {
+        return insumoSub;
     }
 
-    public void setInsumo(Insumo insumo) {
-        this.insumo = insumo;
+    public void setInsumoSub(InsumoSub insumoSub) {
+        this.insumoSub = insumoSub;
     }
 
     public Double getQuantidade() {

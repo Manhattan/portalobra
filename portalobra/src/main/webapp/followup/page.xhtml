@@ -588,7 +588,7 @@
         </h:panelGroup>
         <!-- ************************* AQUI FICA A TELA QUE EXIBE A PESQUISA DE INSUMOS ************************************** /-->
         <h:panelGroup id="panelInsumo" >
-            <ui:include src="insumo.xhtml" />
+            <ui:include src="insumoSub.xhtml" />
         </h:panelGroup>
         <!-- ************************* AQUI FICA A TELA QUE TROCA O CENTRO DE CUSTO ******************************************* /-->
         <h:panelGroup id="panelCentroCusto" >
@@ -716,9 +716,10 @@
                                     <th align='center' rowspan="2">
                                         #{msg.item}
                                     </th>
-                                    <th align='center' rowspan="2">
+                                    <th align='center' rowspan="2" style="min-width: 80px">
                                         <h:outputText value="#{msg.insumo}" /><br/>
                                         <h:inputText value="#{followUpSolicitacoesController.filtroInsumoCod}" onkeypress='return SomenteNumero(event)'  style="width: 40px; height: 13px; margin-top: 5px" maxlength="6" />
+                                        <h:inputText value="#{followUpSolicitacoesController.filtroInsumoSubCod}" onkeypress='return SomenteNumero(event)' style="width: 20px; height: 13px; margin-top: 5px; margin-left: 5px" maxlength="3" />
                                     </th>
                                     <th align='center' rowspan="2">
                                         <h:outputText value="#{msg.especificacao}" /><br/>
@@ -827,7 +828,7 @@
                                     <tr >
                                         <td align='center'>
                                             <h:selectBooleanCheckbox value="#{item.marcado}" rendered="true" disabled="#{!followUpSolicitacoesController.newSolicitacao or !followUpSolicitacoesController.newMovEntrada}" >
-                                                <p:ajax listener="#{followUpSolicitacoesController.addOrRemoveInsumo(item.insumo.codigo, item.marcado, item.solicitacaoCompraItem)}" update=":formMain:panelFollowUpItens" />
+                                                <p:ajax listener="#{followUpSolicitacoesController.addOrRemoveInsumo(item.insumoSub.id, item.marcado, item.solicitacaoCompraItem)}" update=":formMain:panelFollowUpItens" />
                                             </h:selectBooleanCheckbox>
                                         </td>
                                         <td align='center'>
@@ -841,7 +842,7 @@
                                         </td>
                                         <td align='center'><h:outputText value="#{item.solicitacaoCompraItem.itemItem}"/></td>
                                         <td align='left'>
-                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" value="#{item.insumo.codigo.toString()}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgInsumo')}">
+                                            <h:commandButton class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" value="#{item.insumoSub.idCompleto}" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgInsumo')}">
                                                 <p:ajax oncomplete="dlgInsumo.show()" update=":dialogForm" />
                                             </h:commandButton>
                                         </td>
@@ -868,7 +869,7 @@
                                         </td>
 
                                         <td align='right'>
-                                            <h:commandButton value="#{followUpSolicitacoesController.getEstoqueAtualFmt(item.insumo)}" class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" style="text-align: right;" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgKardex')}" >
+                                            <h:commandButton value="#{followUpSolicitacoesController.getEstoqueAtualFmt(item.insumoSub)}" class="button-field" onmouseout="this.className = 'button-field-out'" onmousemove="this.className = 'button-field-over'" style="text-align: right;" actionListener="#{followUpSolicitacoesController.createCurrent(item, 'dlgKardex')}" >
                                                 <p:ajax oncomplete="dlgKardex.show()" update=":dialogForm" />
                                             </h:commandButton>
                                         </td>

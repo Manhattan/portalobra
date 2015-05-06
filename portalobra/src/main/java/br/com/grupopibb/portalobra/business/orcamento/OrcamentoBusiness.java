@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -37,7 +38,10 @@ import org.primefaces.model.TreeNode;
 @Stateless
 @LocalBean
 public class OrcamentoBusiness {
-
+    
+    @EJB
+    private ConnectionFactory connectionFactory;
+    
     @PersistenceContext(unitName = UtilBeans.PERSISTENCE_UNIT)
     private EntityManager em;
 
@@ -204,7 +208,7 @@ public class OrcamentoBusiness {
         try {
             buildGradeOrcamento(
                     solicItem.getSolicitacao().getCentro(),
-                    solicItem.getInsumo(),
+                    solicItem.getInsumoSub().getInsumo(),
                     root,
                     solicItem);
         } catch (SQLException ex) {
@@ -225,7 +229,7 @@ public class OrcamentoBusiness {
             if (root == null || root.getChildren() == null || root.getChildren().isEmpty()) {
                 buildGradeOrcamento(
                         solicItem.getSolicitacao().getCentro(),
-                        solicItem.getInsumo(),
+                        solicItem.getInsumoSub().getInsumo(),
                         root,
                         solicItem);
             }
@@ -315,7 +319,6 @@ public class OrcamentoBusiness {
                 }
             }
         }
-        System.out.println(solicItem);
     }
 
     /**
@@ -490,7 +493,7 @@ public class OrcamentoBusiness {
      *
      * @param orcItem
      */
-    private static Integer updateItemOrcPlanEvt(SolicitacaoCompraItemOrcPlan itemPlan, EnumOpeEvtOrcamento ope, int numeroEvento) {
+    private Integer updateItemOrcPlanEvt(SolicitacaoCompraItemOrcPlan itemPlan, EnumOpeEvtOrcamento ope, int numeroEvento) {
         String opCod = ope.toString();
         Integer numeroEvt = numeroEvento;
         Integer codigoPlanoOrc = itemPlan.getPlanCodOrc();
@@ -507,7 +510,7 @@ public class OrcamentoBusiness {
             ope = EnumOpeEvtOrcamento.E;
         }
 
-        Connection con = new ConnectionFactory().getConnectionOpen();
+        Connection con = connectionFactory.getConnection();
 
         String sql = "exec spORC_UpdateItemOrcPlanEvt ?,?,?,?,?,?,?,?,?,?,?";
         CallableStatement stmt = null;

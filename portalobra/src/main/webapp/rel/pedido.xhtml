@@ -276,9 +276,9 @@
                                     <tr align='center'>
                                         <td>#{pItem.itemItem}</td>
                                         <td>#{pItem.solicitacaoCompraItem.solicitacao.idSistema}</td>
-                                        <td>#{pItem.solicitacaoCompraItem.insumo.codigo}</td>
+                                        <td>#{pItem.solicitacaoCompraItem.insumoSub.insumoCod}</td>
                                         <td align='left'>#{pItem.solicitacaoCompraItem.especificacaoCompleta} - #{pItem.solicitacaoCompraItem.observacao}</td>
-                                        <td>#{pItem.solicitacaoCompraItem.insumo.unidade.codigo}</td>
+                                        <td>#{pItem.solicitacaoCompraItem.insumoSub.insumo.unidade.codigo}</td>
                                         <td align='right' style="padding-right: 10px">
                                             <h:outputText value="#{pItem.quantidade}">
                                                 <f:convertNumber maxFractionDigits="4" />

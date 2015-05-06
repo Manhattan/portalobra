@@ -115,16 +115,16 @@
                                     #{mi.itemItem}
                                 </td>
                                 <td>
-                                    #{mi.insumo.codigo}
+                                    #{mi.insumoSub.idCompleto}
                                 </td>
                                 <td>
-                                    #{mi.insumo.especificacao}
+                                    #{mi.insumoSub.especificacao}
                                 </td>
                                 <td>
-                                    #{mi.insumo.unidade.codigo}
+                                    #{mi.insumoSub.insumo.unidade.codigo}
                                 </td>
                                 <td align='center'>
-                                    <h:outputText value="#{followUpSolicitacoesController.getEstoqueAtual(mi.insumo)}">
+                                    <h:outputText value="#{followUpSolicitacoesController.getEstoqueAtual(mi.insumoSub)}">
                                         <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
                                     </h:outputText>
                                 </td>
@@ -154,7 +154,7 @@
                         <tr class="noborder">
                             <td></td>
                             <td colspan="2">
-                                <p:commandButton oncomplete="dlgNovoInsumo.show()" icon="ui-icon-circle-plus" actionListener="#{insumoController.desconsiderarLinkOrcamento()}" update=":form-insumo:dialogPanelInsumo" style="width: 30px; height: 20px; margin-right: 5px" disabled="#{!followUpSolicitacoesController.enableEdicaoMatEntrada}">
+                                <p:commandButton oncomplete="dlgNovoInsumoSub.show()" icon="ui-icon-circle-plus" actionListener="#{insumoController.desconsiderarLinkOrcamento()}" update=":form-insumoSub:dialogPanelInsumoSub" style="width: 30px; height: 20px; margin-right: 5px" disabled="#{!followUpSolicitacoesController.enableEdicaoMatEntrada}">
                                 </p:commandButton>
                             </td>
                         </tr>

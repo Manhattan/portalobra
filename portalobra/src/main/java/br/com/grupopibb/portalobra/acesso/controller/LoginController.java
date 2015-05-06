@@ -148,10 +148,6 @@ public class LoginController implements Serializable {
         return JsfUtil.LOGIN_PAGE;
     }
 
-    public void performLogin() {
-        getPerformLogin();
-    }
-
     public SelectItem[] getCentrosFuncionarioSelect() {
         try {
             return JsfUtil.getSelectItems(funcionario.getCentros(), false, FacesContext.getCurrentInstance());
@@ -160,7 +156,7 @@ public class LoginController implements Serializable {
         }
     }
 
-    public Funcionario getPerformLogin() {
+    public Integer getPerformLogin() {
         if (isLoggedUser()) {
             closeLoggedUser();
         }
@@ -206,7 +202,7 @@ public class LoginController implements Serializable {
             monitorTask = new MonitorTask(this.monitor, monitorFacade, funcionario);
             monitorScheduler.init(this.monitorTask);
             monitorFacade.atualizaMonitor();
-            return funcionario;
+            return statusLogin;
         } else if (result == StatusLogin.INATIVO) {
             statusLogin = StatusLogin.INATIVO;
             erroLogin = LOGIN_SENHA_INVALIDOS;
@@ -215,6 +211,22 @@ public class LoginController implements Serializable {
         statusLogin = StatusLogin.INATIVO;
         erroLogin = ACESSO_NEGADO;
         return null;
+    }
+    
+        /**
+     * Recebe o status do login e redireciona para a página adequada.
+     *
+     * @param statusLogin
+     * @return página de acordo com o status do login.
+     */
+    public String redirectLogin(int statusLogin) {
+        if (statusLogin == StatusLogin.ATIVO) {
+            return JsfUtil.FOLLOWUP;
+        } else if (statusLogin == StatusLogin.INATIVO) {
+            return JsfUtil.LOGIN_ERROR;
+        } else {
+            return JsfUtil.LOGIN_PAGE;
+        }
     }
 
     public String mudaCentro(CentroCusto c, String destino) {

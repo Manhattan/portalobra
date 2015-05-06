@@ -8,6 +8,8 @@ import br.com.grupopibb.portalobra.dao.commons.AbstractEntityBeans;
 import static br.com.grupopibb.portalobra.dao.commons.AbstractEntityBeans.getMapParams;
 import br.com.grupopibb.portalobra.model.followup.FollowUpSolicitacoes;
 import br.com.grupopibb.portalobra.model.geral.CentroCusto;
+import br.com.grupopibb.portalobra.model.insumo.Insumo;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import br.com.grupopibb.portalobra.model.solicitacaocompra.SolicitacaoCompra;
 import br.com.grupopibb.portalobra.model.solicitacaocompra.SolicitacaoCompraItem;
 import br.com.grupopibb.portalobra.model.solicitacaocompra.Solicitante;
@@ -64,9 +66,9 @@ public class FollowUpSolicitacoesFacade extends AbstractEntityBeans<FollowUpSoli
      * @return Double estoqueAtual
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Double findEstoqueByInsumo(final CentroCusto centro, final Long insumo) {
+    public Double findEstoqueByInsumo(final CentroCusto centro, final InsumoSub insumoSub) {
         Map<String, Object> params = getMapParams();
-        paramsInsumo(params, centro, insumo);
+        paramsInsumo(params, centro, insumoSub);
         Query q = getEntityManager().createNamedQuery("FollowUpSolicitacoes.findEstoqueByInsumo");
         for (String chave : params.keySet()) {
             q.setParameter(chave, params.get(chave));
@@ -79,9 +81,9 @@ public class FollowUpSolicitacoesFacade extends AbstractEntityBeans<FollowUpSoli
     }
 
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Double findEstoqueUsinaByInsumo(final CentroCusto centro, final Long insumo) {
+    public Double findEstoqueUsinaByInsumoSub(final CentroCusto centro, final InsumoSub insumoSub) {
         Map<String, Object> params = getMapParams();
-        paramsInsumo(params, centro, insumo);
+        paramsInsumo(params, centro, insumoSub);
         Query q = getEntityManager().createNamedQuery("FollowUpSolicitacoes.findEstoqueUsinaByInsumo");
         for (String chave : params.keySet()) {
             q.setParameter(chave, params.get(chave));
@@ -102,9 +104,9 @@ public class FollowUpSolicitacoesFacade extends AbstractEntityBeans<FollowUpSoli
      * @return Quantidade orçada a realizar.
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Double findQuantidadeOrcamentoByInsumo(final CentroCusto centro, final Long insumo) {
+    public Double findQuantidadeOrcamentoByInsumo(final CentroCusto centro, final Long insumoCod) {
         Map<String, Object> params = getMapParams();
-        paramsInsumo(params, centro, insumo);
+        paramsInsumoOrc(params, centro, insumoCod);
         Query q = getEntityManager().createNamedQuery("FollowUpSolicitacoes.findQuantidadeOrcamento");
         for (String chave : params.keySet()) {
             q.setParameter(chave, params.get(chave));
@@ -121,9 +123,9 @@ public class FollowUpSolicitacoesFacade extends AbstractEntityBeans<FollowUpSoli
      *
      * @return List<FollowUpSolicitacoes>
      */
-    public List<FollowUpSolicitacoes> findParam(final CentroCusto centro, final Date dataInicial, final Date dataFinal, final List<EnumSituacaoSolicitacao> situacaoFiltro, final String filtroInsumoCod, final String filtroInsumoEspecificacao, final String solicId, final boolean solicMaiorEstoque) {
+    public List<FollowUpSolicitacoes> findParam(final CentroCusto centro, final Date dataInicial, final Date dataFinal, final List<EnumSituacaoSolicitacao> situacaoFiltro, final String filtroInsumoCod, final String filtroInsumoSubCod, final String filtroInsumoEspecificacao, final String solicId, final boolean solicMaiorEstoque) {
         Map<String, Object> params = getMapParams();
-        paramsPaginacao(params, centro, dataInicial, dataFinal, situacaoFiltro, filtroInsumoCod, filtroInsumoEspecificacao, solicId, solicMaiorEstoque);
+        paramsPaginacao(params, centro, dataInicial, dataFinal, situacaoFiltro, filtroInsumoCod, filtroInsumoSubCod, filtroInsumoEspecificacao, solicId, solicMaiorEstoque);
         return listPesqParam("FollowUpSolicitacoes.selectRange", params);
     }
 
@@ -167,7 +169,7 @@ public class FollowUpSolicitacoesFacade extends AbstractEntityBeans<FollowUpSoli
      */
     public List<FollowUpSolicitacoes> findRangeParam(final CentroCusto centro, final Date dataInicial, final Date dataFinal,
             final List<EnumSituacaoSolicitacao> situacaoFiltro, final boolean mesclarEstoque, final boolean mesclarEstoqueUsina,
-            final String filtroInsumoCod, final String filtroInsumoEspecificacao, final String solicId, final Solicitante solicitante,
+            final String filtroInsumoCod, final String filtroInsumoSubCod, final String filtroInsumoEspecificacao, final String solicId, final Solicitante solicitante,
             final String codigoCredor, final String razaoSocialCredor, final String nomeFantasiaCredor, final String cpfCnpjCredor,
             final Integer numeroPedido, final Integer numeroAR, final int[] range, boolean marcado,
             final boolean solicMaiorEstoque) {
@@ -186,10 +188,10 @@ public class FollowUpSolicitacoesFacade extends AbstractEntityBeans<FollowUpSoli
             } else if (mesclarEstoqueUsina == true) {
                 namedQuery = "FollowUpSolicitacoes.selectRangeUsina"; //Estoque da usina
             }
-            paramsPaginacao(params, centro, dataInicial, dataFinal, situacaoFiltro, filtroInsumoCod, filtroInsumoEspecificacao, solicId, solicMaiorEstoque);
+            paramsPaginacao(params, centro, dataInicial, dataFinal, situacaoFiltro, filtroInsumoCod, filtroInsumoSubCod, filtroInsumoEspecificacao, solicId, solicMaiorEstoque);
         } else {
             namedQuery = "FollowUpSolicitacoes.selectRange"; //Apenas solicitações de compra
-            paramsPaginacaoSolic(params, centro, dataInicial, dataFinal, situacaoFiltro, filtroInsumoCod, filtroInsumoEspecificacao, solicId, 
+            paramsPaginacaoSolic(params, centro, dataInicial, dataFinal, situacaoFiltro, filtroInsumoCod, filtroInsumoSubCod, filtroInsumoEspecificacao, solicId, 
                     solicitante, codigoCredor, razaoSocialCredor, nomeFantasiaCredor, cpfCnpjCredor, numeroPedido, solicMaiorEstoque);
         }
         List<FollowUpSolicitacoes> lista = listPesqParamRange(namedQuery, params, range[1] - range[0], range[0]);
@@ -209,7 +211,7 @@ public class FollowUpSolicitacoesFacade extends AbstractEntityBeans<FollowUpSoli
      */
     public Long countParam(final CentroCusto centro, final Date dataInicial, final Date dataFinal,
             final List<EnumSituacaoSolicitacao> situacaoFiltro, final Boolean mesclarEstoque,
-            final Boolean mesclarEstoqueUsina, final String filtroInsumoCod, final String filtroInsumoEspecificacao,
+            final Boolean mesclarEstoqueUsina, final String filtroInsumoCod,  final String filtroInsumoSubCod, final String filtroInsumoEspecificacao,
             final String solicId, final Solicitante solicitante, final String codigoCredor, final String razaoSocialCredor,
             final String nomeFantasiaCredor, final String cpfCnpjCredor, final Integer numeroPedido, final Integer numeroAR,
             final boolean solicMaiorEstoque) {
@@ -227,35 +229,38 @@ public class FollowUpSolicitacoesFacade extends AbstractEntityBeans<FollowUpSoli
             } else if (mesclarEstoqueUsina == true) {
                 namedQuery = "FollowUpSolicitacoes.countRangeUsina"; //Estoque da usina
             }
-            paramsPaginacao(params, centro, dataInicial, dataFinal, situacaoFiltro, filtroInsumoCod, filtroInsumoEspecificacao, solicId, solicMaiorEstoque);
+            paramsPaginacao(params, centro, dataInicial, dataFinal, situacaoFiltro, filtroInsumoCod, filtroInsumoSubCod, filtroInsumoEspecificacao, solicId, solicMaiorEstoque);
         } else {
             namedQuery = "FollowUpSolicitacoes.countRange"; //Apenas solicitações de compra
-            paramsPaginacaoSolic(params, centro, dataInicial, dataFinal, situacaoFiltro, filtroInsumoCod, filtroInsumoEspecificacao, 
+            paramsPaginacaoSolic(params, centro, dataInicial, dataFinal, situacaoFiltro, filtroInsumoCod, filtroInsumoSubCod, filtroInsumoEspecificacao, 
                     solicId, solicitante, codigoCredor, razaoSocialCredor, nomeFantasiaCredor, cpfCnpjCredor, numeroPedido, solicMaiorEstoque);
         }
-        paramsPaginacao(params, centro, dataInicial, dataFinal, situacaoFiltro, filtroInsumoCod, filtroInsumoEspecificacao, solicId, solicMaiorEstoque);
+        paramsPaginacao(params, centro, dataInicial, dataFinal, situacaoFiltro, filtroInsumoCod, filtroInsumoSubCod, filtroInsumoEspecificacao, solicId, solicMaiorEstoque);
         return pesqCount(namedQuery, params);
     }
 
     private void paramsPaginacao(Map<String, Object> params, final CentroCusto centro, final Date dataInicial, final Date dataFinal, 
-            final List<EnumSituacaoSolicitacao> situacaoFiltro, final String filtroInsumoCod, final String filtroInsumoEspecificacao, 
+            final List<EnumSituacaoSolicitacao> situacaoFiltro, final String filtroInsumoCod, final String filtroInsumoSubCod, final String filtroInsumoEspecificacao, 
             final String solicId, final boolean solicMaiorEstoque) {
         params.put("centro", centro);
         //params.put("centro2", centro == null ? "todos" : "filtro");
         params.put("dataInicial", DateUtils.addDays(dataInicial, -1));
         params.put("dataFinal", DateUtils.addDays(dataFinal, 1));
         params.put("situacaoFiltro", situacaoFiltro);
-        params.put("insumoCod2", StringUtils.isBlank(filtroInsumoCod) ? "todos" : "filtro");
-        params.put("insumoEspecificacao2", StringUtils.isBlank(filtroInsumoEspecificacao) ? "todos" : "filtro");
         params.put("insumoCod", StringBeanUtils.acertaNomeParaLike(filtroInsumoCod, StringBeanUtils.LIKE_END));
+        params.put("insumoSubCod", StringBeanUtils.acertaNomeParaLike(NumberUtils.removeZeroEsquerda(filtroInsumoSubCod), StringBeanUtils.LIKE_END));
         params.put("insumoEspecificacao", StringBeanUtils.acertaNomeParaLike(filtroInsumoEspecificacao, StringBeanUtils.LIKE_MIDDLE));
-        params.put("solicId2", StringUtils.isBlank(solicId) ? "todos" : "filtro");
         params.put("solicId", StringBeanUtils.acertaNomeParaLike(solicId, StringBeanUtils.LIKE_END));
         params.put("solicMaiorEstoque", !solicMaiorEstoque ? "todos" : "filtro");
+        
+        params.put("insumoCod2", StringUtils.isBlank(filtroInsumoCod) ? "todos" : "filtro");
+        params.put("insumoSubCod2", StringUtils.isBlank(filtroInsumoSubCod) ? "todos" : "filtro");
+        params.put("insumoEspecificacao2", StringUtils.isBlank(filtroInsumoEspecificacao) ? "todos" : "filtro");
+        params.put("solicId2", StringUtils.isBlank(solicId) ? "todos" : "filtro");
     }
 
     private void paramsPaginacaoSolic(Map<String, Object> params, final CentroCusto centro, final Date dataInicial, final Date dataFinal, 
-            final List<EnumSituacaoSolicitacao> situacaoFiltro, final String filtroInsumoCod, final String filtroInsumoEspecificacao, 
+            final List<EnumSituacaoSolicitacao> situacaoFiltro, final String filtroInsumoCod, final String filtroInsumoSubCod, final String filtroInsumoEspecificacao, 
             final String solicId, final Solicitante solicitante, final String codigoCredor, final String razaoSocialCredor, 
             final String nomeFantasiaCredor, final String cpfCnpjCredor, final Integer numeroPedido, final boolean solicMaiorEstoque) {
         params.put("centro", centro);
@@ -263,9 +268,11 @@ public class FollowUpSolicitacoesFacade extends AbstractEntityBeans<FollowUpSoli
         params.put("dataInicial", DateUtils.addDays(dataInicial, -1));
         params.put("dataFinal", DateUtils.addDays(dataFinal, 1));
         params.put("situacaoFiltro", situacaoFiltro);
-        params.put("insumoCod2", StringUtils.isBlank(filtroInsumoCod) ? "todos" : "filtro");
         params.put("insumoEspecificacao2", StringUtils.isBlank(filtroInsumoEspecificacao) ? "todos" : "filtro");
-        params.put("insumoCod", StringBeanUtils.acertaNomeParaLike(filtroInsumoCod, StringBeanUtils.LIKE_END));
+        params.put("insumoCod", StringBeanUtils.acertaNomeParaLike(NumberUtils.removeZeroEsquerda(filtroInsumoCod), StringBeanUtils.LIKE_END));
+        params.put("insumoCod2", StringUtils.isBlank(filtroInsumoCod) ? "todos" : "filtro");
+        params.put("insumoSubCod", StringBeanUtils.acertaNomeParaLike(NumberUtils.removeZeroEsquerda(filtroInsumoSubCod, "0"), StringBeanUtils.LIKE_END));
+        params.put("insumoSubCod2", StringUtils.isBlank(filtroInsumoSubCod) ? "todos" : "filtro");
         params.put("insumoEspecificacao", StringBeanUtils.acertaNomeParaLike(filtroInsumoEspecificacao, StringBeanUtils.LIKE_MIDDLE));
         params.put("solicitante", solicitante);
         params.put("solicitante2", solicitante == null ? "todos" : "filtro");
@@ -289,9 +296,14 @@ public class FollowUpSolicitacoesFacade extends AbstractEntityBeans<FollowUpSoli
         params.put("solicMaiorEstoque", !solicMaiorEstoque ? "todos" : "filtro");
     }
 
-    private void paramsInsumo(Map<String, Object> params, final CentroCusto centro, final Long insumo) {
+    private void paramsInsumo(Map<String, Object> params, final CentroCusto centro, final InsumoSub insumoSub) {
         params.put("centro", centro);
-        params.put("insumo", insumo);
+        params.put("insumoSub", insumoSub);
+    }
+    
+    private void paramsInsumoOrc(Map<String, Object> params, final CentroCusto centro, final Long insumoCod) {
+        params.put("centro", centro);
+        params.put("insumoCod", insumoCod);
     }
 
     private void paramsSolicitacao(Map<String, Object> params, final SolicitacaoCompra solicitacaoCompra) {

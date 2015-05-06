@@ -59,42 +59,47 @@ public class FollowUpBusiness {
      * @throws SQLException
      */
     public void atualizaFollowUp(CentroCusto centro, SolicitacaoCompra solicitacaoCompra) throws SQLException {
-        Query q = getEntityManager().createNativeQuery("exec sp_PO_UpdateFollowUpSolicitacao ?, ?, ?, ?, ?, ?");
+        Query q = getEntityManager().createNativeQuery("exec sp_PO_UpdateFollowUpSolicitacao ?, ?, ?, ?, ?, ?, ?");
         q.setParameter(1, centro.getEmpresaCod());
         q.setParameter(2, centro.getFilialCod());
         q.setParameter(3, centro.getCodigo());
         q.setParameter(4, solicitacaoCompra.getNumero().intValue());
         q.setParameter(5, null);
         q.setParameter(6, null);
+        q.setParameter(7, null);
 
         q.executeUpdate();
 
     }
 
-    public void atualizaFollowUp(CentroCusto centro) throws SQLException {
-        Query q = getEntityManager().createNativeQuery("exec sp_PO_UpdateFollowUpSolicitacao ?, ?, ?, ?, ?, ?");
-        q.setParameter(1, centro.getEmpresaCod());
-        q.setParameter(2, centro.getFilialCod());
-        q.setParameter(3, centro.getCodigo());
-        q.setParameter(4, null);
-        q.setParameter(5, null);
-        q.setParameter(6, null);
+    /*   public void atualizaFollowUp(CentroCusto centro) throws SQLException {
+     Query q = getEntityManager().createNativeQuery("exec sp_PO_UpdateFollowUpSolicitacao ?, ?, ?, ?, ?, ?, ?");
+     q.setParameter(1, centro.getEmpresaCod());
+     q.setParameter(2, centro.getFilialCod());
+     q.setParameter(3, centro.getCodigo());
+     q.setParameter(4, null);
+     q.setParameter(5, null);
+     q.setParameter(6, null);
+     q.setParameter(7, null);
 
-        q.executeUpdate();
-    }
+     q.executeUpdate();
+     }
+     */
+    
+    /*
+     public void atualizaFollowUp(CentroCusto centro, Insumo insumo) throws SQLException {
+     Query q = getEntityManager().createNativeQuery("exec sp_PO_UpdateFollowUpSolicitacao ?, ?, ?, ?, ?, ?, ?");
+     q.setParameter(1, centro.getEmpresaCod());
+     q.setParameter(2, centro.getFilialCod());
+     q.setParameter(3, centro.getCodigo());
+     q.setParameter(4, null);
+     q.setParameter(5, null);
+     q.setParameter(6, insumo.getCodigo().intValue());
+     q.setParameter(7, null);
 
-    public void atualizaFollowUp(CentroCusto centro, Insumo insumo) throws SQLException {
-        Query q = getEntityManager().createNativeQuery("exec sp_PO_UpdateFollowUpSolicitacao ?, ?, ?, ?, ?, ?");
-        q.setParameter(1, centro.getEmpresaCod());
-        q.setParameter(2, centro.getFilialCod());
-        q.setParameter(3, centro.getCodigo());
-        q.setParameter(4, null);
-        q.setParameter(5, null);
-        q.setParameter(6, insumo.getCodigo().intValue());
-
-        q.executeUpdate();
-    }
-
+     q.executeUpdate();
+     }
+     */
     /**
      * Atualiza a quantidade orçada a realizar de todas as incidências de
      * determinado insumo no followup.

@@ -107,6 +107,10 @@ public class Insumo implements EntityInterface<Insumo> {
     private Unidade unidade;
     /*
      */
+    @OneToMany(mappedBy = "insumo", targetEntity = InsumoSub.class, fetch = FetchType.EAGER)
+    private List<InsumoSub> insumoSub;
+    /*
+     */
     @ManyToOne(targetEntity = CaracterizacaoInsumos.class, fetch = FetchType.EAGER)
     @JoinColumns(value = {
         @JoinColumn(name = "GruIns_Cod", referencedColumnName = "GruIns_Cod", insertable = false, updatable = false),
@@ -233,6 +237,14 @@ public class Insumo implements EntityInterface<Insumo> {
 
     public void setUnidade(Unidade unidade) {
         this.unidade = unidade;
+    }
+
+    public List<InsumoSub> getInsumoSub() {
+        return insumoSub;
+    }
+
+    public void setInsumoSub(List<InsumoSub> insumoSub) {
+        this.insumoSub = insumoSub;
     }
 
     public CaracterizacaoInsumos getCaracterizacaoInsumo() {

@@ -142,13 +142,13 @@
                                     #{mi.itemItem}
                                 </td>
                                 <td>
-                                    #{mi.insumo.codigo}
+                                    #{mi.insumoSub.idCompleto}
                                 </td>
                                 <td>
-                                    #{mi.insumo.especificacao}
+                                    #{mi.insumoSub.especificacao}
                                 </td>
                                 <td>
-                                    #{mi.insumo.unidade.codigo}
+                                    #{mi.insumoSub.insumo.unidade.codigo}
                                 </td>
                                 <td>
                                     <pe:inputNumber id="qtdSaida" value="#{mi.quantidade}" style="width: 70px" decimalPlaces="4" maxValue="#{followUpSolicitacoesController.getLimiteMovSaida(mi)}" />
@@ -159,11 +159,11 @@
                                     </h:outputText>
                                 </td>
                                 <td align='center'>
-                                    <h:outputText id="estoqueAtual" value="#{followUpSolicitacoesController.getEstoqueAtual(mi.insumo)}">
+                                    <h:outputText id="estoqueAtual" value="#{followUpSolicitacoesController.getEstoqueAtual(mi.insumoSub)}">
                                         <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
                                     </h:outputText>
                                     <p:commandButton id="updtEstqBtn" title="#{msg.atualizarSaldo}" icon="ui-icon-refresh" iconPos="left" value="" styleClass="button-only-icon" 
-                                                     update=":form-saidamaterial:saidaMaterialForm:saidaMaterialTable"  actionListener="#{materiaisEstoqueController.atualizaSaldo(mi.insumo.codigo)}" action = "#{followUpSolicitacoesController.limpaLimiteMovSaida(mi)}"
+                                                     update=":form-saidamaterial:saidaMaterialForm:saidaMaterialTable"  actionListener="#{materiaisEstoqueController.atualizaSaldo(mi.insumoSub)}" action="#{followUpSolicitacoesController.limpaLimiteMovSaida(mi)}"
                                                      style = "margin-left: 10px"/>
                                 </td>
                                 <td>
@@ -174,7 +174,7 @@
                         <tr class="noborder">
                             <td></td>
                             <td colspan="2">
-                                <p:commandButton oncomplete="dlgNovoInsumo.show()" actionListener="#{insumoController.desconsiderarLinkOrcamento()}" icon="ui-icon-circle-plus" update=":form-insumo:dialogPanelInsumo" style="width: 30px; height: 20px; margin-right: 5px" disabled="#{!followUpSolicitacoesController.enableEdicaoMatSaida}">
+                                <p:commandButton oncomplete="dlgNovoInsumoSub.show()" actionListener="#{insumoController.desconsiderarLinkOrcamento()}" icon="ui-icon-circle-plus" update=":form-insumoSub:dialogPanelInsumoSub" style="width: 30px; height: 20px; margin-right: 5px" disabled="#{!followUpSolicitacoesController.enableEdicaoMatSaida}">
                                 </p:commandButton>
                             </td>
                         </tr>

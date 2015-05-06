@@ -10,6 +10,7 @@ import br.com.grupopibb.portalobra.model.coleta.ColetaPrecoItem;
 import br.com.grupopibb.portalobra.model.common.EntityInterface;
 import br.com.grupopibb.portalobra.model.geral.CentroCusto;
 import br.com.grupopibb.portalobra.model.insumo.Insumo;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import br.com.grupopibb.portalobra.model.materiais.MateriaisEstoque;
 import br.com.grupopibb.portalobra.model.materiais.MaterialEntradaItens;
 import br.com.grupopibb.portalobra.model.materiais.MaterialEntradasESaidas;
@@ -56,6 +57,7 @@ import javax.persistence.Transient;
             + " AND (f.situacao IN :situacaoFiltro OR f.situacao is null) "
             + " AND (f.itemSolicitado in (0,1)) "
             + " AND (:insumoCod2 = 'todos' OR f.insumoCod like :insumoCod) "
+            + " AND (:insumoSubCod2 = 'todos' OR f.insumoSubCod like :insumoSubCod) "
             + " AND (:insumoEspecificacao2 = 'todos' OR f.insumoEspecificacao like :insumoEspecificacao) "
             + " AND (:solicId2 = 'todos' OR f.solicitacaoCompraIDSis LIKE :solicId) "
             + " AND (:solicMaiorEstoque = 'todos' OR f.quantidadeSolicitada <= f.estoqueAtual) "
@@ -67,6 +69,7 @@ import javax.persistence.Transient;
             + " AND (f.situacao IN :situacaoFiltro OR f.situacao is null) "
             + " AND (f.itemSolicitado in (0,1))"
             + " AND (:insumoCod2 = 'todos' OR f.insumoCod like :insumoCod) "
+            + " AND (:insumoSubCod2 = 'todos' OR f.insumoSubCod like :insumoSubCod) "
             + " AND (:insumoEspecificacao2 = 'todos' OR f.insumoEspecificacao like :insumoEspecificacao) "
             + " AND (:solicId2 = 'todos' OR f.solicitacaoCompraIDSis LIKE :solicId) "
             + " AND (:solicMaiorEstoque = 'todos' OR f.quantidadeSolicitada <= f.estoqueAtual) "),
@@ -78,6 +81,7 @@ import javax.persistence.Transient;
             + " AND (f.situacao IN :situacaoFiltro) "
             + " AND (f.itemSolicitado = 0) "
             + " AND (:insumoCod2 = 'todos' OR f.insumoCod like :insumoCod) "
+            + " AND (:insumoSubCod2 = 'todos' OR f.insumoSubCod like :insumoSubCod) "
             + " AND (:insumoEspecificacao2 = 'todos' OR f.insumoEspecificacao like :insumoEspecificacao) "
             + " AND (:solicitante2 = 'todos' OR f.solicitacaoCompraItem.solicitacao.solicitante = :solicitante) "
             + " AND (:codigoCredor2 = 'todos' OR cre.codigo = :codigoCredor) "
@@ -95,6 +99,7 @@ import javax.persistence.Transient;
             + " AND (f.situacao IN :situacaoFiltro) "
             + " AND (f.itemSolicitado = 0)"
             + " AND (:insumoCod2 = 'todos' OR f.insumoCod like :insumoCod) "
+            + " AND (:insumoSubCod2 = 'todos' OR f.insumoSubCod like :insumoSubCod) "
             + " AND (:insumoEspecificacao2 = 'todos' OR f.insumoEspecificacao like :insumoEspecificacao) "
             + " AND (:solicitante2 = 'todos' OR f.solicitacaoCompraItem.solicitacao.solicitante = :solicitante) "
             + " AND (:codigoCredor2 = 'todos' OR cre.codigo = :codigoCredor) "
@@ -107,15 +112,15 @@ import javax.persistence.Transient;
     /**/
     @NamedQuery(name = "FollowUpSolicitacoes.findEstoqueByInsumo",
             query = " SELECT MAX(f.estoqueAtual) FROM FollowUpSolicitacoes f "
-            + " WHERE f.centro = :centro and f.insumoCod = :insumo"),
+            + " WHERE f.centro = :centro and f.insumoSub = :insumoSub"),
     /**/
     @NamedQuery(name = "FollowUpSolicitacoes.findEstoqueUsinaByInsumo",
             query = " SELECT MAX(f.estoqueUsina) FROM FollowUpSolicitacoes f "
-            + " WHERE f.centro = :centro and f.insumoCod = :insumo"),
+            + " WHERE f.centro = :centro and f.insumoSub = :insumoSub"),
     /**/
     @NamedQuery(name = "FollowUpSolicitacoes.findQuantidadeOrcamento",
             query = " SELECT MAX(f.quantidadeOrcamento) FROM FollowUpSolicitacoes f "
-            + " WHERE f.centro = :centro and f.insumoCod = :insumo"),
+            + " WHERE f.centro = :centro and f.insumoCod = :insumoCod"),
     /**/
     @NamedQuery(name = "FollowUpSolicitacoes.selectRangeEstoqueUsina",
             query = " SELECT DISTINCT f FROM FollowUpSolicitacoes f "
@@ -124,6 +129,7 @@ import javax.persistence.Transient;
             + " AND (f.situacao IN :situacaoFiltro OR f.situacao is null) "
             + " AND (f.itemSolicitado in (0,1,2)) "
             + " AND (:insumoCod2 = 'todos' OR f.insumoCod like :insumoCod) "
+            + " AND (:insumoSubCod2 = 'todos' OR f.insumoSubCod like :insumoSubCod) "
             + " AND (:insumoEspecificacao2 = 'todos' OR f.insumoEspecificacao like :insumoEspecificacao) "
             + " AND (:solicId2 = 'todos' OR f.solicitacaoCompraIDSis LIKE :solicId)"
             + " AND (:solicMaiorEstoque = 'todos' OR f.quantidadeSolicitada <= f.estoqueAtual) "
@@ -135,6 +141,7 @@ import javax.persistence.Transient;
             + " AND (f.situacao IN :situacaoFiltro OR f.situacao is null) "
             + " AND (f.itemSolicitado in (0,1,2))"
             + " AND (:insumoCod2 = 'todos' OR f.insumoCod like :insumoCod) "
+            + " AND (:insumoSubCod2 = 'todos' OR f.insumoSubCod like :insumoSubCod) "
             + " AND (:insumoEspecificacao2 = 'todos' OR f.insumoEspecificacao like :insumoEspecificacao) "
             + " AND (:solicId2 = 'todos' OR f.solicitacaoCompraIDSis LIKE :solicId) "
             + " AND (:solicMaiorEstoque = 'todos' OR f.quantidadeSolicitada <= f.estoqueAtual) "),
@@ -146,6 +153,7 @@ import javax.persistence.Transient;
             + " AND (f.situacao IN :situacaoFiltro OR f.situacao is null) "
             + " AND (f.itemSolicitado in (0,1,2)) "
             + " AND (:insumoCod2 = 'todos' OR f.insumoCod like :insumoCod) "
+            + " AND (:insumoSubCod2 = 'todos' OR f.insumoSubCod like :insumoSubCod) "
             + " AND (:insumoEspecificacao2 = 'todos' OR f.insumoEspecificacao like :insumoEspecificacao) "
             + " AND (f.estoqueUsina > 0 OR f.itemSolicitado = 0) "
             + " AND (:solicId2 = 'todos' OR f.solicitacaoCompraIDSis LIKE :solicId)"
@@ -158,6 +166,7 @@ import javax.persistence.Transient;
             + " AND (f.situacao IN :situacaoFiltro OR f.situacao is null) "
             + " AND (f.itemSolicitado in (0,1,2))"
             + " AND (:insumoCod2 = 'todos' OR f.insumoCod like :insumoCod) "
+            + " AND (:insumoSubCod2 = 'todos' OR f.insumoSubCod like :insumoSubCod) "
             + " AND (:insumoEspecificacao2 = 'todos' OR f.insumoEspecificacao like :insumoEspecificacao) "
             + " AND (f.estoqueUsina > 0 OR f.itemSolicitado = 0) "
             + " AND (:solicId2 = 'todos' OR f.solicitacaoCompraIDSis LIKE :solicId) "
@@ -205,12 +214,21 @@ public class FollowUpSolicitacoes implements EntityInterface<FollowUpSolicitacoe
     private String solicitacaoItemObservacao;
     /*
      */
+    @ManyToOne(targetEntity = InsumoSub.class)
+    @JoinColumns(value = {
+        @JoinColumn(name = "Insumo_Cod", referencedColumnName = "Insumo_Cod", insertable = false, updatable = false),
+        @JoinColumn(name = "SubInsumo_Cod", referencedColumnName = "SubInsumo_Cod", insertable = false, updatable = false)
+    })
+    private InsumoSub insumoSub;
+    /*
+     */
+    @Column(name = "SubInsumo_Cod", insertable = false, updatable = false)
+    private Integer insumoSubCod;
     /*
      */
     @Column(name = "SolicItem_DataEntrega")
     @Temporal(TemporalType.DATE)
     private Date solicitacaoDataEntrega;
-
     /*
      */
     @Transient
@@ -511,6 +529,22 @@ public class FollowUpSolicitacoes implements EntityInterface<FollowUpSolicitacoe
 
     public void setInsumo(Insumo insumo) {
         this.insumo = insumo;
+    }
+
+    public InsumoSub getInsumoSub() {
+        return insumoSub;
+    }
+
+    public void setInsumoSub(InsumoSub insumoSub) {
+        this.insumoSub = insumoSub;
+    }
+
+    public Integer getInsumoSubCod() {
+        return insumoSubCod;
+    }
+
+    public void setInsumoSubCod(Integer insumoSubCod) {
+        this.insumoSubCod = insumoSubCod;
     }
 
     public String getInsumoEspecificacao() {

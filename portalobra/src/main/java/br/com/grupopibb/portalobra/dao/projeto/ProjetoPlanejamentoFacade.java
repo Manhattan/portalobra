@@ -94,7 +94,8 @@ public class ProjetoPlanejamentoFacade extends AbstractEntityBeans<ProjetoPlanej
         q.setParameter(3, planCod);
         q.setParameter(4, insumoCod);
 
-        return ((BigDecimal) q.getSingleResult()).doubleValue();
+        Double resultado = ((BigDecimal) q.getSingleResult()).doubleValue();
+        return resultado;
     }
 
     /**

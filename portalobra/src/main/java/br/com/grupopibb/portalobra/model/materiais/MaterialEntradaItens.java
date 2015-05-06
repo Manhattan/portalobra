@@ -6,6 +6,7 @@ package br.com.grupopibb.portalobra.model.materiais;
 
 import br.com.grupopibb.portalobra.model.common.EntityInterface;
 import br.com.grupopibb.portalobra.model.insumo.Insumo;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
@@ -13,6 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -30,22 +32,22 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(name = "MaterialEntradaItens.find",
             query = " SELECT DISTINCT mi FROM MaterialEntradaItens mi "
-            + " WHERE (mi.insumo.codigo = :insumoCod) "
+            + " WHERE (mi.insumoSub = :insumoSub) "
             + " AND (mi.empresaCod = :empresaCod) "
             + " AND (mi.centroCod = :centroCod) "
             + " AND (mi.filialCod = :filialCod) "
             + " AND (mi.dataEntrada BETWEEN :dataInicial AND :dataFinal) "
             + " ORDER BY mi.dataEntrada, mi.numero "),
     @NamedQuery(name = "MaterialEntradaItens.findEntradaNumeroByInsumo",
-            query = " SELECT DISTINCT (mi.materialEntrada.numeroEntrada) FROM MaterialEntradaItens mi"
-            + " WHERE (:insumoCod2 = 'todos' OR mi.insumo.codigo = :insumoCod) "
-            + " AND (:insumoEspecificacao2 = 'todos' OR mi.insumo.especificacao LIKE :insumoEspecificacao) "
+            query = " SELECT DISTINCT (mi.materialEntrada.numeroEntrada) FROM MaterialEntradaItens mi join mi.insumoSub isu "
+            + " WHERE (:insumoSub2 = 'todos' OR mi.insumoSub = :insumoSub) "
+            + " AND (:insumoEspecificacao2 = 'todos' OR isu.especificacao LIKE :insumoEspecificacao) "
             + " AND (mi.empresaCod = :empresaCod) "
             + " AND (mi.centroCod = :centroCod) "
             + " AND (mi.filialCod = :filialCod) "),
-        @NamedQuery(name = "MaterialEntradaItens.findEstoqueEntradas",
+    @NamedQuery(name = "MaterialEntradaItens.findEstoqueEntradas",
             query = " SELECT SUM(mi.quantidade) FROM MaterialEntradaItens mi"
-            + " WHERE (mi.insumo.codigo = :insumoCod) "
+            + " WHERE (mi.insumoSub = :insumoSub) "
             + " AND (mi.dataEntrada BETWEEN :dataInicial AND :dataFinal) "
             + " AND (mi.empresaCod = :empresaCod) "
             + " AND (mi.centroCod = :centroCod) "
@@ -57,12 +59,12 @@ public class MaterialEntradaItens implements EntityInterface<MaterialEntradaIten
     }
 
     public MaterialEntradaItens(MaterialEntrada materialEntrada, Integer numero, String itemItem,
-            Insumo insumo, Double quantidade, Double valor, Date dataEntrada, String empresaCod, String filialCod,
+            InsumoSub insumoSub, Double quantidade, Double valor, Date dataEntrada, String empresaCod, String filialCod,
             String centroCod, String observacao) {
         this.materialEntrada = materialEntrada;
         this.numero = numero;
         this.itemItem = itemItem;
-        this.insumo = insumo;
+        this.insumoSub = insumoSub;
         this.quantidade = quantidade;
         this.valor = valor;
         this.dataEntrada = dataEntrada;
@@ -71,14 +73,14 @@ public class MaterialEntradaItens implements EntityInterface<MaterialEntradaIten
         this.centroCod = centroCod;
         this.observacao = observacao;
     }
-    
+
     public MaterialEntradaItens(MaterialEntrada materialEntrada, Integer numero, String itemItem,
-            Insumo insumo, Double quantidade, Double valor, Date dataEntrada, String empresaCod, String filialCod,
+            InsumoSub insumoSub, Double quantidade, Double valor, Date dataEntrada, String empresaCod, String filialCod,
             String centroCod, String observacao, Long saidaNumeroT, Integer saidaItemNumeroT) {
         this.materialEntrada = materialEntrada;
         this.numero = numero;
         this.itemItem = itemItem;
-        this.insumo = insumo;
+        this.insumoSub = insumoSub;
         this.quantidade = quantidade;
         this.valor = valor;
         this.dataEntrada = dataEntrada;
@@ -104,9 +106,12 @@ public class MaterialEntradaItens implements EntityInterface<MaterialEntradaIten
     private String itemItem;
     /*
      */
-    @OneToOne(targetEntity = Insumo.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "Insumo_Cod")
-    private Insumo insumo;
+    @ManyToOne(targetEntity = InsumoSub.class)
+    @JoinColumns(value = {
+        @JoinColumn(name = "Insumo_Cod", referencedColumnName = "Insumo_Cod"),
+        @JoinColumn(name = "SubInsumo_Cod", referencedColumnName = "SubInsumo_Cod")
+    })
+    private InsumoSub insumoSub;
     /*
      */
     @Column(name = "EntradaItem_Quantidade")
@@ -146,6 +151,7 @@ public class MaterialEntradaItens implements EntityInterface<MaterialEntradaIten
     private Integer saidaItemNumeroT;
     /*
      */
+
     @Override
     public Serializable getId() {
         return materialEntrada.getNumeroEntrada().toString() + '-' + numero.toString();
@@ -153,7 +159,7 @@ public class MaterialEntradaItens implements EntityInterface<MaterialEntradaIten
 
     @Override
     public String getLabel() {
-        return "Insumo: " + insumo;
+        return "Insumo: " + insumoSub;
     }
 
     @Override
@@ -195,12 +201,12 @@ public class MaterialEntradaItens implements EntityInterface<MaterialEntradaIten
         this.itemItem = itemItem;
     }
 
-    public Insumo getInsumo() {
-        return insumo;
+    public InsumoSub getInsumoSub() {
+        return insumoSub;
     }
 
-    public void setInsumo(Insumo insumo) {
-        this.insumo = insumo;
+    public void setInsumoSub(InsumoSub insumoSub) {
+        this.insumoSub = insumoSub;
     }
 
     public Double getQuantidade() {

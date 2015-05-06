@@ -17,14 +17,17 @@
 
         <h:panelGroup id="panelMain" rendered="#{loginController.statusLogin == 1  and loginController.centroSelecionado != null and loginController.funcionario.login != null}">
             <h:form id="formMain">
-                <h:panelGrid columns="6">
+                <h:panelGrid columns="8">
                     <h:outputText value="#{msg.periodoSaidas}:" style="font-weight: bold" />
                     <h:outputText value="#{msg.numeroDoc}:" style="font-weight: bold" />
-                    <h:outputText value="#{msg.insumo}:" style="font-weight: bold" />
+                    <h:outputText value="#{msg.insumo}:" style="font-weight: bold; margin-left: 10px" />
+                    <h:outputText value="" />
+                    <h:outputText value="" />
                     <h:outputText value="#{msg.especificacao}:" style="font-weight: bold" />
                     <h:outputText value="#{msg.tipoMovimento}:" style="font-weight: bold" />
                     <h:outputText value="" />
-                    <h:panelGroup>
+                    
+                    <h:panelGroup style="margin-right: 10px">
                         <p:calendar  value="#{materialSaidaItensController.dataInicial}" size="11" maxlength="10"  id="dataInicialMatSaiI" 
                                      onkeypress="AtalhoData(event, this);" onchange="AtualizaData(this)"
                                      title="#{msg.dataInicial}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
@@ -35,15 +38,16 @@
                         <p:calendar value="#{materialSaidaItensController.dataFinal}" size="11" maxlength="10"  id="dataFinalMatSaiI" 
                                     onkeypress="AtalhoData(event, this);" onchange="AtualizaData(this)"
                                     title="#{msg.dataFinal}" pattern="dd/MM/yyyy" pagedate="utilsController.getDate()" locale="pt" mode="popup"
-                                    navigator="true" immediate="true" style="margin-right: 5px"
+                                    navigator="true" immediate="true"
                                     timeZone="#{initParam['timezone']}" >
                         </p:calendar>
                     </h:panelGroup>
 
                     <p:inputText value="#{materialSaidaItensController.numeroDoc}" style="width: 80px" />
-                    <p:inputText value="#{materialSaidaItensController.insumoCod}" style="width: 80px" />
-                    <p:inputText value="#{materialSaidaItensController.especificacao}" style="width: 160px"/>
-                    <p:selectOneMenu value="#{materialSaidaItensController.tipoMovimento}" style="margin-right: 10px" >
+                    <p:inputText value="#{materialSaidaItensController.insumoCod}" style="width: 80px; margin-left: 10px" onkeypress='return SomenteNumero(event)' /> -
+                    <p:inputText value="#{materialSaidaItensController.insumoSubCod}" style="width: 25px; margin-right: 10px" maxlength="3" onkeypress='return SomenteNumero(event)' />
+                    <p:inputText value="#{materialSaidaItensController.especificacao}" style="width: 160px; margin-right: 10px"/>
+                    <p:selectOneMenu value="#{materialSaidaItensController.tipoMovimento}" style="margin-right: 10px">
                         <f:selectItem value="#{null}" itemLabel="" />
                         <f:selectItems value="#{followUpSolicitacoesController.tipoMovimentoMaterialSaidaSelect}" var="i" itemLabel="#{i.label}" />
                     </p:selectOneMenu>
@@ -74,13 +78,13 @@
                                     </h:outputText>
                                 </td>
                                 <td align='center'>
-                                    <h:outputText value="#{item.insumo.codigo}"/>
+                                    <h:outputText value="#{item.insumoSub.idCompleto}"/>
                                 </td>
                                 <td>
-                                    <h:outputText value="#{item.insumo.especificacao}"/>
+                                    <h:outputText value="#{item.insumoSub.especificacao}"/>
                                 </td>
                                 <td align='center'>
-                                    <h:outputText value="#{item.insumo.unidade}" />
+                                    <h:outputText value="#{item.insumoSub.insumo.unidade}" />
                                 </td>
                                 <td align='right' style="padding-right: 5px">
                                     <h:outputText value="#{item.quantidade}">
@@ -88,7 +92,7 @@
                                     </h:outputText>
                                 </td>
                                 <td align='right'>
-                                    <h:outputText value="#{materialSaidaItensController.getEstoqueAtual(item.insumo)}">
+                                    <h:outputText value="#{materialSaidaItensController.getEstoqueAtual(item.insumoSub)}">
                                         <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
                                     </h:outputText>
                                 </td>

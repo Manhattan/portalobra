@@ -115,9 +115,9 @@ public final class NumberUtils {
     }
 
     /**
-     * Formata o valor passado separando grupo de milhares com ponto. 
-     * Se o valor passado for nulo, retorna 0. Ex: 1000.0
-     * é formatado para 1.000; Ex: 1000.1 é formatado para 1.000,1.
+     * Formata o valor passado separando grupo de milhares com ponto. Se o valor
+     * passado for nulo, retorna 0. Ex: 1000.0 é formatado para 1.000; Ex:
+     * 1000.1 é formatado para 1.000,1.
      *
      * @param valor Double a ser formatado.
      * @return String valor formatado.
@@ -126,7 +126,7 @@ public final class NumberUtils {
         if (valor == null || valor == 0) {
             return "0," + StringUtils.repeat("0", decimalPlaces);
         } else {
-            
+
             DecimalFormat df = new DecimalFormat(",##0." + StringUtils.repeat("0", decimalPlaces));
             return df.format(valor);
         }
@@ -444,8 +444,43 @@ public final class NumberUtils {
      * @param quantity
      */
     public static String preencheZeroEsquerda(String value, int quantity) {
+        int size = value.length();
         value = StringUtils.repeat("0", quantity) + value;
-        value = StringUtils.right(value, quantity);
+        value = StringUtils.right(value, quantity > size ? quantity : size);
+        return value;
+    }
+
+    /**
+     * Remove zeros à esquerda de uma String. Ex: "0000021445a" ficará "21445a"
+     *
+     * @param value
+     * @return
+     */
+    public static String removeZeroEsquerda(String value) {
+        try {
+            while (value.startsWith("0")) {
+                value = value.substring(1, value.length());
+            }
+        } catch (NullPointerException e) {
+        }
+        return value;
+    }
+
+    /**
+     * Remove zeros à esquerda de uma String e retorna String default caso
+     * resultado final seja vazio. Ex: "0000021445a" ficará "21445a"; Ex:
+     * removeZeroEsquerda("0000", "a") ficará "a".
+     *
+     * @param value String que sejá verificada.
+     * @param ifEmpty String default.
+     * @return
+     */
+    public static String removeZeroEsquerda(String value, String ifEmpty) {
+        try {
+            value = removeZeroEsquerda(value);
+            value = value.isEmpty() ? ifEmpty : value;
+        } catch (NullPointerException e) {
+        }
         return value;
     }
 

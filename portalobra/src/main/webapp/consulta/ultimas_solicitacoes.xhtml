@@ -17,7 +17,7 @@
                             <f:selectItems value="#{documentoEntradaItemController.centroSelect}" />
                             <f:converter converterId="centroCustoConverter" />
                         </p:selectOneMenu>
-                        <p:commandButton actionListener="#{documentoEntradaItemController.pesquisar()}" update=":menuApp:form-consulta-insumo:svwUltSolic:frmUltSolic:scpUltSolic" id="btnPesqDocEntI" value="#{msg.executar}" icon="ui-icon-search" iconPos="left" style="float: left; position: relative" />
+                        <p:commandButton actionListener="#{documentoEntradaItemController.pesquisar()}" update=":menuApp:form-consulta-insumoSub:svwUltSolic:frmUltSolic:scpUltSolic" id="btnPesqDocEntI" value="#{msg.executar}" icon="ui-icon-search" iconPos="left" style="float: left; position: relative" />
                         <br/>
                         <p:scrollPanel id="scpUltSolic" style="max-height: 400px; float: left">
                         <table class="referencesmall" style="min-width: 900px">

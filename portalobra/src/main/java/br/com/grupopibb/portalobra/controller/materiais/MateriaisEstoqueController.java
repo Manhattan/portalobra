@@ -13,11 +13,10 @@ import br.com.grupopibb.portalobra.dao.insumo.CaracterizacaoInsumosFacade;
 import br.com.grupopibb.portalobra.dao.insumo.ClasseInsumosFacade;
 import br.com.grupopibb.portalobra.dao.insumo.GrupoInsumosFacade;
 import br.com.grupopibb.portalobra.dao.materiais.MateriaisEstoqueFacade;
-import br.com.grupopibb.portalobra.model.geral.CentroCusto;
 import br.com.grupopibb.portalobra.model.insumo.CaracterizacaoInsumos;
 import br.com.grupopibb.portalobra.model.insumo.ClasseInsumos;
 import br.com.grupopibb.portalobra.model.insumo.GrupoInsumos;
-import br.com.grupopibb.portalobra.model.insumo.Insumo;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import br.com.grupopibb.portalobra.model.materiais.MateriaisEstoque;
 import br.com.grupopibb.portalobra.model.tipos.EnumOrderMatEstField;
 import br.com.grupopibb.portalobra.utils.DateUtils;
@@ -162,8 +161,8 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
         return valorTotal;
     }
 
-    public Double getTotalCompras(Insumo insumo) {
-        return solicitacaoCompraBusiness.getTotalComprasInsumo(loginController.getCentroSelecionado(), insumo);
+    public Double getTotalCompras(InsumoSub insumoSub) {
+        return solicitacaoCompraBusiness.getTotalComprasInsumo(loginController.getCentroSelecionado(), insumoSub);
     }
 
     /**
@@ -183,19 +182,30 @@ public class MateriaisEstoqueController extends EntityController<MateriaisEstoqu
         this.current = item;
     }
 
-    public void atualizaSaldo(Long insumoCod) {
+    public void atualizaSaldo(InsumoSub insumoSub) {
         try {
             Date dataRef = DateUtils.toFirstDate(new Date());
             dataRef = DateUtils.addMonths(dataRef, -2);
-            estoqueBusiness.atualizaSaldoMaterial(loginController.getCentroSelecionado(), dataRef, insumoCod);
+            estoqueBusiness.atualizaSaldoMaterial(loginController.getCentroSelecionado(), dataRef, insumoSub);
 
             dataRef = DateUtils.addMonths(dataRef, 1);
-            estoqueBusiness.atualizaSaldoMaterial(loginController.getCentroSelecionado(), dataRef, insumoCod);
+            estoqueBusiness.atualizaSaldoMaterial(loginController.getCentroSelecionado(), dataRef, insumoSub);
 
             dataRef = DateUtils.addMonths(dataRef, 1);
-            estoqueBusiness.atualizaSaldoMaterial(loginController.getCentroSelecionado(), dataRef, insumoCod);
+            estoqueBusiness.atualizaSaldoMaterial(loginController.getCentroSelecionado(), dataRef, insumoSub);
 
             dataRef = null;
+            valorTotal = null;
+            getFacade().clearCache();
+            recreateTable();
+        } catch (SQLException ex) {
+            Logger.getLogger(MateriaisEstoqueController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void atualizaSaldoTodosMeses() {
+        try {
+            estoqueBusiness.atualizaSaldoMaterialTodosMeses(loginController.getCentroSelecionado());
             valorTotal = null;
             getFacade().clearCache();
             recreateTable();

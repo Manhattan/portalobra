@@ -5,7 +5,7 @@
 package br.com.grupopibb.portalobra.model.materiais;
 
 import br.com.grupopibb.portalobra.model.common.EntityInterface;
-import br.com.grupopibb.portalobra.model.insumo.Insumo;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
@@ -13,10 +13,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -30,82 +30,84 @@ import javax.persistence.Transient;
 @Table(name = "MateriaisSaida_Itens")
 @NamedQueries({
     @NamedQuery(name = "MaterialSaidaItens.selectRange",
-            query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi "
+            query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi join msi.insumoSub isu "
             + " WHERE ( msi.empresaCod = :empresaCod ) "
             + " AND ( msi.centroCod = :centroCod ) "
             + " AND ( msi.filialCod = :filialCod ) "
             + " AND ( :numeroDoc2 = 'todos' OR msi.materialSaida.numeroDocumento = :numeroDoc ) "
             + " AND ( msi.dataSaida BETWEEN :dataInicial AND :dataFinal ) "
-            + " AND ( :insumoCod2 = 'todos' OR msi.insumo.codigo = :insumoCod ) "
-            + " AND ( :insumoEspecificacao2 = 'todos' OR msi.insumo.especificacao LIKE :insumoEspecificacao ) "
+            + " AND ( :insumoCod2 = 'todos' OR msi.insumoSub.insumoCod LIKE :insumoCod ) "
+            + " AND ( :insumoSubCod2 = 'todos' OR msi.insumoSub.codigo LIKE :insumoSubCod ) "
+            + " AND ( :insumoEspecificacao2 = 'todos' OR isu.especificacao LIKE :insumoEspecificacao ) "
             + " AND ( :tipoMovimento2 = 'todos' OR msi.materialSaida.tipoMovimento = :tipoMovimento ) "
             + " ORDER BY msi.dataSaida DESC"),
     //
     @NamedQuery(name = "MaterialSaidaItens.countRange",
-            query = " SELECT COUNT(DISTINCT msi) FROM MaterialSaidaItens msi "
+            query = " SELECT COUNT(DISTINCT msi) FROM MaterialSaidaItens msi join msi.insumoSub isu "
             + " WHERE ( msi.empresaCod = :empresaCod ) "
             + " AND ( msi.centroCod = :centroCod ) "
             + " AND ( msi.filialCod = :filialCod ) "
             + " AND ( :numeroDoc2 = 'todos' OR msi.materialSaida.numeroDocumento = :numeroDoc ) "
             + " AND ( msi.dataSaida BETWEEN :dataInicial AND :dataFinal ) "
-            + " AND ( :insumoCod2 = 'todos' OR msi.insumo.codigo = :insumoCod ) "
-            + " AND ( :insumoEspecificacao2 = 'todos' OR msi.insumo.especificacao LIKE :insumoEspecificacao ) "
+            + " AND ( :insumoCod2 = 'todos' OR msi.insumoSub.insumoCod LIKE :insumoCod ) "
+            + " AND ( :insumoSubCod2 = 'todos' OR msi.insumoSub.codigo LIKE :insumoSubCod ) "
+            + " AND ( :insumoEspecificacao2 = 'todos' OR isu.especificacao LIKE :insumoEspecificacao ) "
             + " AND ( :tipoMovimento2 = 'todos' OR msi.materialSaida.tipoMovimento = :tipoMovimento ) "),
     //
     @NamedQuery(name = "MaterialSaidaItens.find",
             query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi "
-            + " WHERE msi.insumo.codigo = :insumoCod "
+            + " WHERE msi.insumoSub = :insumoSub "
             + " AND msi.empresaCod = :empresaCod "
             + " AND msi.centroCod = :centroCod "
             + " AND msi.filialCod = :filialCod "
             + " AND msi.dataSaida BETWEEN :dataInicial AND :dataFinal"),
     //
     @NamedQuery(name = "MaterialSaidaItens.findByItem",
-            query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi JOIN msi.materialSaida ms "
-            + " WHERE (ms.numeroSaida = :numeroSaida) "
+            query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi "
+            + " WHERE (msi.materialSaida.numeroSaida = :numeroSaida) "
             + " AND (msi.numero = :itemNumero)"),
     //
     @NamedQuery(name = "MaterialSaidaItens.findSaidaNumeroByInsumo",
-            query = " SELECT DISTINCT (ms.numeroSaida) FROM MaterialSaidaItens msi JOIN msi.materialSaida ms"
-            + " WHERE (:insumoCod2 = 'todos' OR msi.insumo.codigo = :insumoCod) "
-            + " AND (:insumoEspecificacao2 = 'todos' OR msi.insumo.especificacao LIKE :insumoEspecificacao) "
+            query = " SELECT DISTINCT (msi.materialSaida.numeroSaida) FROM MaterialSaidaItens msi join msi.insumoSub i "
+            + " WHERE (:insumoCod2 = 'todos' OR msi.insumoSub.insumoCod = :insumoCod) "
+            + " AND (:insumoEspecificacao2 = 'todos' OR i.especificacao LIKE :insumoEspecificacao) "
             + " AND (msi.empresaCod = :empresaCod) "
             + " AND (msi.centroCod = :centroCod) "
             + " AND (msi.filialCod = :filialCod) "),
     //
     @NamedQuery(name = "MaterialSaidaItens.findEstoqueSaidas",
             query = " SELECT SUM(msi.quantidade) FROM MaterialSaidaItens msi"
-            + " WHERE (msi.insumo.codigo = :insumoCod) "
+            + " WHERE (msi.insumoSub.insumoCod = :insumoCod) "
             + " AND (msi.dataSaida BETWEEN :dataInicial AND :dataFinal) "
             + " AND (msi.empresaCod = :empresaCod) "
             + " AND (msi.centroCod = :centroCod) "
             + " AND (msi.filialCod = :filialCod) "),
     //
     @NamedQuery(name = "MaterialSaidaItens.findEstoqueSaidasSemDevolucoes",
-            query = " SELECT SUM(msi.quantidade) FROM MaterialSaidaItens msi"
-            + " WHERE ( msi.insumo.codigo = :insumoCod ) "
+            query = " SELECT SUM(msi.quantidade) FROM MaterialSaidaItens msi "
+            + " WHERE ( msi.insumoSub = :insumoSub ) "
             + " AND ( msi.empresaCod = :empresaCod ) "
             + " AND ( msi.centroCod = :centroCod ) "
             + " AND ( msi.filialCod = :filialCod ) "
             + " AND ( msi.materialSaida.tipoMovimento <> 'D' )"),
     //
     @NamedQuery(name = "MaterialSaidaItens.findTransferencias",
-            query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi join msi.materialSaida ms "
-            + " WHERE (ms.centro = :centroOrigem) "
+            query = " SELECT DISTINCT msi FROM MaterialSaidaItens msi "
+            + " WHERE (msi.materialSaida.centro = :centroOrigem) "
             + " AND (msi.dataSaida = :dataSaida) "
-            + " AND (ms.numeroDocumento = :numeroDocumento) "
-            + " AND (ms.centroDestino = :centroDestino) ")
+            + " AND (msi.materialSaida.numeroDocumento = :numeroDocumento) "
+            + " AND (msi.materialSaida.centroDestino = :centroDestino) ")
 })
 public class MaterialSaidaItens implements EntityInterface<MaterialSaidaItens> {
 
     public MaterialSaidaItens() {
     }
 
-    public MaterialSaidaItens(MaterialSaida materialSaida, Integer numero, String itemItem, Insumo insumo, Double quantidade, Double valor, Date dataSaida, String empresaCod, String filialCod, String centroCod, String observacao, Double estoqueAtual) {
+    public MaterialSaidaItens(MaterialSaida materialSaida, Integer numero, String itemItem, InsumoSub insumoSub, Double quantidade, Double valor, Date dataSaida, String empresaCod, String filialCod, String centroCod, String observacao, Double estoqueAtual) {
         this.materialSaida = materialSaida;
         this.numero = numero;
         this.itemItem = itemItem;
-        this.insumo = insumo;
+        this.insumoSub = insumoSub;
         this.quantidade = quantidade;
         this.valor = valor;
         this.dataSaida = dataSaida;
@@ -130,9 +132,12 @@ public class MaterialSaidaItens implements EntityInterface<MaterialSaidaItens> {
     private String itemItem;
     /*
      */
-    @OneToOne(targetEntity = Insumo.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "Insumo_Cod")
-    private Insumo insumo;
+    @ManyToOne(targetEntity = InsumoSub.class)
+    @JoinColumns(value = {
+        @JoinColumn(name = "Insumo_Cod", referencedColumnName = "Insumo_Cod"),
+        @JoinColumn(name = "SubInsumo_Cod", referencedColumnName = "SubInsumo_Cod")
+    })
+    private InsumoSub insumoSub;
     /*
      */
     @Column(name = "SaidaItem_Quantidade")
@@ -182,7 +187,7 @@ public class MaterialSaidaItens implements EntityInterface<MaterialSaidaItens> {
 
     @Override
     public String getLabel() {
-        return "Insumo: " + insumo;
+        return "Insumo: " + insumoSub;
     }
 
     @Override
@@ -228,12 +233,12 @@ public class MaterialSaidaItens implements EntityInterface<MaterialSaidaItens> {
         this.itemItem = itemItem;
     }
 
-    public Insumo getInsumo() {
-        return insumo;
+    public InsumoSub getInsumoSub() {
+        return insumoSub;
     }
 
-    public void setInsumo(Insumo insumo) {
-        this.insumo = insumo;
+    public void setInsumoSub(InsumoSub insumoSub) {
+        this.insumoSub = insumoSub;
     }
 
     public Double getQuantidade() {

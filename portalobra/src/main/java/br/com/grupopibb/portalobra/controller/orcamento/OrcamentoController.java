@@ -4,16 +4,12 @@
  */
 package br.com.grupopibb.portalobra.controller.orcamento;
 
-import br.com.grupopibb.portalobra.business.insumo.InsumoBusiness;
 import br.com.grupopibb.portalobra.business.orcamento.OrcamentoBusiness;
 import br.com.grupopibb.portalobra.dao.insumo.InsumoFacade;
-import br.com.grupopibb.portalobra.model.insumo.Insumo;
 import br.com.grupopibb.portalobra.model.solicitacaocompra.SolicitacaoCompraItem;
 import br.com.grupopibb.portalobra.model.solicitacaocompra.SolicitacaoCompraItemOrcPlan;
 import br.com.grupopibb.portalobra.utils.NumberUtils;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -41,14 +37,14 @@ public class OrcamentoController implements Serializable {
     private TreeNode selecionado;
     private Double[] valorSolicitado = new Double[10];
     private SolicitacaoCompraItem currentItem;
-    private String valorSoma = "0,00";
+    private String valorSoma = "0,0000";
     private boolean solicitacao = false;
 
     public void openOrcamentoGrid(SolicitacaoCompraItem solicItem, boolean solicitacao) {
         this.solicitacao = solicitacao;
         this.currentItem = solicItem;
 
-        root = new DefaultTreeNode(new SolicitacaoCompraItemOrcPlan(0, this.currentItem.getInsumo().getCodigo(), this.currentItem.getInsumo().getEspecificacao(), this.currentItem.getInsumo().getUnidade().getCodigo()));
+        root = new DefaultTreeNode(new SolicitacaoCompraItemOrcPlan(0, this.currentItem.getInsumoSub().getInsumoCod(), this.currentItem.getInsumoSub().getEspecificacao(), this.currentItem.getInsumoSub().getInsumo().getUnidade().getCodigo()));
         orcamentoBusiness.initDefaultTreeOrcamento(this.currentItem, this.root);
 
         if (currentItem.getItensPlanoOrcamento() == null || currentItem.getItensPlanoOrcamento().isEmpty()) {
@@ -56,7 +52,7 @@ public class OrcamentoController implements Serializable {
         }
         orcamentoBusiness.initUpdatedTreeOrcamento(this.currentItem, this.root);
  
-        valorSoma = NumberUtils.formatCurrencyNoSymbol(orcamentoBusiness.getSomaValores(root));
+        valorSoma = NumberUtils.formatDecimal(orcamentoBusiness.getSomaValores(root), 4);
     }
 
     public SolicitacaoCompraItem confirmOrcamentoGrid() {
@@ -65,7 +61,7 @@ public class OrcamentoController implements Serializable {
             orcamentoBusiness.pupulateItenPlanNumero(this.currentItem);
             orcamentoBusiness.updateSolicItemOrcamento(this.currentItem, root);
             root = null;
-            valorSoma = "0,00";
+            valorSoma = "0,0000";
         } 
         return this.currentItem;
     }
@@ -121,8 +117,8 @@ public class OrcamentoController implements Serializable {
      */
     public Double getSomaValores() {
         Double valor = orcamentoBusiness.getSomaValores(root);
-        valor = NumberUtils.arredondarHalfUp(valor, 4);
-        valorSoma = NumberUtils.formatDecimalNoFinalZero(valor);
+        valor = NumberUtils.sumPositiveNumbers(NumberUtils.arredondarHalfUp(valor, 4), 0.0);
+        valorSoma = NumberUtils.formatDecimal(valor, 4);
         return valor;
     }
 

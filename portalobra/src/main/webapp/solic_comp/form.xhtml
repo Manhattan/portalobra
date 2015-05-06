@@ -17,7 +17,7 @@
                 <p:commandButton id="btnPrintSolic" icon="ui-icon-print" value="" iconPos="left" styleClass="button-only-icon" 
                                  actionListener="#{solicitacaoCompraController.initSolicitacao(followUpSolicitacoesController.solicitacaoCompra)}" 
                                  update=":form-solicitacao:pngRelSolic" oncomplete="dlgRelSolic.show()" />
-                <hr />
+                <hr/>
                 <table>
                     <tr>
                         <td>
@@ -31,7 +31,9 @@
                         <td>
                         </td>
                     </tr>
-                    <tr><td colspan="3"/></tr>
+                    <tr>
+                        <td colspan="3"/>
+                    </tr>
                     <tr>
                         <td>
                             <h:outputText value="#{msg.dataSolicitacaoAbrev}: " style="font-weight: bolder;" />
@@ -66,8 +68,8 @@
                                 <p:commandButton value="#{msg.nao}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
                             </p:confirmDialog>
 
-                            <p:commandButton id="btnCancelSolic"   value="#{msg.cancelar}"    update=":panelSolicitacaoCompra, :panelMain" actionListener="#{followUpSolicitacoesController.limparSolicitacaoCompra()}" style="width: 95px;" icon="ui-icon-cancel" oncomplete="#{insumoController.limparInsumos()}" />
-                            <p:commandButton id="btnConfirmarSolic"  value="#{msg.ok}" update=":panelMain" actionListener="#{insumoController.limparInsumos()}" icon="ui-icon-circle-check" style="width: 95px;" disabled="#{!followUpSolicitacoesController.enableInsercaoSolicitacao}" action="#{followUpSolicitacoesController.createOrEditSolicitacao()}" />
+                            <p:commandButton id="btnCancelSolic"   value="#{msg.cancelar}"    update=":panelSolicitacaoCompra, :panelMain" actionListener="#{followUpSolicitacoesController.limparSolicitacaoCompra()}" style="width: 95px;" icon="ui-icon-cancel" oncomplete="#{insumoSubController.limparInsumos()}" />
+                            <p:commandButton id="btnConfirmarSolic"  value="#{msg.ok}" update=":panelMain" actionListener="#{insumoSubController.limparInsumos()}" icon="ui-icon-circle-check" style="width: 95px;" disabled="#{!followUpSolicitacoesController.enableInsercaoSolicitacao}" action="#{followUpSolicitacoesController.createOrEditSolicitacao()}" />
                         </td>
                         <td>
                         </td>
@@ -81,7 +83,7 @@
                             <th align='center' style="width: auto">
                                 #{msg.item}
                             </th>
-                            <th align='center' style="width: auto">
+                            <th align='center' style="min-width: 55px">
                                 #{msg.insumo}
                             </th>
                             <th>
@@ -90,7 +92,7 @@
                             <th>
                                 #{msg.especificacao}
                             </th>
-                            <th>
+                            <th align='center'>
                                 #{msg.unidadeAbrevidada}
                             </th>
                             <th style="width: 70px">
@@ -119,21 +121,32 @@
 
                                 </td>
                                 <td>
-                                    <p:commandButton id="btnRemoveItem" update=":form-solicitacao:solicCompraForm:solicCompraTable, :form-solicitacao:solicCompraForm:btnConfirmarSolic, :form-solicitacao:solicCompraForm:btnConcluiSolic, :form-solicitacao:solicCompraForm:btnDesconcSolic, :form-solicitacao:solicCompraForm:btnRemoveSolic" actionListener="#{followUpSolicitacoesController.removerItemSolic(si)}" icon="ui-icon-closethick" disabled="#{!followUpSolicitacoesController.enableEdicaoSolicitacao}" />
+                                    <p:commandButton id="btnRemoveItem" update=":form-solicitacao:solicCompraForm:solicCompraTable, :form-solicitacao:solicCompraForm:btnConfirmarSolic, :form-solicitacao:solicCompraForm:btnConcluiSolic, :form-solicitacao:solicCompraForm:btnDesconcSolic, :form-solicitacao:solicCompraForm:btnRemoveSolic" 
+                                                     actionListener="#{followUpSolicitacoesController.removerItemSolic(si)}" icon="ui-icon-closethick" disabled="#{!followUpSolicitacoesController.enableEdicaoSolicitacao}" />
                                 </td>
-                                <td>#{si.itemItem}</td>
-                                <td align='center'><h:outputText value="#{si.insumo.codigo}" /></td>
-                                <td><h:outputText value="#{si.insumo.especificacao}" style='width: auto' /></td>
-                                <td><p:inputTextarea maxlength="250" rows="1" value="#{si.especificacaoComplemento}" readonly="#{!followUpSolicitacoesController.enableEdicaoSolicitacao}" /></td>
-                                <td>#{si.insumo.unidade.codigo}</td>
+                                <td>
+                                    #{si.itemItem}
+                                </td>
+                                <td align='center'>
+                                    <h:outputText value="#{si.insumoSub.idCompleto}" />
+                                </td>
+                                <td>
+                                    <h:outputText value="#{si.insumoSub.especificacao}" style='width: auto' />
+                                </td>
+                                <td>
+                                    <p:inputTextarea maxlength="250" rows="1" value="#{si.especificacaoComplemento}" readonly="#{!followUpSolicitacoesController.enableEdicaoSolicitacao}" />
+                                </td>
+                                <td>
+                                    #{si.insumoSub.insumo.unidade.codigo}
+                                </td>
                                 <td align='center'>
                                     <pe:inputNumber value="#{si.quantidade}"    rendered="#{followUpSolicitacoesController.enableEdicaoSolicitacao and !followUpSolicitacoesController.obraLinkadaOrcamento}"  style="width: 65px" id="qtdSolic" maxValue="9999999" immediate="true"   />
                                     <p:inputText    value="#{si.quantidadeFmt}" rendered="#{!followUpSolicitacoesController.enableEdicaoSolicitacao}" style="width: 65px" readonly="true"   />
                                     <p:commandLink  value="#{si.quantidadeFmt}" rendered="#{followUpSolicitacoesController.enableEdicaoSolicitacao and followUpSolicitacoesController.obraLinkadaOrcamento}"   style="width: 65px; text-align: center; color: blue"  actionListener="#{orcamentoController.openOrcamentoGrid(si, true)}" oncomplete="dlgOrc.show()" update=":form-solicitacao:panelOrcamento" />
 
                                 </td>
-                                <td align='center'><h:outputText id="qtdEstAtual" value="#{followUpSolicitacoesController.getEstoqueAtual(si.insumo)}" /></td>
-                                <td align='center'><h:outputText id="qtdEstUsina" value="#{followUpSolicitacoesController.getEstoqueUsina(si.insumo)}" /></td>
+                                <td align='center'><h:outputText id="qtdEstAtual" value="#{followUpSolicitacoesController.getEstoqueAtual(si.insumoSub)}" /></td>
+                                <td align='center'><h:outputText id="qtdEstUsina" value="#{followUpSolicitacoesController.getEstoqueUsina(si.insumoSub)}" /></td>
                                 <td align='center'>
                                     <p:calendar  value="#{si.dataEntrega}" style="width: 70px"  size="11" maxlength="10" id="dataEntrega" 
                                                  onkeypress="AtalhoData(event, this)" onchange="AtualizaData(this)"
@@ -151,7 +164,7 @@
                         <tr class="noborder">
                             <td></td>
                             <td colspan="2">
-                                <p:commandButton oncomplete="dlgNovoInsumo.show()" icon="ui-icon-circle-plus" style="width: 30px; height: 20px; margin-right: 5px" actionListener="#{insumoController.considerarLinkOrcamento()}" update=":form-insumo:formNovoInsumo" disabled="#{!followUpSolicitacoesController.enableEdicaoSolicitacao}" >
+                                <p:commandButton oncomplete="dlgNovoInsumoSub.show()" icon="ui-icon-circle-plus" style="width: 30px; height: 20px; margin-right: 5px" actionListener="#{insumoSubController.considerarLinkOrcamento()}" update=":form-insumoSub:formNovoInsumoSub" disabled="#{!followUpSolicitacoesController.enableEdicaoSolicitacao}" >
                                 </p:commandButton>
                             </td>
                         </tr>

@@ -9,6 +9,7 @@ import br.com.grupopibb.portalobra.dao.commons.AbstractEntityBeans;
 import static br.com.grupopibb.portalobra.dao.commons.AbstractEntityBeans.getMapParams;
 import br.com.grupopibb.portalobra.exceptions.EntityException;
 import br.com.grupopibb.portalobra.model.geral.CentroCusto;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import br.com.grupopibb.portalobra.model.materiais.MaterialEntrada;
 import br.com.grupopibb.portalobra.model.materiais.MaterialEntradaItens;
 import br.com.grupopibb.portalobra.utils.DateUtils;
@@ -18,8 +19,6 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -59,9 +58,9 @@ public class MaterialEntradaItensFacade extends AbstractEntityBeans<MaterialEntr
      *
      * @return List<MaterialEntradaItens>
      */
-    public List<MaterialEntradaItens> findParam(final String empresaCod, final String filialCod, final String centroCod, final Long insumoCod, final Date dataMesRef) {
+    public List<MaterialEntradaItens> findParam(final String empresaCod, final String filialCod, final String centroCod, final InsumoSub insumoSub, final Date dataMesRef) {
         Map<String, Object> params = getMapParams();
-        paramsPaginacao(params, empresaCod, filialCod, centroCod, insumoCod, dataMesRef);
+        paramsPaginacao(params, empresaCod, filialCod, centroCod, insumoSub, dataMesRef);
         return listPesqParam("MaterialEntradaItens.find", params);
     }
 
@@ -81,8 +80,8 @@ public class MaterialEntradaItensFacade extends AbstractEntityBeans<MaterialEntr
             for (MaterialEntradaItens item : itens) {
                 try {
                     create(item);
-                    estoqueBusiness.atualizaSaldoMaterial(centro, materialEntrada.getDataEntrada(), item.getInsumo().getCodigo());
-                    estoqueBusiness.atualizaEstoqueFollowUp(centro, item.getInsumo().getCodigo());
+                    estoqueBusiness.atualizaSaldoMaterial(centro, materialEntrada.getDataEntrada(), item.getInsumoSub());
+                    estoqueBusiness.atualizaEstoqueFollowUp(centro, item.getInsumoSub());
                 } catch (EntityException | SQLException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -111,11 +110,11 @@ public class MaterialEntradaItensFacade extends AbstractEntityBeans<MaterialEntr
         params.put("dataFinal", new Date());
     }
 
-    private void paramsPaginacao(Map<String, Object> params, final String empresaCod, final String filialCod, final String centroCod, final Long insumoCod, final Date dataMesRef) {
+    private void paramsPaginacao(Map<String, Object> params, final String empresaCod, final String filialCod, final String centroCod, final InsumoSub insumoSub, final Date dataMesRef) {
         params.put("empresaCod", empresaCod);
         params.put("filialCod", filialCod);
         params.put("centroCod", centroCod);
-        params.put("insumoCod", insumoCod);
+        params.put("insumoSub", insumoSub);
         params.put("dataInicial", DateUtils.toFirstDate(dataMesRef));
         params.put("dataFinal", DateUtils.toLastDate(dataMesRef));
     }
@@ -129,5 +128,4 @@ public class MaterialEntradaItensFacade extends AbstractEntityBeans<MaterialEntr
         params.put("insumoCod2", insumoCod == null ? "todos" : "filtro");
         params.put("insumoEspecificacao2", StringUtils.isBlank(insumoEspecificacao) ? "todos" : "filtro");
     }
-
 }

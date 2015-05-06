@@ -79,6 +79,10 @@ public class LogFollowup implements EntityInterface<LogFollowup>{
     private Integer insumoCod;
     /*
      */
+    @Column(name = "LogF_SubInsumo_Cod")
+    private Integer insumoSubCod;
+    /*
+     */
     @Column(name = "LogF_Lido")
     @Enumerated(EnumType.STRING)
     private EnumsGeral lido;
@@ -153,6 +157,14 @@ public class LogFollowup implements EntityInterface<LogFollowup>{
 
     public void setInsumoCod(Integer insumoCod) {
         this.insumoCod = insumoCod;
+    }
+
+    public Integer getInsumoSubCod() {
+        return insumoSubCod;
+    }
+
+    public void setInsumoSubCod(Integer insumoSubCod) {
+        this.insumoSubCod = insumoSubCod;
     }
 
     public EnumsGeral getLido() {

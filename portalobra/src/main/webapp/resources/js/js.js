@@ -457,4 +457,7 @@ function AtualizaData(campoData)
 function solicitadoIgualSaldo(element)
 {
     element.value = document.getElementById(element.id.substr(0, 46) + "saldoSolic").innerHTML;
+    if (parseFloat(element.value) < 0){
+        element.value = 0;
+    }
 }

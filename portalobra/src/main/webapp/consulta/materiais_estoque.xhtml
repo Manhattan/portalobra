@@ -20,7 +20,7 @@
                 <p:panel >
                     <h:outputText value="#{msg.estoqueMateriais}" style="font-weight: bold" />
                 </p:panel>
-                <p:panelGrid columns="7" styleClass="noFormatColumn">
+                <p:panelGrid columns="8" styleClass="noFormatColumn">
                     <h:panelGroup>
                         <h:outputText value="#{msg.mesAno}:" style="float: left; font-weight: bold" /><br/>
                         <p:calendar  value="#{materiaisEstoqueController.mesAno}" size="15" maxlength="20"  id="mesAno" 
@@ -43,7 +43,7 @@
                     <h:panelGroup rendered="#{!materiaisEstoqueController.modoSimples}">
                         <h:outputText value="#{msg.classe}:" style="font-weight: bold" />
                         <br/>
-                        <p:selectOneMenu id="filtroClasseInsumos" filter="true" filterMatchMode="contains" value="#{materiaisEstoqueController.filtroClasseInsumo}" >
+                        <p:selectOneMenu id="filtroClasseInsumos" filter="true" filterMatchMode="contains" value="#{materiaisEstoqueController.filtroClasseInsumo}" style="height: 20px" >
                             <f:selectItem value="#{null}" itemLabel="" />
                             <f:selectItems value="#{materiaisEstoqueController.insumoClasseSelect}" />
                             <p:ajax update="filtroGrupoInsumos, filtroCaracterizacaoInsumos" immediate="true" />
@@ -54,7 +54,7 @@
                     <h:panelGroup rendered="#{!materiaisEstoqueController.modoSimples}">
                         <h:outputText value="#{msg.grupo}:" style="font-weight: bold" />
                         <br/>
-                        <p:selectOneMenu id="filtroGrupoInsumos" filter="true" filterMatchMode="contains" value="#{materiaisEstoqueController.filtroGrupoInsumo}" style="margin-right: 5px">
+                        <p:selectOneMenu id="filtroGrupoInsumos" filter="true" filterMatchMode="contains" value="#{materiaisEstoqueController.filtroGrupoInsumo}" style="margin-right: 5px; height: 20px">
                             <f:selectItem value="#{null}" itemLabel="" />                                
                             <f:selectItems value="#{materiaisEstoqueController.insumoGrupoSelect}" />
                             <f:ajax render="filtroCaracterizacaoInsumos" immediate="true" />
@@ -65,7 +65,7 @@
                     <h:panelGroup rendered="#{!materiaisEstoqueController.modoSimples}">
                         <h:outputText value="#{msg.caracterizacao}:" style="font-weight: bold" />
                         <br/>
-                        <p:selectOneMenu id="filtroCaracterizacaoInsumos" filter="true" filterMatchMode="contains" value="#{materiaisEstoqueController.filtroCaracInsumo}" style="margin-right: 5px">
+                        <p:selectOneMenu id="filtroCaracterizacaoInsumos" filter="true" filterMatchMode="contains" value="#{materiaisEstoqueController.filtroCaracInsumo}" style="margin-right: 5px; height: 20px">
                             <f:selectItem value="#{null}" itemLabel="" />
                             <f:selectItems value="#{materiaisEstoqueController.insumoCaracterizacaoSelect}" />
                             <f:ajax render="filtroCaracterizacaoInsumos" immediate="true" />
@@ -74,19 +74,31 @@
                     </h:panelGroup>
 
                     <h:panelGroup>
-                        <p:commandButton actionListener="#{materiaisEstoqueController.pesquisar()}" icon="ui-icon-search" update=":formMain" value="#{msg.executar}" style="float: left; margin-top: 16px" />
-                        <h:selectBooleanCheckbox id="chkConsMatMdSimp" value="#{materiaisEstoqueController.modoSimples}" style="margin-top: 22px; margin-left: 10px">
+                        <h:selectBooleanCheckbox id="chkConsMatMdSimp" value="#{materiaisEstoqueController.modoSimples}" style="margin-top: 5px; margin-bottom: 10px">
                             <p:ajax update=":formMain" />
                         </h:selectBooleanCheckbox>
-                        <h:outputLabel value="#{msg.modoSimples}" for="chkConsMatMdSimp" style="font-weight: bold;" />
-                        <p:commandLink value="#{msg.atualizarSaldo}" actionListener="#{materiaisEstoqueController.atualizaSaldo(null)}" update=":formMain" style="margin-left: 30px" />
+                        <h:outputLabel value="#{msg.modoSimples}" for="chkConsMatMdSimp" style="font-weight: bold;"/>
+                        <br/>
+                        <p:commandButton actionListener="#{materiaisEstoqueController.pesquisar()}" icon="ui-icon-search" update=":formMain" value="#{msg.executar}" style="float: left" />
                     </h:panelGroup>
-                    
+
+                    <h:panelGroup>
+                        <p:commandButton value="#{msg.atualizarSaldoCompletoAbrev}" icon="ui-icon-refresh" title="#{msg.atualizarSaldoCompleto}" iconPos="left" actionListener="#{materiaisEstoqueController.atualizaSaldoTodosMeses()}" 
+                                         update=":formMain" style="margin-left: 10px; height: 20px; padding-bottom: 20px; margin-bottom: 5px; background-color: white">
+                            <p:confirm header="#{msg.atualizarSaldoCompleto}" message="#{msg.confirmaAtualizarSaldoCompleto}" icon="ui-icon-alert" />
+                        </p:commandButton>
+                        <br/>
+                        <p:commandButton value="#{msg.atualizarSaldoAbrev}" icon="ui-icon-arrowrefresh-1-e" title="#{msg.atualizarSaldo}" iconPos="left" actionListener="#{materiaisEstoqueController.atualizaSaldo(null)}" update=":formMain"
+                                         style="margin-left: 10px; height: 20px; padding-bottom: 20px;"/>
+                    </h:panelGroup>
                 </p:panelGrid>
-                
+
+                <p:confirmDialog closeOnEscape="true" global="true" >
+                    <p:commandButton value="#{msg.sim}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="#{msg.nao}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+
                 <p:separator rendered="#{!materiaisEstoqueController.modoSimples}" />
-
-
                 <h:panelGroup id="materiaisConsultaTable">
                     <table class="referencesmall">
                         <thead>
@@ -101,9 +113,9 @@
                                     #{msg.unidade}
                                 </th>
                                 <h:panelGroup rendered="#{!materiaisEstoqueController.modoSimples}">
-                                    <th>#{msg.caracterizacao}</th>
-                                    <th>#{msg.grupo}</th>
                                     <th>#{msg.classe}</th>
+                                    <th>#{msg.grupo}</th>
+                                    <th>#{msg.caracterizacao}</th>
                                 </h:panelGroup>
                                 <th>
                                     #{msg.totalRecebido}
@@ -125,16 +137,16 @@
                         </thead>
                         <ui:repeat value="#{materiaisEstoqueController.items}" var="item" varStatus="x">
                             <tr>
-                                <td>#{item.insumoCod}</td>
-                                <td align='left'>#{item.insumo.especificacao}</td>
-                                <td align='center'>#{item.insumo.unidade.codigo}</td>
+                                <td>#{item.insumoSub.idCompleto}</td>
+                                <td align='left'>#{item.insumoSub.especificacao}</td>
+                                <td align='center'>#{item.insumoSub.insumo.unidade.codigo}</td>
                                 <h:panelGroup rendered="#{!materiaisEstoqueController.modoSimples}">
-                                    <td>#{item.insumo.caracterizacaoInsumo.titulo}</td>
-                                    <td>#{item.insumo.caracterizacaoInsumo.grupoInsumos.titulo}</td>
-                                    <td>#{item.insumo.caracterizacaoInsumo.grupoInsumos.classeInsumos.titulo}</td>
+                                    <td>#{item.insumoSub.insumo.caracterizacaoInsumo.grupoInsumos.classeInsumos.titulo}</td>
+                                    <td>#{item.insumoSub.insumo.caracterizacaoInsumo.grupoInsumos.titulo}</td>
+                                    <td>#{item.insumoSub.insumo.caracterizacaoInsumo.titulo}</td>
                                 </h:panelGroup>
                                 <td align='right'>
-                                    <h:outputText value="#{materiaisEstoqueController.getTotalCompras(item.insumo)}" style="padding-left: 5px; padding-right: 5px">
+                                    <h:outputText value="#{materiaisEstoqueController.getTotalCompras(item.insumoSub)}" style="padding-left: 5px; padding-right: 5px">
                                         <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="2" />
                                     </h:outputText>
                                 </td>
@@ -175,7 +187,7 @@
             <h:panelGroup id="dialogForm">
                 <p:dialog header="#{msg.extratoMateriais}" closeOnEscape="true" widgetVar="dlgKardex" resizable="false" style="position: absolute; float: top" position="left">
                     <h:form>
-                        <h:outputText value="Insumo: #{materiaisEstoqueController.current.insumo}" style="font-weight: bold" />
+                        <h:outputText value="Insumo: #{materiaisEstoqueController.current.insumoSub.especificacao}" style="font-weight: bold" />
                         <table class="dialogtable">
                             <tr>
                                 <th>#{msg.data}</th>

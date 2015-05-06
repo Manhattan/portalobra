@@ -10,13 +10,13 @@ import br.com.grupopibb.portalobra.model.geral.CentroCusto;
 import br.com.grupopibb.portalobra.model.insumo.CaracterizacaoInsumos;
 import br.com.grupopibb.portalobra.model.insumo.ClasseInsumos;
 import br.com.grupopibb.portalobra.model.insumo.GrupoInsumos;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import br.com.grupopibb.portalobra.model.materiais.MateriaisEstoque;
 import br.com.grupopibb.portalobra.model.tipos.EnumOrderMatEstField;
 import br.com.grupopibb.portalobra.utils.DateUtils;
 import br.com.grupopibb.portalobra.utils.NumberUtils;
 import br.com.grupopibb.portalobra.utils.StringBeanUtils;
 import br.com.grupopibb.portalobra.utils.UtilBeans;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -53,9 +53,9 @@ public class MateriaisEstoqueFacade extends AbstractEntityBeans<MateriaisEstoque
      *
      * @return List<MateriaisEstoque>
      */
-    public MateriaisEstoque findParam(final CentroCusto centro, final Long insumoCod, final String anoMes) {
+    public MateriaisEstoque findParam(final CentroCusto centro, final InsumoSub insumoSub, final String anoMes) {
         Map<String, Object> params = getMapParams();
-        paramsPesquisa(params, centro, insumoCod, anoMes);
+        paramsPesquisa(params, centro, insumoSub, anoMes);
         return pesqParam("MateriaisEstoque.find", params);
     }
 
@@ -64,10 +64,10 @@ public class MateriaisEstoqueFacade extends AbstractEntityBeans<MateriaisEstoque
      *
      * @return List<MateriaisEstoque>
      */
-    public Double findSaldo(final CentroCusto centro, final Long insumoCod, final String anoMes) {
+    public Double findSaldo(final CentroCusto centro, final InsumoSub insumoSub, final String anoMes) {
         Map<String, Object> params = getMapParams();
-        paramsPesquisa(params, centro, insumoCod, anoMes);
         try {
+            paramsPesquisa(params, centro, insumoSub, anoMes);
             MateriaisEstoque mat = pesqParam("MateriaisEstoque.find", params);
             return NumberUtils.isNull(mat.getEstoqueQuantidade(), 0.0);
         } catch (NullPointerException | NoResultException e) {
@@ -132,9 +132,9 @@ public class MateriaisEstoqueFacade extends AbstractEntityBeans<MateriaisEstoque
         return listPesqParamRange(namedQuery, params, range[1] - range[0], range[0]);
     }
 
-    private void paramsPesquisa(Map<String, Object> params, final CentroCusto centro, final Long insumoCod, final String anoMes) {
+    private void paramsPesquisa(Map<String, Object> params, final CentroCusto centro, final InsumoSub insumoSub, final String anoMes) {
         params.put("centro", centro);
-        params.put("insumoCod", insumoCod);
+        params.put("insumoSub", insumoSub);
         params.put("anoMes", anoMes);
     }
 

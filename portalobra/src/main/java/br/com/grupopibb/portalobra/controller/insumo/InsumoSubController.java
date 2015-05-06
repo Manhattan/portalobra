@@ -12,12 +12,14 @@ import br.com.grupopibb.portalobra.dao.insumo.CaracterizacaoInsumosFacade;
 import br.com.grupopibb.portalobra.dao.insumo.ClasseInsumosFacade;
 import br.com.grupopibb.portalobra.dao.insumo.GrupoInsumosFacade;
 import br.com.grupopibb.portalobra.dao.insumo.InsumoFacade;
+import br.com.grupopibb.portalobra.dao.insumo.InsumoSubFacade;
 import br.com.grupopibb.portalobra.dao.projeto.ProjetoPlanejamentoFacade;
 import br.com.grupopibb.portalobra.model.geral.CentroCusto;
 import br.com.grupopibb.portalobra.model.insumo.CaracterizacaoInsumos;
 import br.com.grupopibb.portalobra.model.insumo.ClasseInsumos;
 import br.com.grupopibb.portalobra.model.insumo.GrupoInsumos;
 import br.com.grupopibb.portalobra.model.insumo.Insumo;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import br.com.grupopibb.portalobra.utils.JsfUtil;
 import br.com.grupopibb.portalobra.utils.NumberUtils;
 import java.io.Serializable;
@@ -40,10 +42,10 @@ import javax.faces.model.SelectItem;
  */
 @ManagedBean
 @ViewScoped
-public class InsumoController extends EntityController<Insumo> implements Serializable {
+public class InsumoSubController extends EntityController<InsumoSub> implements Serializable {
 
     @EJB
-    private InsumoFacade insumoFacade;
+    private InsumoSubFacade insumoSubFacade;
     @EJB
     private ClasseInsumosFacade classeInsumosFacade;
     @EJB
@@ -56,6 +58,7 @@ public class InsumoController extends EntityController<Insumo> implements Serial
     private ProjetoPlanejamentoFacade projPlanFacade;
     //Filtros para seleção de insumo 
     private String filtroSolicInsumoCod = "";
+    private String filtroSolicInsumoSubCod;
     private String filtroSolicInsumoEspec = "";
     private ClasseInsumos filtroClasseInsumo;
     private GrupoInsumos filtroGrupoInsumo;
@@ -67,7 +70,7 @@ public class InsumoController extends EntityController<Insumo> implements Serial
     //----------------------------------------------
     private List<String> insumosSelecionados;
     //---------------------------------------------------
-    private Insumo current;
+    private InsumoSub current;
     private boolean obraLinkadaOrcamento = false;
     private boolean desconsideraLinkOrcamento = true;
     //---------------------------------------------------
@@ -95,13 +98,13 @@ public class InsumoController extends EntityController<Insumo> implements Serial
     }
 
     @Override
-    protected void setEntity(Insumo t) {
+    protected void setEntity(InsumoSub t) {
         this.current = t;
     }
 
     @Override
-    protected Insumo getNewEntity() {
-        Insumo ins = new Insumo();
+    protected InsumoSub getNewEntity() {
+        InsumoSub ins = new InsumoSub();
         return ins;
     }
 
@@ -119,8 +122,8 @@ public class InsumoController extends EntityController<Insumo> implements Serial
         return "";
     }
 
-    public InsumoFacade getFacade() {
-        return insumoFacade;
+    public InsumoSubFacade getFacade() {
+        return insumoSubFacade;
     }
 
     public boolean isObraLinkadaOrcamento() {
@@ -158,7 +161,6 @@ public class InsumoController extends EntityController<Insumo> implements Serial
         }
     }
 
-
     /**
      * Pesquisa a quantidade orçada a realizar de um Insumo no centro de custo
      * atual selecionado dentro da tabela de FollowUp das Solicitações de
@@ -187,6 +189,11 @@ public class InsumoController extends EntityController<Insumo> implements Serial
     }
 
     @Override
+    public void pesquisar() {
+        recreateTable();
+    }
+
+    @Override
     public EntityPagination getPagination() {
         if (pagination == null) {
             pagination = new EntityPagination(registrosPorPagina) {
@@ -197,7 +204,7 @@ public class InsumoController extends EntityController<Insumo> implements Serial
                 @Override
                 public int getItemsCount() {
                     try {
-                        return getFacade().countParam(filtroSolicInsumoCod, filtroSolicInsumoEspec, codigoCarac, codigoClasse, codigoGrupo, loginController.getCentroSelecionado().isObraLinkadaOrcamento(), desconsideraLinkOrcamento, loginController.getCentroSelecionado().getPlanCod()).intValue();
+                        return getFacade().countParam(filtroSolicInsumoCod, filtroSolicInsumoSubCod, filtroSolicInsumoEspec, codigoCarac, codigoClasse, codigoGrupo, loginController.getCentroSelecionado().isObraLinkadaOrcamento(), desconsideraLinkOrcamento, loginController.getCentroSelecionado().getPlanCod()).intValue();
                     } catch (NullPointerException e) {
                         return 0;
                     }
@@ -206,7 +213,7 @@ public class InsumoController extends EntityController<Insumo> implements Serial
                 @Override
                 public DataModel createPageDataModel() {
                     try {
-                        return new ListDataModel(getFacade().findRangeParam(loginController.getCentroSelecionado(), filtroSolicInsumoCod, filtroSolicInsumoEspec, codigoCarac, codigoClasse, codigoGrupo, loginController.getCentroSelecionado().isObraLinkadaOrcamento(), desconsideraLinkOrcamento, loginController.getCentroSelecionado().getPlanCod(), new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                        return new ListDataModel(getFacade().findRangeParam(loginController.getCentroSelecionado(), filtroSolicInsumoCod, filtroSolicInsumoSubCod, filtroSolicInsumoEspec, codigoCarac, codigoClasse, codigoGrupo, loginController.getCentroSelecionado().isObraLinkadaOrcamento(), desconsideraLinkOrcamento, loginController.getCentroSelecionado().getPlanCod(), new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
                     } catch (NullPointerException e) {
                         return null;
                     }
@@ -234,15 +241,23 @@ public class InsumoController extends EntityController<Insumo> implements Serial
         recreateTable();
     }
 
-    public void addOrRemoveInsumo(String codigoInsumoSub, boolean marcado) {
+    /**
+     * Limpa todos os dados salvos em memória no objeto DAO principal.
+     */
+    public void updateTable() {
+        insumoSubFacade.clearCache();
+    }
+
+    public void addOrRemoveInsumo(Long insumoCod, Integer insumoSubCod, boolean marcado) {
+        String codigoInsumo = insumoCod + "_" + insumoSubCod;
         projPlanFacade.findProjetoCod(loginController.getCentroSelecionado());
         if (insumosSelecionados == null) {
             insumosSelecionados = new ArrayList<>();
         }
         if (marcado) {
-            insumosSelecionados.add(codigoInsumoSub);
+            insumosSelecionados.add(codigoInsumo);
         } else {
-            insumosSelecionados.remove(codigoInsumoSub);
+            insumosSelecionados.remove(codigoInsumo);
         }
     }
 
@@ -296,12 +311,12 @@ public class InsumoController extends EntityController<Insumo> implements Serial
         this.insumoCaracterizacaoSelect = insumoCaracterizacaoSelect;
     }
 
-    public InsumoFacade getInsumoFacade() {
-        return insumoFacade;
+    public InsumoSubFacade getInsumoSubFacade() {
+        return insumoSubFacade;
     }
 
-    public void setInsumoFacade(InsumoFacade insumoFacade) {
-        this.insumoFacade = insumoFacade;
+    public void setInsumoSubFacade(InsumoSubFacade insumoSubFacade) {
+        this.insumoSubFacade = insumoSubFacade;
     }
 
     public String getFiltroSolicInsumoCod() {
@@ -310,6 +325,14 @@ public class InsumoController extends EntityController<Insumo> implements Serial
 
     public void setFiltroSolicInsumoCod(String filtroSolicInsumoCod) {
         this.filtroSolicInsumoCod = filtroSolicInsumoCod;
+    }
+
+    public String getFiltroSolicInsumoSubCod() {
+        return filtroSolicInsumoSubCod;
+    }
+
+    public void setFiltroSolicInsumoSubCod(String filtroSolicInsumoSubCod) {
+        this.filtroSolicInsumoSubCod = filtroSolicInsumoSubCod;
     }
 
     public String getFiltroSolicInsumoEspec() {
@@ -364,11 +387,11 @@ public class InsumoController extends EntityController<Insumo> implements Serial
         this.insumosSelecionados = insumosSelecionados;
     }
 
-    public Insumo getCurrent() {
+    public InsumoSub getCurrent() {
         return current;
     }
 
-    public void setCurrent(Insumo current) {
+    public void setCurrent(InsumoSub current) {
         this.current = current;
     }
 }

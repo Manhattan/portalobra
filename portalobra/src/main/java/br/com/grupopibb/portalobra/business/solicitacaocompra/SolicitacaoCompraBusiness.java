@@ -6,6 +6,7 @@ package br.com.grupopibb.portalobra.business.solicitacaocompra;
 
 import br.com.grupopibb.portalobra.model.geral.CentroCusto;
 import br.com.grupopibb.portalobra.model.insumo.Insumo;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import br.com.grupopibb.portalobra.model.solicitacaocompra.SolicitacaoCompra;
 import br.com.grupopibb.portalobra.model.solicitacaocompra.SolicitacaoCompraItem;
 import br.com.grupopibb.portalobra.utils.UtilBeans;
@@ -42,9 +43,9 @@ public class SolicitacaoCompraBusiness {
      * @param insumo Insumo a ser comparado.
      * @return Verdadeiro ou falso.
      */
-    public boolean isContainsInsumo(SolicitacaoCompra solic, Insumo insumo) {
+    public boolean isContainsInsumo(SolicitacaoCompra solic, InsumoSub insumoSub) {
         for (SolicitacaoCompraItem item : solic.getItens()) {
-            if (item.getInsumo().getCodigo() == insumo.getCodigo()) {
+            if (item.getInsumoSub().getId() == insumoSub.getId()) {
                 return true;
             }
         }
@@ -59,33 +60,34 @@ public class SolicitacaoCompraBusiness {
      * @param solic Solicitação de Compra com os itens a serem verificados.
      * @return Lista com os insumos que possuem duplicatas.
      */
-    public List<Insumo> getDistinctDuplicatedInsumo(SolicitacaoCompra solic) {
-        List<Insumo> insumos = new ArrayList<>();
+    public List<InsumoSub> getDistinctDuplicatedInsumo(SolicitacaoCompra solic) {
+        List<InsumoSub> insumosSub = new ArrayList<>();
         for (SolicitacaoCompraItem item : solic.getItens()) {
             int i = 0;
-            Insumo insumo = item.getInsumo();
+            InsumoSub insumoSub = item.getInsumoSub();
             for (SolicitacaoCompraItem it : solic.getItens()) {
-                if (it.getInsumo() == insumo) {
+                if (it.getInsumoSub() == insumoSub) {
                     i++;
                 }
             }
-            if (i >= 2 && !insumos.contains(insumo)) {
-                insumos.add(insumo);
+            if (i >= 2 && !insumosSub.contains(insumoSub)) {
+                insumosSub.add(insumoSub);
             }
             i = 0;
         }
 
-        return insumos;
+        return insumosSub;
     }
 
-    public Double getTotalComprasInsumo(CentroCusto centro, Insumo insumo) {
-        String sql = "exec dbo.sp_PO_TotCompInsumoCentro ?,?,?,?";
+    public Double getTotalComprasInsumo(CentroCusto centro, InsumoSub insumoSub) {
+        String sql = "exec dbo.sp_PO_TotCompInsumoCentro ?,?,?,?,?";
         try {
             Query q = getEntityManager().createNativeQuery(sql);
             q.setParameter(1, centro.getEmpresaCod());
             q.setParameter(2, centro.getFilialCod());
             q.setParameter(3, centro.getCodigo());
-            q.setParameter(4, insumo.getCodigo().intValue());
+            q.setParameter(4, insumoSub.getInsumoCod());
+            q.setParameter(5, insumoSub.getCodigo());
             Double result = ((BigDecimal) q.getSingleResult()).doubleValue();
             return result;
         } catch (NullPointerException | NumberFormatException | ClassCastException | NoResultException ex) {

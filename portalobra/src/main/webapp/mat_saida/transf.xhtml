@@ -68,12 +68,26 @@
                                                 <p:ajax listener="#{materialSaidaController.addOrRemoveItemT(t)}" />
                                             </h:selectBooleanCheckbox>
                                         </td>
-                                        <td>#{t.itemItem}</td>
-                                        <td>#{t.insumo.codigo}</td>
-                                        <td>#{t.insumo.especificacao}</td>
-                                        <td>#{t.insumo.unidade.codigo}</td>
-                                        <td>#{t.quantidade} </td>
-                                        <td>#{t.observacao}</td>
+                                        <td>
+                                            #{t.itemItem}
+                                        </td>
+                                        <td>
+                                            #{t.insumoSub.idCompleto}
+                                        </td>
+                                        <td>
+                                            #{t.insumoSub.especificacao}
+                                        </td>
+                                        <td>
+                                            #{t.insumoSub.insumo.unidade.codigo}
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{t.quantidade}">
+                                                <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            #{t.observacao}
+                                        </td>
                                     </tr>
                                 </ui:repeat>
                             </table>

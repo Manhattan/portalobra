@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -28,6 +29,9 @@ import javax.persistence.PersistenceContext;
 @LocalBean
 public class TituloAPagarFacade extends AbstractEntityBeans<TituloAPagar, Long> {
 
+    @EJB
+    private ConnectionFactory connectionFactory;
+    
     @PersistenceContext(unitName = UtilBeans.PERSISTENCE_UNIT)
     private EntityManager em;
 
@@ -46,7 +50,7 @@ public class TituloAPagarFacade extends AbstractEntityBeans<TituloAPagar, Long> 
                 + "inner join Movimento_Financeiro MF on (P.MovFin_Numero = MF.MovFin_Numero)"
                 + "where TP.TitaPag_Numero = " + numeroTitulo;
         try {
-            Connection con = new ConnectionFactory().getConnectionOpen();
+            Connection con = connectionFactory.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -64,7 +68,7 @@ public class TituloAPagarFacade extends AbstractEntityBeans<TituloAPagar, Long> 
                 + "inner join Movimento_Financeiro MF on (P.MovFin_Numero = MF.MovFin_Numero)"
                 + "where TP.TitaPag_Numero = " + numeroTitulo;
         try {
-            Connection con = new ConnectionFactory().getConnectionOpen();
+            Connection con = connectionFactory.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {

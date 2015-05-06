@@ -5,7 +5,6 @@
 package br.com.grupopibb.portalobra.controller.followup;
 
 import br.com.grupopibb.portalobra.acesso.controller.LoginController;
-import br.com.grupopibb.portalobra.acesso.status.StatusLogin;
 import br.com.grupopibb.portalobra.business.followup.FollowUpBusiness;
 import br.com.grupopibb.portalobra.business.materiais.EstoqueBusiness;
 import br.com.grupopibb.portalobra.business.materiais.MaterialBusiness;
@@ -18,7 +17,7 @@ import br.com.grupopibb.portalobra.dao.followup.LogFollowupFacade;
 import br.com.grupopibb.portalobra.dao.geral.CentroCustoFacade;
 import br.com.grupopibb.portalobra.dao.geral.SequenciaisFacade;
 import br.com.grupopibb.portalobra.dao.geral.SequenciaisRangeFacade;
-import br.com.grupopibb.portalobra.dao.insumo.InsumoFacade;
+import br.com.grupopibb.portalobra.dao.insumo.InsumoSubFacade;
 import br.com.grupopibb.portalobra.dao.materiais.MateriaisEstoqueFacade;
 import br.com.grupopibb.portalobra.dao.materiais.MaterialEntradaFacade;
 import br.com.grupopibb.portalobra.dao.materiais.MaterialEntradaItensFacade;
@@ -34,9 +33,9 @@ import br.com.grupopibb.portalobra.exceptions.EntityException;
 import br.com.grupopibb.portalobra.model.ar.DocumentoEntrada;
 import br.com.grupopibb.portalobra.model.ar.DocumentoEntradaItem;
 import br.com.grupopibb.portalobra.model.followup.FollowUpSolicitacoes;
-import br.com.grupopibb.portalobra.model.funcionario.Funcionario;
 import br.com.grupopibb.portalobra.model.geral.CentroCusto;
 import br.com.grupopibb.portalobra.model.insumo.Insumo;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import br.com.grupopibb.portalobra.model.materiais.MaterialEntrada;
 import br.com.grupopibb.portalobra.model.materiais.MaterialEntradaItens;
 import br.com.grupopibb.portalobra.model.materiais.MaterialItemSelecionado;
@@ -46,6 +45,7 @@ import br.com.grupopibb.portalobra.model.pagamento.TituloAPagar;
 import br.com.grupopibb.portalobra.model.solicitacaocompra.SolicitacaoCompra;
 import br.com.grupopibb.portalobra.model.solicitacaocompra.SolicitacaoCompraItem;
 import br.com.grupopibb.portalobra.model.solicitacaocompra.Solicitante;
+import br.com.grupopibb.portalobra.model.tipos.EnumAutorizacao;
 import br.com.grupopibb.portalobra.model.tipos.EnumOpeEvtOrcamento;
 import br.com.grupopibb.portalobra.model.tipos.EnumSistemaOrigemEstoque;
 import br.com.grupopibb.portalobra.model.tipos.EnumSituacaoSolicitacao;
@@ -102,7 +102,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     @EJB
     private SequenciaisRangeFacade sequenciaisRangeFacade;
     @EJB
-    private InsumoFacade insumoFacade;
+    private InsumoSubFacade insumoSubFacade;
     @EJB
     private SolicitacaoCompraItemFacade solicitacaoCompraItemFacade;
     @EJB
@@ -142,7 +142,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     private Solicitante solicitante;
     private FollowUpSolicitacoes current;
     private List<MaterialItemSelecionado> itensMaterialList;
-    private List<Long> insumosSelecionados;
+    private List<String> insumosSelecionados;
     private List<SolicitacaoCompraItem> solicItemSelecionados;
     private Integer registrosPorPagina;
     private Date dataInicial;
@@ -212,11 +212,12 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     private boolean filtroSolicMaiorEstoque = false;
     //----------------------------------------------
     private String filtroInsumoCod;
+    private String filtroInsumoSubCod;
     private String filtroInsumoEspecificacao;
     private String filtroSolicId;
     //----------- SOLICITACAO COMPRA ---------------
     private SolicitacaoCompra solicitacaoCompra;
-    private boolean obraLinkadaOrcamento = false;
+    //private boolean obraLinkadaOrcamento = false;
     private Date dataEntregaT;
     private List<SolicitacaoCompraItem> itensSolicitacaoRemovidos;
     //----------------- MATERIAIS ------------------
@@ -529,9 +530,10 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                 @Override
                 public int getItemsCount() {
                     if (itensCount == 0) {
-                        itensCount = getFacade().countParam(loginController.getCentroSelecionado(), dataInicial, dataFinal, filtrosSituacao, filtroMesclarEstoque,
-                                filtroMesclarEstoqueUsina, filtroInsumoCod, filtroInsumoEspecificacao, filtroSolicId, solicitante, codigoCredor,
-                                razaoSocialCredor, nomeFantasiaCredor, cpfCnpjCredor, numeroPedido, numeroAR, filtroSolicMaiorEstoque).intValue();
+                        itensCount = getFacade().countParam(loginController.getCentroSelecionado(), dataInicial, dataFinal, filtrosSituacao,
+                                filtroMesclarEstoque, filtroMesclarEstoqueUsina, filtroInsumoCod, filtroInsumoSubCod, filtroInsumoEspecificacao, filtroSolicId,
+                                solicitante, codigoCredor, razaoSocialCredor, nomeFantasiaCredor, cpfCnpjCredor, numeroPedido, numeroAR,
+                                filtroSolicMaiorEstoque).intValue();
                     }
                     return itensCount;
                 }
@@ -539,7 +541,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                 @Override
                 public DataModel createPageDataModel() {
                     return new ListDataModel(getFacade().findRangeParam(loginController.getCentroSelecionado(), dataInicial, dataFinal, filtrosSituacao,
-                            filtroMesclarEstoque, filtroMesclarEstoqueUsina, filtroInsumoCod, filtroInsumoEspecificacao, filtroSolicId,
+                            filtroMesclarEstoque, filtroMesclarEstoqueUsina, filtroInsumoCod, filtroInsumoSubCod, filtroInsumoEspecificacao, filtroSolicId,
                             solicitante, codigoCredor, razaoSocialCredor, nomeFantasiaCredor, cpfCnpjCredor, numeroPedido, numeroAR,
                             new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}, marcado, filtroSolicMaiorEstoque));
                 }
@@ -642,10 +644,10 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
      */
     public void initSelecionadosT(List<MaterialSaidaItens> selecionadosT) {
         for (MaterialSaidaItens item : selecionadosT) {
-            if (!materialBusiness.isContainsInsumo(materialEntrada, item.getInsumo())) {
+            if (!materialBusiness.isContainsInsumoSub(materialEntrada, item.getInsumoSub())) {
                 materialEntrada.getItens().add(materialBusiness.convertItemSaidaToItemEntrada(item, materialEntrada));
             } else {
-                msgInsumoJaIncluso(item.getInsumo().getCodigo().intValue());
+                msgInsumoJaIncluso(item.getInsumoSub().getId().toString());
             }
         }
     }
@@ -979,6 +981,14 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         this.filtroInsumoCod = filtroInsumoCod;
     }
 
+    public String getFiltroInsumoSubCod() {
+        return filtroInsumoSubCod;
+    }
+
+    public void setFiltroInsumoSubCod(String filtroInsumoSubCod) {
+        this.filtroInsumoSubCod = filtroInsumoSubCod;
+    }
+
     public String getFiltroInsumoEspecificacao() {
         return filtroInsumoEspecificacao;
     }
@@ -1276,10 +1286,10 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     private void mountKardex() {
         String dataSaldoInicial = DateUtils.getDataFormatada("yyyyMM", DateUtils.incrementar(new Date(), -1, Calendar.MONTH));
         String dataSaldoFinal = DateUtils.getDataFormatada("yyyyMM", new Date());
-        current.setMateriaisEstoqueInicial(materiaisEstoqueFacade.findParam(current.getCentro(), current.getInsumoCod(), dataSaldoInicial));
-        current.setMateriaisEstoqueFinal(materiaisEstoqueFacade.findParam(current.getCentro(), current.getInsumoCod(), dataSaldoFinal));
-        current.setMaterialEntradaItens(materialEntradaItensFacade.findParam(current.getCentro().getEmpresaCod(), current.getCentro().getFilialCod(), current.getCentro().getCodigo(), current.getInsumoCod(), new Date()));
-        current.setMaterialSaidaItens(materialSaidaItensFacade.findParam(current.getCentro().getEmpresaCod(), current.getCentro().getFilialCod(), current.getCentro().getCodigo(), current.getInsumoCod(), new Date()));
+        current.setMateriaisEstoqueInicial(materiaisEstoqueFacade.findParam(current.getCentro(), current.getInsumoSub(), dataSaldoInicial));
+        current.setMateriaisEstoqueFinal(materiaisEstoqueFacade.findParam(current.getCentro(), current.getInsumoSub(), dataSaldoFinal));
+        current.setMaterialEntradaItens(materialEntradaItensFacade.findParam(current.getCentro().getEmpresaCod(), current.getCentro().getFilialCod(), current.getCentro().getCodigo(), current.getInsumoSub(), new Date()));
+        current.setMaterialSaidaItens(materialSaidaItensFacade.findParam(current.getCentro().getEmpresaCod(), current.getCentro().getFilialCod(), current.getCentro().getCodigo(), current.getInsumoSub(), new Date()));
         current.setMaterialEntradasESaidas(followUpBusiness.mountEntradasESaidas(current.getMaterialEntradaItens(), current.getMaterialSaidaItens()));
         current.getMaterialEntradaItens().clear();
         current.getMaterialSaidaItens().clear();
@@ -1390,7 +1400,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
      * @param solicitacaoCompra
      * @param solicItemNumero
      */
-    public void addOrRemoveInsumo(Long codigoInsumo, boolean marcado, SolicitacaoCompraItem solicItem) {
+    public void addOrRemoveInsumo(String subInsumoId, boolean marcado, SolicitacaoCompraItem solicItem) {
         if (insumosSelecionados == null) {
             insumosSelecionados = new ArrayList<>();
         }
@@ -1399,10 +1409,10 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         }
         if (marcado) {
             solicItemSelecionados.add(solicItem);
-            insumosSelecionados.add(codigoInsumo);
+            insumosSelecionados.add(subInsumoId);
         } else {
             solicItemSelecionados.remove(solicItem);
-            insumosSelecionados.remove(codigoInsumo);
+            insumosSelecionados.remove(subInsumoId);
         }
         if (insumosSelecionados.isEmpty()) {
             changeDisableButtonAutorizacao(true);
@@ -1428,10 +1438,10 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         for (FollowUpSolicitacoes item : getItems()) {
             if (item.isMarcado()) {
                 solicItemSelecionados.add(item.getSolicitacaoCompraItem());
-                insumosSelecionados.add(item.getInsumoCod());
+                insumosSelecionados.add(item.getInsumoSub().getId().toString());
             } else {
                 solicItemSelecionados.remove(item.getSolicitacaoCompraItem());
-                insumosSelecionados.remove(item.getInsumoCod());
+                insumosSelecionados.remove(item.getInsumoSub().getId().toString());
             }
         }
 
@@ -1450,7 +1460,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         }
     }
 
-    public String incluirItemSolicitacao(List<Long> selecionados) {
+    public String incluirItemSolicitacao(List<String> selecionados) {
         if (newSolicitacao || solicitacaoCompra == null) {
             prepareCreateSolicitacao();
         }
@@ -1463,18 +1473,18 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         }
 
         if (insumosSelecionados != null && !insumosSelecionados.isEmpty()) {
-            for (Long codigoInsumo : insumosSelecionados) {
-                Insumo insumo = insumoFacade.find(codigoInsumo);
-                if (insumo != null) {
+            for (String insumoSubId : insumosSelecionados) {
+                InsumoSub insumoSub = insumoSubFacade.find(insumoSubId);
+                if (insumoSub != null) {
                     Date dataEntrega = DateUtils.incrementar(new Date(), 2, Calendar.WEEK_OF_MONTH);
                     Integer itemNum = incrementItemSolic();
                     String itemItem = "000" + String.valueOf(itemNum);
                     itemItem = StringUtils.substring(itemItem, (itemItem.length() - 3));
-                    solicitacaoCompra.getItens().add(new SolicitacaoCompraItem(solicitacaoCompra, itemNum, itemItem, insumo, isObraLinkadaOrcamento() ? 0.0 : 1.0, dataEntrega, EnumsGeral.AB, "", ""));
+                    solicitacaoCompra.getItens().add(new SolicitacaoCompraItem(solicitacaoCompra, itemNum, itemItem, insumoSub, isObraLinkadaOrcamento() ? 0.0 : 1.0, dataEntrega, EnumsGeral.AB, "", ""));
                     if (!newSolicitacao) {
                         decrementItemSolic();
                     }
-                    insumo = null;
+                    insumoSub = null;
                     itemNum = null;
                     itemItem = null;
                 }
@@ -1492,7 +1502,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
      * @param selecionados Lista de insumos selecionados.
      * @return I Página atual caso necessário.
      */
-    public String incluirItemMaterialEntrada(List<Long> selecionados) {
+    public String incluirItemMaterialEntrada(List<String> selecionados) {
         if (newMovEntrada || materialEntrada == null) {
             prepareCreateMaterialEntrada();
         }
@@ -1506,21 +1516,21 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         }
 
         if (insumosSelecionados != null && !insumosSelecionados.isEmpty()) {
-            for (Long codigoInsumo : insumosSelecionados) {
-                Insumo insumo = insumoFacade.find(codigoInsumo);
-                if (insumo != null) {
-                    if (insumo.getGeraEstoque()) {
+            for (String insumoSubCod : insumosSelecionados) {
+                InsumoSub insumoSub = insumoSubFacade.find(insumoSubCod);
+                if (insumoSub != null) {
+                    if (insumoSub.getInsumo().getGeraEstoque()) {
                         Integer itemNum = incrementItemMatEntrada();
                         String itemItem = NumberUtils.preencheZeroEsquerda(String.valueOf(itemNum), 3);
-                        Double valor = materialBusiness.getEntradaUltimoPreco(loginController.getCentroSelecionado(), codigoInsumo);
+                        Double valor = materialBusiness.getEntradaUltimoPreco(loginController.getCentroSelecionado(), insumoSub);
                         valor = valor == null || valor < 0.01 ? 0.01 : valor;
-                        materialEntrada.getItens().add(new MaterialEntradaItens(materialEntrada, itemNum, itemItem, insumo, 1.0, valor, new Date(), loginController.getCentroSelecionado().getEmpresaCod(), loginController.getCentroSelecionado().getFilialCod(), loginController.getCentroSelecionado().getCodigo(), ""));
+                        materialEntrada.getItens().add(new MaterialEntradaItens(materialEntrada, itemNum, itemItem, insumoSub, 1.0, valor, new Date(), loginController.getCentroSelecionado().getEmpresaCod(), loginController.getCentroSelecionado().getFilialCod(), loginController.getCentroSelecionado().getCodigo(), ""));
                         itemNum = null;
                         itemItem = null;
                     } else {
-                        msgInsumoNaoGeraEstoque(insumo);
+                        msgInsumoNaoGeraEstoque(insumoSub);
                     }
-                    codigoInsumo = null;
+                    insumoSubCod = null;
                 }
             }
         }
@@ -1530,7 +1540,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         return JsfUtil.MANTEM;
     }
 
-    public String incluirItemMaterialSaida(List<Long> selecionados) {
+    public String incluirItemMaterialSaida(List<String> selecionados) {
         if (newMovSaida || materialSaida == null) {
             prepareCreateMaterialSaida();
         }
@@ -1544,16 +1554,16 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         }
 
         if (insumosSelecionados != null && !insumosSelecionados.isEmpty()) {
-            for (Long codigoInsumo : insumosSelecionados) {
-                Insumo insumo = insumoFacade.find(codigoInsumo);
-                if (insumo != null) {
-                    insumo.setNovoItem(true);
+            for (String insumoSubCod : insumosSelecionados) {
+                InsumoSub insumoSub = insumoSubFacade.find(insumoSubCod);
+                if (insumoSub != null) {
+                    insumoSub.getInsumo().setNovoItem(true);
                     Integer itemNum = incrementItemMatSaida();
                     String itemItem = "000" + String.valueOf(itemNum);
                     itemItem = StringUtils.substring(itemItem, (itemItem.length() - 3));
-                    Double estoqueAtual = followUpSolicitacoesFacade.findEstoqueByInsumo(loginController.getCentroSelecionado(), insumo.getCodigo());
-                    materialSaida.getItens().add(new MaterialSaidaItens(materialSaida, itemNum, itemItem, insumo, 0.0, 1.0, new Date(), loginController.getCentroSelecionado().getEmpresaCod(), loginController.getCentroSelecionado().getFilialCod(), loginController.getCentroSelecionado().getCodigo(), "", estoqueAtual));
-                    codigoInsumo = null;
+                    Double estoqueAtual = followUpSolicitacoesFacade.findEstoqueByInsumo(loginController.getCentroSelecionado(), insumoSub);
+                    materialSaida.getItens().add(new MaterialSaidaItens(materialSaida, itemNum, itemItem, insumoSub, 0.0, 1.0, new Date(), loginController.getCentroSelecionado().getEmpresaCod(), loginController.getCentroSelecionado().getFilialCod(), loginController.getCentroSelecionado().getCodigo(), "", estoqueAtual));
+                    insumoSub = null;
                     itemNum = null;
                     itemItem = null;
                 }
@@ -1565,7 +1575,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         return JsfUtil.MANTEM;
     }
 
-    public void incluirItem(List<Long> selecionados) {
+    public void incluirItem(List<String> selecionados) {
         if (showMovimentacaoEntrada) {
             incluirItemMaterialEntrada(selecionados);
         } else if (showMovimentacaoSaida) {
@@ -1943,17 +1953,17 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
      * de Custo.
      * @return Quantidade em estoque.
      */
-    public Double getEstoqueAtualPositivo(Insumo insumo) {
-        Double estoque = getEstoqueAtual(insumo);
+    public Double getEstoqueAtualPositivo(InsumoSub insumoSub) {
+        Double estoque = getEstoqueAtual(insumoSub);
         return estoque < 0 ? 0.0 : estoque;
     }
 
     private Double calculaLimiteMovSaida(MaterialSaidaItens item) {
         try {
-            if (item.getInsumo().isNovoItem()) {
-                return getEstoqueAtualPositivo(item.getInsumo());
+            if (item.getInsumoSub().getInsumo().isNovoItem()) {
+                return getEstoqueAtualPositivo(item.getInsumoSub());
             }
-            return getEstoqueAtualPositivo(item.getInsumo()) + item.getQuantidade();
+            return getEstoqueAtualPositivo(item.getInsumoSub()) + item.getQuantidade();
         } catch (NullPointerException | NoResultException e) {
             return 0.0;
         }
@@ -1961,7 +1971,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
 
     public Double getLimiteMovSaida(MaterialSaidaItens item) {
         if (materialSaida.getTipoMovimento().equals(EnumTipoMovimentoMaterialSaida.D.toString())) {
-            item.setLimiteSaida(getEstoqueSaidasSemDevolucoes(item.getInsumo()));
+            item.setLimiteSaida(getEstoqueSaidasSemDevolucoes(item.getInsumoSub()));
         } else {
             item.setLimiteSaida(calculaLimiteMovSaida(item));
         }
@@ -1972,20 +1982,20 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         item.setLimiteSaida(null);
     }
 
-    public Double getEstoqueAtual(Insumo insumo) {
-        return NumberUtils.arredondarHalfUp(NumberUtils.isNull(materiaisEstoqueFacade.findSaldo(loginController.getCentroSelecionado(), insumo.getCodigo(), DateUtils.getYearMonth(new Date())), 0.0), 4);
+    public Double getEstoqueAtual(InsumoSub insumoSub) {
+        return NumberUtils.arredondarHalfUp(NumberUtils.isNull(materiaisEstoqueFacade.findSaldo(loginController.getCentroSelecionado(), insumoSub, DateUtils.getYearMonth(new Date())), 0.0), 4);
     }
 
-    public String getEstoqueAtualFmt(Insumo insumo) {
+    public String getEstoqueAtualFmt(InsumoSub insumoSub) {
         try {
-            return NumberUtils.formatDecimal(getEstoqueAtual(insumo), 4);
+            return NumberUtils.formatDecimal(getEstoqueAtual(insumoSub), 4);
         } catch (NullPointerException | NumberFormatException | NoResultException e) {
             return "0,0000";
         }
     }
 
-    public Double getEstoqueUsina(Insumo insumo) {
-        Double estoque = followUpSolicitacoesFacade.findEstoqueUsinaByInsumo(loginController.getCentroSelecionado(), insumo.getCodigo());
+    public Double getEstoqueUsina(InsumoSub insumoSub) {
+        Double estoque = followUpSolicitacoesFacade.findEstoqueUsinaByInsumoSub(loginController.getCentroSelecionado(), insumoSub);
         return estoque == null ? 0.0 : estoque;
     }
 
@@ -1993,8 +2003,8 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         return NumberUtils.isNull(materialSaidaItensFacade.findEstoqueSaidas(insumo.getCodigo(), loginController.getCentroSelecionado()), 0.0);
     }
 
-    public Double getEstoqueSaidasSemDevolucoes(Insumo insumo) {
-        return NumberUtils.isNull(materialSaidaItensFacade.findEstoqueSaidasSemDevolucoes(insumo.getCodigo(), loginController.getCentroSelecionado()), 0.0);
+    public Double getEstoqueSaidasSemDevolucoes(InsumoSub insumoSub) {
+        return NumberUtils.isNull(materialSaidaItensFacade.findEstoqueSaidasSemDevolucoes(insumoSub, loginController.getCentroSelecionado()), 0.0);
     }
 
     public Double getEstoqueEntradas(Insumo insumo) {
@@ -2011,97 +2021,93 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     }
 
     /**
-     * Autoriza os itens do followup selecionados. Os que já foram
-     * autorizados/rejeitados ou não concluidos não sofrem alteração.
+     * Executa a rotina de autorização ou rejeição das solicitações de compra
+     * selecionadas, de acordo com o parâmetro passado.
+     *
+     * @param aut EnumAutorizacao que pode ser "A" para autorizar ou "R" para
+     * rejeitar.
+     * @return Página que irá suceder a operação.
+     * @throws EntityException
+     * @throws SQLException
+     * @throws NullPointerException
      */
-    public String autorizaSolicitacao() {
-        boolean statusAS = true;
-        boolean itensConcluidos = true;
+    private void autorizaOuRejeitaSolicitacao(EnumAutorizacao aut) throws EntityException, SQLException, NullPointerException {
+        boolean statusAut = true;
+        boolean statusNaoConc = false;
+        boolean statusJaAut = false;
         for (SolicitacaoCompraItem solicItem : solicItemSelecionados) {
-            try {
-                if (solicItem == null || solicItem.getSolicitacao() == null) {
-                    msgItemNaoPossuiSolicitacao();
-                } else if (isItemConcluido(solicItem)) {
-                    itensConcluidos = true;
-                    if (!isItemAutorizadoOuRejeitado(solicItem)) {
-                        solicItem.setInstrucaoData(new Date());
-                        solicItem.setInstrucao("A");
-                        solicItem.setUsuarioInstrucao(loginController.getLogin());
-                        solicItem.setInstrucaoMotivo(motivoRejeitaSolicitacao);
-                        solicitacaoCompraItemFacade.update(solicItem);
-                        followUpBusiness.atualizaFollowUp(loginController.getCentroSelecionado(), solicItem.getSolicitacao());
-                        msgSolicitacaoItensAutorizados();
-                        marcado = false;
-                        statusAS = true;
-                    } else {
-                        statusAS = false;
-                        //SOLICITAÇÃO NÃO ESTÁ NO STATUS AS(AGUARDANDO AUTORIZAÇÃO DA SOLICITAÇÃO)
-                    }
+            if (solicItem == null || solicItem.getSolicitacao() == null) {
+                msgItemNaoPossuiSolicitacao();
+            } else if (isItemConcluido(solicItem)) {
+                statusNaoConc = false;
+                if (!isItemAutorizadoOuRejeitado(solicItem)) {
+                    solicItem.setInstrucaoData(new Date());
+                    solicItem.setInstrucao(aut.name());
+                    solicItem.setUsuarioInstrucao(loginController.getLogin());
+                    solicItem.setInstrucaoMotivo(motivoRejeitaSolicitacao);
+                    solicitacaoCompraItemFacade.update(solicItem);
+                    followUpBusiness.atualizaFollowUp(loginController.getCentroSelecionado(), solicItem.getSolicitacao());
+                    marcado = false;
+                    statusAut = true;
                 } else {
-                    itensConcluidos = false;
-                    //ALGUNS ITENS NÃO FORAM CONCLUÍDOS
+                    statusJaAut = true;
+                    //SOLICITAÇÃO NÃO ESTÁ NO STATUS AS(AGUARDANDO AUTORIZAÇÃO DA SOLICITAÇÃO)
                 }
-            } catch (EntityException | SQLException | NullPointerException ex) {
-                msgErroAutorizaSolicitacao(ex);
-                limpaOperacoesFollowUp();
+            } else {
+                statusNaoConc = true;
+                //ALGUNS ITENS NÃO FORAM CONCLUÍDOS
             }
         }
-        if (!itensConcluidos) {
+        if (statusNaoConc) {
             msgSolicitacaoItensNaoConcluidos();
         }
-        if (!statusAS) {
+        if (statusJaAut) {
             msgSolicitacaoItensJaAutorizados();
         }
+        if (statusAut) {
+            if (aut == EnumAutorizacao.A) {
+                msgSolicitacaoItensAutorizados();
+            } else {
+                msgSolicitacaoItensRejeitados();
+            }
+        }
         limpaOperacoesFollowUp();
-        return JsfUtil.MANTEM;
     }
 
     /**
      * Autoriza os itens do followup selecionados. Os que já foram
      * autorizados/rejeitados ou não concluidos não sofrem alteração.
      */
-    public String rejeitaSolicitacao() {
-        boolean statusAS = true;
-        boolean itensConcluidos = true;
-        if (motivoRejeitaSolicitacao.length() == 0) {
-            msgInformeMotivoRejeitaSolicitacao();
+    public String autorizaSolicitacao() {
+        try {
+            autorizaOuRejeitaSolicitacao(EnumAutorizacao.A);
+        } catch (EntityException | SQLException | NullPointerException ex) {
+            msgErroAutorizaSolicitacao(ex);
         }
-        for (SolicitacaoCompraItem solicItem : solicItemSelecionados) {
-            try {
-                if (isItemConcluido(solicItem)) {
-                    if (!isItemAutorizadoOuRejeitado(solicItem)) {
-                        solicItem.setInstrucaoData(new Date());
-                        solicItem.setInstrucao("R");
-                        solicItem.setUsuarioInstrucao(loginController.getLogin());
-                        solicItem.setInstrucaoMotivo(motivoRejeitaSolicitacao);
+        return JsfUtil.MANTEM;
+    }
 
-                        solicitacaoCompraItemFacade.update(solicItem);
-                        followUpBusiness.atualizaFollowUp(loginController.getCentroSelecionado(), solicItem.getSolicitacao());
-                        motivoRejeitaSolicitacao = "";
-                        msgSolicitacaoItensRejeitados();
-                        marcado = false;
-                    } else {
-                        statusAS = false;
-                        //SOLICITAÇÃO NÃO ESTÁ NO STATUS AS(AGUARDANDO AUTORIZAÇÃO DA SOLICITAÇÃO)
-                    }
-                } else {
-                    itensConcluidos = false;
-                    //ALGUNS ITENS NÃO FORAM CONCLUÍDOS
-                }
-            } catch (EntityException | SQLException ex) {
-                msgErroRejeitaSolicitacao(ex);
+    /**
+     * Rejeita os itens do followup selecionados. Os que já foram
+     * autorizados/rejeitados ou não concluidos não sofrem alteração.
+     */
+    public String rejeitaSolicitacao() {
+        try {
+            if (StringUtils.isBlank(motivoRejeitaSolicitacao)) {
+                msgInformeMotivoRejeitaSolicitacao();
+            } else {
+                autorizaOuRejeitaSolicitacao(EnumAutorizacao.R);
             }
+        } catch (EntityException | SQLException | NullPointerException ex) {
+            msgErroRejeitaSolicitacao(ex);
         }
-        if (!itensConcluidos) {
-            msgSolicitacaoItensNaoConcluidos();
-        } else if (!statusAS) {
-            msgSolicitacaoItensJaAutorizados();
-        }
-        limpaOperacoesFollowUp();
         return JsfUtil.MANTEM;
     }
 
     public String desfazAutorizacao() {
+        boolean statusAut = false;
+        boolean statusErro = false;
+        String erro = "";
         for (SolicitacaoCompraItem solicItem : solicItemSelecionados) {
             try {
                 if (!StringUtils.isBlank(solicItem.getInstrucao())) {
@@ -2111,15 +2117,22 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                         solicItem.setUsuarioInstrucao(loginController.getLogin());
                         solicItem.setInstrucaoMotivo(null);
                         solicitacaoCompraItemFacade.update(solicItem);
+                        statusAut = true;
                         followUpBusiness.atualizaFollowUp(loginController.getCentroSelecionado(), solicItem.getSolicitacao());
                         motivoRejeitaSolicitacao = "";
-                        msgSolicitacaoItensDesautorizados();
                         marcado = false;
                     }
                 }
-            } catch (EntityException | SQLException ex) {
-                msgErroDesautorizaSolicitacao(ex);
+            } catch (NullPointerException | EntityException | SQLException ex) {
+                statusErro = true;
+                erro = ex.getMessage();
             }
+        }
+        if (statusAut) {
+            msgSolicitacaoItensDesautorizados();
+        }
+        if (statusErro){
+                msgErroDesautorizaSolicitacao(erro);
         }
         limpaOperacoesFollowUp();
         return JsfUtil.MANTEM;
@@ -2146,12 +2159,11 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         }
     }
 
-    public void atualizaSaldoARealizarSolicitacao(SolicitacaoCompra solic) throws SQLException {
-        for (SolicitacaoCompraItem solicItem : solic.getItens()) {
-            followUpBusiness.atualizaOrcamentoFollowUp(loginController.getCentroSelecionado(), solicItem.getInsumo());
-        }
-    }
-
+    /* public void atualizaSaldoARealizarSolicitacao(SolicitacaoCompra solic) throws SQLException {
+     for (SolicitacaoCompraItem solicItem : solic.getItens()) {
+     followUpBusiness.atualizaOrcamentoFollowUp(loginController.getCentroSelecionado(), solicItem.getInsumoSub().getInsumo());
+     }
+     }*/
     private void atualizaSequenciaisSolicitacaoCompra(Integer seqNumero, Integer seqId) {
         sequenciaisFacade.update(sequenciaisFacade.getSequencialSolicitacaoCompra().initNumber(seqNumero));
         sequenciaisRangeFacade.update(sequenciaisRangeFacade.getSequencialSolicitacaoCompra(loginController.getCentroSelecionado()).initNumber(seqId));
@@ -2173,7 +2185,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     public String createSolicitacaoCompra() {
         boolean itensOk = true;
         for (SolicitacaoCompraItem solicItem : solicitacaoCompra.getItens()) {
-            if (solicItem.getQuantidade() == 0 || (obraLinkadaOrcamento && (solicItem.getItensPlanoOrcamento() == null || solicItem.getItensPlanoOrcamento().isEmpty()))) {
+            if (solicItem.getQuantidade() == 0 || (isObraLinkadaOrcamento() && (solicItem.getItensPlanoOrcamento() == null || solicItem.getItensPlanoOrcamento().isEmpty()))) {
                 itensOk = false;
             }
         }
@@ -2202,7 +2214,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                         atualizaSequenciaisSolicitacaoCompra(seqNumero, solicitacaoCompra.getIdSistema());
                         logFollowupFacade.createLogSolic(solicitacaoCompra);
                         logFollowupFacade.updateLogFollowup();
-                        atualizaSaldoARealizarSolicitacao(solicitacaoCompra);
+                        //atualizaSaldoARealizarSolicitacao(solicitacaoCompra);
                         msgSolicitacaoCompraCriada();
                     }
                 } catch (BusinessException ex) {
@@ -2237,7 +2249,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
     public String updateSolicitacaoCompra() {
         boolean itensOk = true;
         for (SolicitacaoCompraItem solicItem : solicitacaoCompra.getItens()) {
-            if (solicItem.getQuantidade() == 0 || (obraLinkadaOrcamento && (solicItem.getItensPlanoOrcamento() == null || solicItem.getItensPlanoOrcamento().isEmpty()))) {
+            if (solicItem.getQuantidade() == 0 || (isObraLinkadaOrcamento() && (solicItem.getItensPlanoOrcamento() == null || solicItem.getItensPlanoOrcamento().isEmpty()))) {
                 itensOk = false;
             }
         }
@@ -2250,7 +2262,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                 orcamentoBusiness.updateItemOrcPlan(solicitacaoCompra.getItens());
                 solicitacaoCompraFacade.update(solicitacaoCompra);
                 followUpBusiness.atualizaFollowUp(loginController.getCentroSelecionado(), solicitacaoCompra);
-                atualizaSaldoARealizarSolicitacao(solicitacaoCompra);
+                //atualizaSaldoARealizarSolicitacao(solicitacaoCompra);
                 msgSolicitacaoCompraAtualizada();
                 updateFollowup();
                 recreateTable();
@@ -2281,7 +2293,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                 solicitacaoCompraFacade.remove(solicitacaoCompra);
                 orcamentoBusiness.removeItemOrcPlan(solicitacaoCompra.getItens());
                 followUpBusiness.atualizaFollowUp(loginController.getCentroSelecionado(), solicitacaoCompra);
-                atualizaSaldoARealizarSolicitacao(solicitacaoCompra);
+                //atualizaSaldoARealizarSolicitacao(solicitacaoCompra);
                 msgSolicitacaoCompraRemovida();
             } catch (SQLException | EntityException ex) {
                 msgErroRemoverSolicitacao(ex);
@@ -2415,11 +2427,11 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
         this.itensMaterialList = itensMaterialList;
     }
 
-    public List<Long> getInsumosSelecionados() {
+    public List<String> getInsumosSelecionados() {
         return insumosSelecionados;
     }
 
-    public void setInsumosSelecionados(List<Long> insumosSelecionados) {
+    public void setInsumosSelecionados(List<String> insumosSelecionados) {
         this.insumosSelecionados = insumosSelecionados;
     }
 
@@ -2460,7 +2472,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                 logFollowupFacade.updateLogFollowup();
 
                 for (MaterialEntradaItens item : materialEntrada.getItens()) {
-                    estoqueBusiness.atualizaEstoque(loginController.getCentroSelecionado(), materialEntrada.getDataEntrada(), item.getInsumo().getCodigo());
+                    estoqueBusiness.atualizaSaldoMaterial(loginController.getCentroSelecionado(), materialEntrada.getDataEntrada(), item.getInsumoSub());
                 }
                 msgMaterialEntradaCriado();
             } catch (BusinessException ex) {
@@ -2488,7 +2500,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                 logFollowupFacade.createLogMatSai(materialSaida, loginController.getFuncionario().getLogin(), null, null);
                 logFollowupFacade.updateLogFollowup();
                 for (MaterialSaidaItens item : materialSaida.getItens()) {
-                    estoqueBusiness.atualizaEstoque(loginController.getCentroSelecionado(), materialSaida.getDataSaida(), item.getInsumo().getCodigo());
+                    estoqueBusiness.atualizaSaldoMaterial(loginController.getCentroSelecionado(), materialSaida.getDataSaida(), item.getInsumoSub());
                 }
                 msgMaterialSaidaCriado();
             } catch (BusinessException ex) {
@@ -3004,9 +3016,9 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                 FacesContext.getCurrentInstance());
     }
 
-    public void msgErroDesautorizaSolicitacao(Exception ex) {
+    public void msgErroDesautorizaSolicitacao(String ex) {
         MessageUtils.messageFactoringFull("erroDesautorizaSolicitacao",
-                ex.getMessage(),
+                ex,
                 null, FacesMessage.SEVERITY_ERROR,
                 FacesContext.getCurrentInstance());
     }
@@ -3038,7 +3050,7 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                 FacesContext.getCurrentInstance());
     }
 
-    public void msgInsumoJaIncluso(Integer insumoCod) {
+    public void msgInsumoJaIncluso(String insumoCod) {
         MessageUtils.messageFactoringFull("insumoJaIncluso",
                 new Object[]{insumoCod}, FacesMessage.SEVERITY_WARN,
                 FacesContext.getCurrentInstance());
@@ -3076,8 +3088,8 @@ public class FollowUpSolicitacoesController extends EntityController<FollowUpSol
                 FacesContext.getCurrentInstance());
     }
 
-    public void msgInsumoNaoGeraEstoque(Insumo insumo) {
-        String idInsumo = insumo.getCodigo().toString() + " - " + insumo.getEspecificacaoAbrev();
+    public void msgInsumoNaoGeraEstoque(InsumoSub insumoSub) {
+        String idInsumo = insumoSub.getIdCompleto() + " - " + insumoSub.getInsumo().getEspecificacaoAbrev();
         MessageUtils.messageFactoringFull("insumoNaoGeraEstoque",
                 new Object[]{idInsumo},
                 FacesMessage.SEVERITY_WARN,

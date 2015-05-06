@@ -11,7 +11,7 @@
     <f:subview id="form-orc">
         <h:panelGroup id="dialogPanelOrc" style='margin-right: 0px; width: auto'>
             <h:form id="formOrc">
-                <p:dialog widgetVar="dlgOrc" modal="true" styleClass="dialog" style="position: absolute; float: top" position="top" closeOnEscape="true" header="#{msg.orcamento} - #{orcamentoController.currentItem.insumo}" >
+                <p:dialog widgetVar="dlgOrc" modal="true" styleClass="dialog" style="position: absolute; float: top" position="top" closeOnEscape="true" header="#{msg.orcamento} - #{orcamentoController.currentItem.insumoSub.insumo}" >
                     <f:facet name="footer">
                         <p:commandButton id="btnOrcOk" value="#{orcamentoController.valorSoma}"  icon="ui-icon-circle-check" iconPos="left" 
                                          actionListener="#{followUpSolicitacoesController.substituteSolicItemOrcado(orcamentoController.confirmOrcamentoGrid(), orcamentoController.solicitacao)}" 
@@ -36,7 +36,7 @@
                                             disabled="#{root.insumoCod == 0}" rendered="#{root.classeItem == 'IN' and orcamentoController.solicitacao}" 
                                             maxValue="#{utilsController.somarNumerosPositivos(root.valorSaldo, root.valorSolic, 4)}" ondblclick="solicitadoIgualSaldo(this);"
                                             style="font-size: smaller; height: 10px; width: 70px; background: #{root.valorSolic == null or root.valorSolic > 0 ? 'blue' : 'white'}; color: #{root.valorSolic == null or root.valorSolic > 0 ? 'white' : '#585b57'}">
-                                <p:ajax listener="#{orcamentoController.getSomaValores()}" update=":form-solicitacao:form-orc:formOrc:btnOrcOk, :form-solicitacao:form-orc:formOrc:treeOrc:inputValorSolicAtual" /> 
+                                <p:ajax listener="#{orcamentoController.getSomaValores()}" update=":form-solicitacao:form-orc:formOrc:btnOrcOk :form-solicitacao:form-orc:formOrc:treeOrc:inputValorSolicAtual" /> 
                             </pe:inputNumber>
 
                             <h:outputText value="#{root.valorSolic}" rendered="#{root.valorSolic != null and root.classeItem == 'IN' and !orcamentoController.solicitacao}" style="color: #{root.valorSolic > 0 ? 'blue' : '#585b57'}; font-size: smaller">

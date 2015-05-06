@@ -49,13 +49,13 @@
                                             #{sItem.itemItem}
                                         </td>
                                         <td>
-                                            #{sItem.insumo.codigo}
+                                            #{sItem.insumoSub.idCompleto}
                                         </td>
                                         <td align='left'>
                                             #{sItem.especificacaoCompleta}
                                         </td>
                                         <td>
-                                            #{sItem.insumo.unidade.codigo}
+                                            #{sItem.insumoSub.insumo.unidade.codigo}
                                         </td>
                                         <td>
                                             #{sItem.quantidade}
@@ -82,7 +82,6 @@
                                 <br/>
                             </ui:repeat>
                         </p:panel>
-
 
                     </h:panelGroup>
                 </p:scrollPanel>

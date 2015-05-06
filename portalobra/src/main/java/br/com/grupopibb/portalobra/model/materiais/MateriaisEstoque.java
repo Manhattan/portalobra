@@ -6,7 +6,7 @@ package br.com.grupopibb.portalobra.model.materiais;
 
 import br.com.grupopibb.portalobra.model.common.EntityInterface;
 import br.com.grupopibb.portalobra.model.geral.CentroCusto;
-import br.com.grupopibb.portalobra.model.insumo.Insumo;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import br.com.grupopibb.portalobra.utils.NumberUtils;
 import java.io.Serializable;
 import java.util.List;
@@ -32,53 +32,53 @@ import javax.persistence.Transient;
 @NamedQueries({
     @NamedQuery(name = "MateriaisEstoque.find",
             query = " SELECT DISTINCT me FROM MateriaisEstoque me "
-            + " WHERE (me.insumoCod = :insumoCod) "
+            + " WHERE (me.insumoSub = :insumoSub) "
             + " AND (me.centro = :centro) "
             + " AND (me.anoMes = :anoMes) "),
     @NamedQuery(name = "MateriaisEstoque.selectRange",
-            query = " SELECT DISTINCT me FROM MateriaisEstoque me join me.insumo i"
+            query = " SELECT DISTINCT me FROM MateriaisEstoque me join me.insumoSub.insumo i"
             + " WHERE (me.centro = :centro) "
             + " AND (me.anoMes = :anoMes) "
-            + " AND (:insumoCod2 = 'todos' OR (i.especificacao LIKE :insumoCod OR me.insumoCod LIKE :insumoCod)) "
+            + " AND (:insumoCod2 = 'todos' OR (me.insumoSub.especificacao LIKE :insumoCod OR me.insumoCod LIKE :insumoCod)) "
             + " AND (:caracterizacao2 = 'todos' OR i.caracterizacaoCod = :caracterizacao) "
             + " AND (:grupo2 = 'todos' OR i.grupoCod = :grupo) "
             + " AND (:classe2 = 'todos' OR i.classeCod = :classe) "
             // + " AND (me.estoqueQuantidade <> 0.0) "
-            + " ORDER BY me.insumo.especificacao "),
+            + " ORDER BY me.insumoSub.insumo.especificacao "),
     @NamedQuery(name = "MateriaisEstoque.selectRangeValorAsc",
             query = " SELECT DISTINCT me FROM MateriaisEstoque me "
             + " WHERE (me.centro = :centro) "
             + " AND (me.anoMes = :anoMes) "
-            + " AND (:insumoCod2 = 'todos' OR (me.insumo.especificacao LIKE :insumoCod OR me.insumoCod LIKE :insumoCod)) "
-            + " AND (:caracterizacao2 = 'todos' OR me.insumo.caracterizacaoCod = :caracterizacao) "
-            + " AND (:grupo2 = 'todos' OR me.insumo.grupoCod = :grupo) "
-            + " AND (:classe2 = 'todos' OR me.insumo.classeCod = :classe) "
+            + " AND (:insumoCod2 = 'todos' OR (me.insumoSub.especificacao LIKE :insumoCod OR me.insumoCod LIKE :insumoCod)) "
+            + " AND (:caracterizacao2 = 'todos' OR me.insumoSub.insumo.caracterizacaoCod = :caracterizacao) "
+            + " AND (:grupo2 = 'todos' OR me.insumoSub.insumo.grupoCod = :grupo) "
+            + " AND (:classe2 = 'todos' OR me.insumoSub.insumo.classeCod = :classe) "
             // + " AND (me.estoqueQuantidade <> 0.0) "
             + " ORDER BY me.estoqueValor "),
     @NamedQuery(name = "MateriaisEstoque.selectRangeValorDesc",
             query = " SELECT DISTINCT me FROM MateriaisEstoque me "
             + " WHERE (me.centro = :centro) "
             + " AND (me.anoMes = :anoMes) "
-            + " AND (:insumoCod2 = 'todos' OR (me.insumo.especificacao LIKE :insumoCod OR me.insumoCod LIKE :insumoCod)) "
-            + " AND (:caracterizacao2 = 'todos' OR me.insumo.caracterizacaoCod = :caracterizacao) "
-            + " AND (:grupo2 = 'todos' OR me.insumo.grupoCod = :grupo) "
-            + " AND (:classe2 = 'todos' OR me.insumo.classeCod = :classe) "
+            + " AND (:insumoCod2 = 'todos' OR (me.insumoSub.especificacao LIKE :insumoCod OR me.insumoCod LIKE :insumoCod)) "
+            + " AND (:caracterizacao2 = 'todos' OR me.insumoSub.insumo.caracterizacaoCod = :caracterizacao) "
+            + " AND (:grupo2 = 'todos' OR me.insumoSub.insumo.grupoCod = :grupo) "
+            + " AND (:classe2 = 'todos' OR me.insumoSub.insumo.classeCod = :classe) "
             // + " AND (me.estoqueQuantidade <> 0.0) "
             + " ORDER BY me.estoqueValor DESC"),
     @NamedQuery(name = "MateriaisEstoque.countRange",
             query = " SELECT COUNT(DISTINCT me) FROM MateriaisEstoque me "
             + " WHERE (me.centro = :centro) "
             + " AND (me.anoMes = :anoMes) "
-            + " AND (:insumoCod2 = 'todos' OR (me.insumo.especificacao LIKE :insumoCod OR me.insumoCod LIKE :insumoCod)) "
-            + " AND (:caracterizacao2 = 'todos' OR me.insumo.caracterizacaoCod = :caracterizacao) "
-            + " AND (:grupo2 = 'todos' OR me.insumo.grupoCod = :grupo) "
-            + " AND (:classe2 = 'todos' OR me.insumo.classeCod = :classe) "),
+            + " AND (:insumoCod2 = 'todos' OR (me.insumoSub.especificacao LIKE :insumoCod OR me.insumoSub.insumoCod LIKE :insumoCod)) "
+            + " AND (:caracterizacao2 = 'todos' OR me.insumoSub.insumo.caracterizacaoCod = :caracterizacao) "
+            + " AND (:grupo2 = 'todos' OR me.insumoSub.insumo.grupoCod = :grupo) "
+            + " AND (:classe2 = 'todos' OR me.insumoSub.insumo.classeCod = :classe) "),
     //  + " AND (me.estoqueQuantidade <> 0.0) "),
     @NamedQuery(name = "MateriaisEstoque.findValorTotal",
             query = " SELECT SUM(me.estoqueValor) FROM MateriaisEstoque me"
             + " WHERE (me.centro = :centro) "
             + " AND (me.anoMes = :anoMes) "
-            + " AND (me.insumoCod is not null) ")
+            + " AND (me.insumoSub.insumoCod is not null) ")
 })
 public class MateriaisEstoque implements EntityInterface<MateriaisEstoque> {
 
@@ -87,9 +87,17 @@ public class MateriaisEstoque implements EntityInterface<MateriaisEstoque> {
     private Long insumoCod;
     /*
      */
-    @ManyToOne(targetEntity = Insumo.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "Insumo_Cod", insertable = false, updatable = false)
-    private Insumo insumo;
+    @Id
+    @Column(name = "SubInsumo_Cod")
+    private Long insumoSubCod;
+    /*
+     */
+    @ManyToOne(targetEntity = InsumoSub.class)
+    @JoinColumns(value = {
+        @JoinColumn(name = "Insumo_Cod", referencedColumnName = "Insumo_Cod", insertable = false, updatable = false),
+        @JoinColumn(name = "SubInsumo_Cod", referencedColumnName = "SubInsumo_Cod", insertable = false, updatable = false)
+    })
+    private InsumoSub insumoSub;
     /*
      */
     @Id
@@ -199,12 +207,20 @@ public class MateriaisEstoque implements EntityInterface<MateriaisEstoque> {
         this.insumoCod = insumoCod;
     }
 
-    public Insumo getInsumo() {
-        return insumo;
+    public Long getInsumoSubCod() {
+        return insumoSubCod;
     }
 
-    public void setInsumo(Insumo insumo) {
-        this.insumo = insumo;
+    public void setInsumoSubCod(Long insumoSubCod) {
+        this.insumoSubCod = insumoSubCod;
+    }
+
+    public InsumoSub getInsumoSub() {
+        return insumoSub;
+    }
+
+    public void setInsumoSub(InsumoSub insumoSub) {
+        this.insumoSub = insumoSub;
     }
 
     public String getEmpresaCod() {

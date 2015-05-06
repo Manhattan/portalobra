@@ -18,8 +18,6 @@ import br.com.grupopibb.portalobra.model.tipos.EnumsGeral;
 import br.com.grupopibb.portalobra.model.tipos.log_followup.EnumOpeLogFollowup;
 import br.com.grupopibb.portalobra.model.tipos.log_followup.EnumTabLogFollowup;
 import br.com.grupopibb.portalobra.utils.UtilBeans;
-import java.sql.CallableStatement;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -64,7 +62,8 @@ public class LogFollowupFacade extends AbstractEntityBeans<LogFollowup, Integer>
             logF.setTabela(EnumTabLogFollowup.SOLIC);
             logF.setId1(main.getNumero().intValue());
             logF.setId2(item.getNumero().intValue());
-            logF.setInsumoCod(item.getInsumo().getCodigo().intValue());
+            logF.setInsumoCod(item.getInsumoSub().getInsumoCod().intValue());
+            logF.setInsumoSubCod(item.getInsumoSub().getCodigo());
             logF.setLido(EnumsGeral.N);
             createLog(logF);
             logF = null;
@@ -82,7 +81,8 @@ public class LogFollowupFacade extends AbstractEntityBeans<LogFollowup, Integer>
             logF.setTabela(EnumTabLogFollowup.MAT_ENT);
             logF.setId1(solicNumero);
             logF.setId2(solicItemNumero);
-            logF.setInsumoCod(item.getInsumo().getCodigo().intValue());
+            logF.setInsumoCod(item.getInsumoSub().getInsumoCod().intValue());
+            logF.setInsumoSubCod(item.getInsumoSub().getCodigo());
             logF.setLido(EnumsGeral.N);
             createLog(logF);
             logF = null;
@@ -100,7 +100,8 @@ public class LogFollowupFacade extends AbstractEntityBeans<LogFollowup, Integer>
             logF.setTabela(EnumTabLogFollowup.MAT_SAI);
             logF.setId1(solicNumero);
             logF.setId2(solicItemNumero);
-            logF.setInsumoCod(item.getInsumo().getCodigo().intValue());
+            logF.setInsumoCod(item.getInsumoSub().getInsumoCod().intValue());
+            logF.setInsumoSubCod(item.getInsumoSub().getCodigo());
             logF.setLido(EnumsGeral.N);
             createLog(logF);
             logF = null;

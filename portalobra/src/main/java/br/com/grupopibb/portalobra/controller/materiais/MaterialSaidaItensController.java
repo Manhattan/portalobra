@@ -8,10 +8,11 @@ import br.com.grupopibb.portalobra.acesso.controller.LoginController;
 import br.com.grupopibb.portalobra.controller.common.EntityController;
 import br.com.grupopibb.portalobra.controller.common.EntityPagination;
 import br.com.grupopibb.portalobra.dao.geral.CentroCustoFacade;
+import br.com.grupopibb.portalobra.dao.insumo.InsumoSubFacade;
 import br.com.grupopibb.portalobra.dao.materiais.MateriaisEstoqueFacade;
 import br.com.grupopibb.portalobra.dao.materiais.MaterialSaidaItensFacade;
 import br.com.grupopibb.portalobra.model.geral.CentroCusto;
-import br.com.grupopibb.portalobra.model.insumo.Insumo;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import br.com.grupopibb.portalobra.model.materiais.MaterialSaidaItens;
 import br.com.grupopibb.portalobra.utils.DateUtils;
 import br.com.grupopibb.portalobra.utils.JsfUtil;
@@ -47,7 +48,8 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
     private Date dataInicial;
     private Date dataFinal;
     private String numeroDoc;
-    private Long insumoCod;
+    private String insumoCod;
+    private String insumoSubCod;
     private String especificacao;
     private String tipoMovimento;
     private Integer registrosPorPagina = 20;
@@ -89,12 +91,12 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
             pagination = new EntityPagination(registrosPorPagina) {
                 @Override
                 public int getItemsCount() {
-                    return getFacade().countParam(loginController.getCentroSelecionado(), numeroDoc, dataInicial, dataFinal, insumoCod, especificacao, tipoMovimento).intValue();
+                    return getFacade().countParam(loginController.getCentroSelecionado(), numeroDoc, dataInicial, dataFinal, insumoCod, insumoSubCod, especificacao, tipoMovimento).intValue();
                 }
 
                 @Override
                 public DataModel createPageDataModel() {
-                    return new ListDataModel(getFacade().findRangeParam(loginController.getCentroSelecionado(), numeroDoc, dataInicial, dataFinal, insumoCod, especificacao, tipoMovimento, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    return new ListDataModel(getFacade().findRangeParam(loginController.getCentroSelecionado(), numeroDoc, dataInicial, dataFinal, insumoCod, insumoSubCod, especificacao, tipoMovimento, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
                 }
             };
         }
@@ -160,9 +162,9 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
         }
     }
 
-    public Double getEstoqueAtual(Insumo insumo) {
+    public Double getEstoqueAtual(InsumoSub insumoSub) {
         String anoMes = DateUtils.getDataFormatada("YYYYMM", new Date());
-        return materiaisEstoqueFacade.findSaldo(loginController.getCentroSelecionado(), insumo != null ? insumo.getCodigo() : 0L, anoMes);
+        return materiaisEstoqueFacade.findSaldo(loginController.getCentroSelecionado(), insumoSub, anoMes);
     }
 
     /**
@@ -214,12 +216,20 @@ public class MaterialSaidaItensController extends EntityController<MaterialSaida
         this.numeroDoc = numeroDoc;
     }
 
-    public Long getInsumoCod() {
+    public String getInsumoCod() {
         return insumoCod;
     }
 
-    public void setInsumoCod(Long insumoCod) {
+    public void setInsumoCod(String insumoCod) {
         this.insumoCod = insumoCod;
+    }
+
+    public String getInsumoSubCod() {
+        return insumoSubCod;
+    }
+
+    public void setInsumoSubCod(String insumoSubCod) {
+        this.insumoSubCod = insumoSubCod;
     }
 
     public String getEspecificacao() {

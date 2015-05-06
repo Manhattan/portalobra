@@ -1,0 +1,100 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:arq="http://java.sun.com/jsf/composite/ezcomp"
+                >
+    <f:subview id="form-insumoSub">
+        <h:panelGroup id="dialogPanelInsumoSub" style='margin-right: 0px; width: auto'>
+            <p:dialog widgetVar="dlgNovoInsumoSub" closeOnEscape="true" resizable="false" modal="true" styleClass="dialog" style="position: absolute; float: top" position="top" header="#{msg.insumo}" >
+                <h:form id="formNovoInsumoSub">
+                    <h:panelGroup id="panelTableInsumosPaginador" style='margin-right: 0px; width: auto'>
+                        <table class="referencesmall" style='margin-right: 0px; width: auto'>
+                            <tr class="cabecalhoDiscreto">
+                                <th align='center'>
+                                    <p:commandButton value="" icon="ui-icon-search" styleClass="button-only-icon" update="panelTableInsumosPaginador" 
+                                                     actionListener="#{insumoSubController.pesquisar()}" style="margin-bottom: 5px;" />
+                                    <p:commandButton value="" icon="ui-icon-circle-plus" styleClass="button-only-icon" update=":panelMain" 
+                                                     actionListener="#{followUpSolicitacoesController.incluirItem(insumoSubController.insumosSelecionados)}"
+                                                     action="#{insumoSubController.limparInsumosSelecionados()}"
+                                                     oncomplete="dlgNovoInsumoSub.hide()"/>
+                                </th>
+                                <th align='center' style="width: 90px">
+                                    <h:outputText value="#{msg.insumo}" /><br/>
+                                    <p:inputText value="#{insumoSubController.filtroSolicInsumoCod}" style="width: 40px; margin-top: 5px" maxlength="8" />
+                                    <p:inputText value="#{insumoSubController.filtroSolicInsumoSubCod}" style="width: 20px; margin-left: 5px; margin-right: 5px; margin-top: 5px" maxlength="3"/>
+                                </th>
+                                <th>
+                                    <h:outputText value="#{msg.especificacao}" /><br/>
+                                    <p:inputText id="filtroEspecInsumoSub" value="#{insumoSubController.filtroSolicInsumoEspec}" style="width: 90%; margin-top: 5px"  />
+                                </th>
+                                <th>
+                                    <h:outputText value="#{msg.unidade}" style="margin-right: 5px" />
+                                </th>
+                                <th>
+                                    <h:outputText value="#{msg.classe}"/><br/>
+                                    <p:selectOneMenu id="filtroClasseInsumosSub" filter="true" filterMatchMode="contains" value="#{insumoSubController.filtroClasseInsumo}" style="margin-right: 5px; margin-top: 5px; height: 20px">
+                                        <f:selectItem value="#{null}" itemLabel="" />
+                                        <f:selectItems value="#{insumoSubController.insumoClasseSelect}" />
+                                        <p:ajax update="filtroGrupoInsumosSub, filtroCaracterizacaoInsumosSub" immediate="true" />
+                                        <f:converter converterId="classeInsumosConverter" />
+                                    </p:selectOneMenu>
+                                </th>
+                                <th style="width: auto">
+                                    <h:outputText value="#{msg.grupo}" /><br/>
+                                    <p:selectOneMenu id="filtroGrupoInsumosSub" filter="true" filterMatchMode="contains" value="#{insumoSubController.filtroGrupoInsumo}" style="margin-right: 5px; margin-top: 5px; height: 20px">
+                                        <f:selectItem value="#{null}" itemLabel="" />                                
+                                        <f:selectItems value="#{insumoSubController.insumoGrupoSelect}" />
+                                        <f:ajax render="filtroCaracterizacaoInsumosSub" immediate="true" />
+                                        <f:converter converterId="grupoInsumosConverter" />
+                                    </p:selectOneMenu>
+                                </th>
+                                <th style="width: auto">
+                                    <h:outputText value="#{msg.caracterizacao}" /><br/>
+                                    <p:selectOneMenu id="filtroCaracterizacaoInsumosSub" filter="true" filterMatchMode="contains" value="#{insumoSubController.filtroCaracInsumo}" style="margin-right: 5px; margin-top: 5px; height: 20px">
+                                        <f:selectItem value="#{null}" itemLabel="" />
+                                        <f:selectItems value="#{insumoSubController.insumoCaracterizacaoSelect}" />
+                                        <f:ajax render="filtroCaracterizacaoInsumosSub" immediate="true" />
+                                        <f:converter converterId="caracterizacaoInsumosConverter" />
+                                    </p:selectOneMenu>
+                                </th>
+                                <th style="width: auto">
+                                    <h:outputText value="#{msg.aRealizar}" rendered="#{loginController.centroSelecionado.obraLinkadaOrcamento}" />
+                                </th>
+                            </tr>
+                            <ui:repeat value="#{insumoSubController.items}" var="inss" varStatus="s">
+                                <tr>
+                                    <td valign='middle' align='center'>
+                                        <p:commandButton value="" icon="ui-icon-cart" iconPos="left" styleClass="button-only-icon" actionListener="#{documentoEntradaItemController.initInsumo(inss.insumo)}" oncomplete="dlgUltSolic.show()" update=":menuApp:form-consulta-insumoSub:pngUltSolicInclude"  />
+                                        <h:selectBooleanCheckbox rendered="true" disabled="false" value="#{inss.marcado}" >
+                                            <p:ajax listener="#{insumoSubController.addOrRemoveInsumo(inss.insumoCod, inss.codigo, inss.marcado)}" />  
+                                        </h:selectBooleanCheckbox>
+                                    </td>
+                                    <td align='center'>
+                                        <h:outputText value="#{inss.idCompleto}" />
+                                    </td>
+                                    <td><h:outputText value="#{inss.especificacao}" /></td>
+                                    <td><h:outputText value="#{inss.insumo.unidade.codigo}" /></td>
+                                    <td><h:outputText value="#{inss.insumo.caracterizacaoInsumo.grupoInsumos.classeInsumos.tituloAbreviado}" /></td>
+                                    <td><h:outputText value="#{inss.insumo.caracterizacaoInsumo.grupoInsumos.tituloAbreviado}" /></td>
+                                    <td><h:outputText value="#{inss.insumo.caracterizacaoInsumo.tituloAbreviado}"/></td>
+                                    <td align='right'>
+                                        <h:outputText value="#{inss.insumo.valorOrcado}" id="qtdARealizar" rendered="#{loginController.centroSelecionado.obraLinkadaOrcamento}">
+                                            <f:convertNumber type="number" minFractionDigits="4" maxFractionDigits="4" pattern=",##0.0" />
+                                        </h:outputText>
+                                    </td>
+                                </tr>
+                            </ui:repeat> 
+                        </table>
+                        <p:panel style="border: none">
+                            <arq:paginator id="paginadorInsumoSub" entityBean="#{insumoSubController}" formName=":form-insumoSub:formNovoInsumoSub:panelTableInsumosPaginador" renderedNew="false"/>
+                        </p:panel>
+                    </h:panelGroup>
+                </h:form>  
+            </p:dialog>
+        </h:panelGroup>
+    </f:subview>
+</ui:composition>

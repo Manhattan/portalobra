@@ -10,9 +10,11 @@ import br.com.grupopibb.portalobra.dao.commons.AbstractEntityBeans;
 import static br.com.grupopibb.portalobra.dao.commons.AbstractEntityBeans.getMapParams;
 import br.com.grupopibb.portalobra.exceptions.EntityException;
 import br.com.grupopibb.portalobra.model.geral.CentroCusto;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import br.com.grupopibb.portalobra.model.materiais.MaterialSaida;
 import br.com.grupopibb.portalobra.model.materiais.MaterialSaidaItens;
 import br.com.grupopibb.portalobra.utils.DateUtils;
+import br.com.grupopibb.portalobra.utils.NumberUtils;
 import br.com.grupopibb.portalobra.utils.StringBeanUtils;
 import br.com.grupopibb.portalobra.utils.UtilBeans;
 import java.sql.SQLException;
@@ -62,9 +64,9 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
      *
      * @return List<MaterialSaidaItens>
      */
-    public List<MaterialSaidaItens> findParam(final String empresaCod, final String filialCod, final String centroCod, final Long insumoCod, final Date dataMesRef) {
+    public List<MaterialSaidaItens> findParam(final String empresaCod, final String filialCod, final String centroCod, final InsumoSub insumoSub, final Date dataMesRef) {
         Map<String, Object> params = getMapParams();
-        paramsPaginacao1(params, empresaCod, filialCod, centroCod, insumoCod, dataMesRef);
+        paramsPaginacao1(params, empresaCod, filialCod, centroCod, insumoSub, dataMesRef);
         return listPesqParam("MaterialSaidaItens.find", params);
     }
 
@@ -84,8 +86,8 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
             for (MaterialSaidaItens item : itens) {
                 try {
                     create(item);
-                    estoqueBusiness.atualizaSaldoMaterial(centro, materialSaida.getDataSaida(), item.getInsumo().getCodigo());
-                    followUpBusiness.atualizaFollowUp(centro, item.getInsumo());
+                    estoqueBusiness.atualizaSaldoMaterial(centro, materialSaida.getDataSaida(), item.getInsumoSub());
+                    //followUpBusiness.atualizaFollowUp(centro, item.getInsumoSub().getInsumo());
                 } catch (EntityException ex) {
                     throw new RuntimeException(ex);
                 } catch (SQLException ex) {
@@ -108,9 +110,9 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
     }
 
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Double findEstoqueSaidasSemDevolucoes(final Long insumoCod, final CentroCusto centro) {
+    public Double findEstoqueSaidasSemDevolucoes(final InsumoSub insumoSub, final CentroCusto centro) {
         Map<String, Object> params = getMapParams();
-        paramsEstoqueSaidasSemDevolucoes(params, insumoCod, centro.getEmpresaCod(), centro.getFilialCod(), centro.getCodigo());
+        paramsEstoqueSaidasSemDevolucoes(params, insumoSub, centro.getEmpresaCod(), centro.getFilialCod(), centro.getCodigo());
         Query q = getEntityManager().createNamedQuery("MaterialSaidaItens.findEstoqueSaidasSemDevolucoes");
         for (String chave : params.keySet()) {
             q.setParameter(chave, params.get(chave));
@@ -143,15 +145,15 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
     }
 
     public List<MaterialSaidaItens> findRangeParam(final CentroCusto centro, final String numeroDoc, final Date dataInicial,
-            final Date dataFinal, final Long insumoCod, final String insumoEspecificacao, final String tipoMovimento, final int[] range) {
+            final Date dataFinal, final String insumoCod, final String insumoSubCod, final String insumoEspecificacao, final String tipoMovimento, final int[] range) {
         Map<String, Object> params = getMapParams();
-        paramsPaginacao(params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoEspecificacao, tipoMovimento);
+        paramsPaginacao(params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoSubCod, insumoEspecificacao, tipoMovimento);
         return listPesqParamRange("MaterialSaidaItens.selectRange", params, range[1] - range[0], range[0]);
     }
 
-    public Long countParam(final CentroCusto centro, final String numeroDoc, final Date dataInicial, final Date dataFinal, final Long insumoCod, final String insumoEspecificacao, final String tipoMovimento) {
+    public Long countParam(final CentroCusto centro, final String numeroDoc, final Date dataInicial, final Date dataFinal, final String insumoCod, final String insumoSubCod, final String insumoEspecificacao, final String tipoMovimento) {
         Map<String, Object> params = getMapParams();
-        paramsPaginacao(params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoEspecificacao, tipoMovimento);
+        paramsPaginacao(params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoSubCod, insumoEspecificacao, tipoMovimento);
         return pesqCount("MaterialSaidaItens.countRange", params);
     }
 
@@ -164,36 +166,38 @@ public class MaterialSaidaItensFacade extends AbstractEntityBeans<MaterialSaidaI
         params.put("dataFinal", new Date());
     }
 
-    private void paramsEstoqueSaidasSemDevolucoes(Map<String, Object> params, final Long insumoCod, final String empresaCod, final String filialCod, final String centroCod) {
-        params.put("insumoCod", insumoCod);
+    private void paramsEstoqueSaidasSemDevolucoes(Map<String, Object> params, final InsumoSub insumoSub, final String empresaCod, final String filialCod, final String centroCod) {
+        params.put("insumoSub", insumoSub);
         params.put("empresaCod", empresaCod);
         params.put("filialCod", filialCod);
         params.put("centroCod", centroCod);
     }
 //params, centro, numeroDoc, dataInicial, dataFinal, insumoCod, insumoEspecificacao
 
-    private void paramsPaginacao(Map<String, Object> params, final CentroCusto centro, final String numeroDoc, final Date dataInicial, final Date dataFinal, final Long insumoCod, final String insumoEspecificacao, final String tipoMovimento) {
+    private void paramsPaginacao(Map<String, Object> params, final CentroCusto centro, final String numeroDoc, final Date dataInicial, final Date dataFinal, final String insumoCod, final String insumoSubCod, final String insumoEspecificacao, final String tipoMovimento) {
         params.put("empresaCod", centro != null ? centro.getEmpresaCod() : "");
         params.put("filialCod", centro != null ? centro.getFilialCod() : "");
         params.put("centroCod", centro != null ? centro.getCodigo() : "");
         params.put("numeroDoc", numeroDoc);
         params.put("dataInicial", dataInicial);
         params.put("dataFinal", dataFinal);
-        params.put("insumoCod", insumoCod);
+        params.put("insumoCod", StringBeanUtils.acertaNomeParaLike(insumoCod, StringBeanUtils.LIKE_END));
+        params.put("insumoSubCod", StringBeanUtils.acertaNomeParaLike(NumberUtils.removeZeroEsquerda(insumoSubCod, "0"), StringBeanUtils.LIKE_END));
         params.put("insumoEspecificacao", StringBeanUtils.acertaNomeParaLike(insumoEspecificacao, StringBeanUtils.LIKE_END));
         params.put("tipoMovimento", tipoMovimento);
 
         params.put("numeroDoc2", StringUtils.isBlank(numeroDoc) ? "todos" : "filtro");
-        params.put("insumoCod2", insumoCod == null ? "todos" : "filtro");
+        params.put("insumoSubCod2", StringUtils.isBlank(insumoSubCod) ? "todos" : "filtro");
+        params.put("insumoCod2", StringUtils.isBlank(insumoCod) ? "todos" : "filtro");
         params.put("insumoEspecificacao2", StringUtils.isBlank(insumoEspecificacao) ? "todos" : "filtro");
         params.put("tipoMovimento2", StringUtils.isBlank(tipoMovimento) ? "todos" : "filtro");
     }
 
-    private void paramsPaginacao1(Map<String, Object> params, final String empresaCod, final String filialCod, final String centroCod, final Long insumoCod, final Date dataMesRef) {
+    private void paramsPaginacao1(Map<String, Object> params, final String empresaCod, final String filialCod, final String centroCod, final InsumoSub insumoSub, final Date dataMesRef) {
         params.put("empresaCod", empresaCod);
         params.put("filialCod", filialCod);
         params.put("centroCod", centroCod);
-        params.put("insumoCod", insumoCod);
+        params.put("insumoSub", insumoSub);
         params.put("dataInicial", DateUtils.toFirstDate(dataMesRef));
         params.put("dataFinal", DateUtils.toLastDate(dataMesRef));
     }

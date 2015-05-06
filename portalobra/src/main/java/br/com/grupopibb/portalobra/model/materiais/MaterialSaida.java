@@ -222,7 +222,7 @@ public class MaterialSaida implements EntityInterface<MaterialSaida> {
         } else {
             Double custoTotal = 0.0;
             for (MaterialSaidaItens item : itens) {
-                custoTotal += item.getValor();
+                custoTotal += NumberUtils.isNull(item.getValor(), 0.0);
             }
             return custoTotal;
         }

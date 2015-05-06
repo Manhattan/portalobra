@@ -7,7 +7,7 @@
                 template="/templates/loginLayout.xhtml">
 
     <ui:param name="img_param" value="logo_man.png" />
-    <ui:param name="img_param_bg" value="resources/images/riviera_praia_1.jpg" />
+    <ui:param name="img_param_bg" value="resources/images/background_login.jpg" />
     <ui:param name="msgWelcome" value="#{msg.headerWelcome}" />
     <ui:param name="msgLogin" value="#{msg.headerLogin}" />
 
@@ -19,7 +19,7 @@
                 <h:outputText value="#{msg.senha}:" styleClass="textLabel" />
                 <p:password value="#{loginController.senha}" required="true" style="padding: 6px 4px 6px 3px; color: #7D0000; font-size: 16px; width: 100%; margin-bottom: 4px;"/>
 
-                <p:commandButton id="btnLogin" action="followup" actionListener="#{loginController.performLogin()}"
+                <p:commandButton id="btnLogin" action="#{loginController.redirectLogin(loginController.getPerformLogin())}"
                                  update="btnLogin" value="#{msg.entrar}" styleClass="btnLogin" />
             </h:panelGrid>
         </h:form>

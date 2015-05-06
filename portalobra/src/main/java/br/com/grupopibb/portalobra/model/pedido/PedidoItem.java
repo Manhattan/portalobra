@@ -35,27 +35,22 @@ import javax.validation.constraints.NotNull;
 @Table(name = "Pedido_Item")
 @NamedQueries({
     @NamedQuery(name = "PedidoItem.selectRange",
-            query = " SELECT DISTINCT pi FROM PedidoItem pi "
+            query = " SELECT DISTINCT pi FROM PedidoItem pi join pi.solicitacaoCompraItem.insumoSub.insumo i "
             + " WHERE (:dataInicial2 = 'todos' OR :dataFinal2 = 'todos' OR pi.pedido.dataPedido BETWEEN :dataInicial AND :dataFinal) "
-            + " AND (:especificacao2 = 'todos' OR pi.solicitacaoCompraItem.insumo.especificacao LIKE :especificacao) "
+            + " AND (:especificacao2 = 'todos' OR i.especificacao LIKE :especificacao) "
             + " AND (:numeroPedido2 = 'todos' OR pi.pedido.idSistema = :numeroPedido) "
-            + " AND (:caracterizacao2 = 'todos' OR pi.solicitacaoCompraItem.insumo.caracterizacaoInsumo.titulo LIKE :caracterizacao) "
+            + " AND (:caracterizacao2 = 'todos' OR i.caracterizacaoInsumo.titulo LIKE :caracterizacao) "
             + " AND (pi.pedido.centroCusto = :centro) "
             + " AND (:credor2 = 'todos' OR pi.pedido.credor = :credor) "
             + " ORDER BY pi.pedido.numero, pi.itemNumero DESC"),
     @NamedQuery(name = "PedidoItem.countRange",
-            query = " SELECT COUNT(DISTINCT pi) FROM PedidoItem pi "
+            query = " SELECT COUNT(DISTINCT pi) FROM PedidoItem pi join pi.solicitacaoCompraItem.insumoSub.insumo i "
             + " WHERE (:dataInicial2 = 'todos' OR :dataFinal2 = 'todos' OR pi.pedido.dataPedido BETWEEN :dataInicial AND :dataFinal) "
-            + " AND (:especificacao2 = 'todos' OR pi.solicitacaoCompraItem.insumo.especificacao LIKE :especificacao) "
+            + " AND (:especificacao2 = 'todos' OR i.especificacao LIKE :especificacao) "
             + " AND (:numeroPedido2 = 'todos' OR pi.pedido.idSistema = :numeroPedido) "
-            + " AND (:caracterizacao2 = 'todos' OR pi.solicitacaoCompraItem.insumo.caracterizacaoInsumo.titulo like :caracterizacao) "
+            + " AND (:caracterizacao2 = 'todos' OR i.caracterizacaoInsumo.titulo like :caracterizacao) "
             + " AND (pi.pedido.centroCusto = :centro) "
             + " AND (:credor2 = 'todos' OR pi.pedido.credor = :credor) "),
-//    @NamedQuery(name = "PedidoItem.findByInsumo",
-//            query = " SELECT new br.com.grupopibb.portalobra.model.pedido.PedidoItem(pi.itemNumero, pi.pedido) FROM PedidoItem pi "
-//            + " WHERE (:classeInsumo2 = 'todos' OR pi.solicitacaoCompraItem.insumo.classeCod = :classeInsumo) "
-//            + " AND (:grupoInsumo2 = 'todos' OR pi.solicitacaoCompraItem.insumo.grupoCod = :grupoInsumo) "
-//            + " AND (:caracterizacaoInsumo2 = 'todos' OR pi.solicitacaoCompraItem.insumo.caracterizacaoCod = :caracterizacaoInsumo) "),
     @NamedQuery(name = "PedidoItem.findOne",
             query = " SELECT DISTINCT pi FROM PedidoItem pi "
             + " WHERE (:pedido = pi.pedido) "
@@ -247,7 +242,7 @@ public class PedidoItem implements EntityInterface<PedidoItem> {
 
     @Override
     public String getLabel() {
-        return solicitacaoCompraItem.getInsumo().getEspecificacao();
+        return solicitacaoCompraItem.getInsumoSub().getEspecificacao();
     }
 
     @Override

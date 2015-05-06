@@ -29,7 +29,7 @@ import br.com.grupopibb.portalobra.model.geral.Credor;
 import br.com.grupopibb.portalobra.model.insumo.CaracterizacaoInsumos;
 import br.com.grupopibb.portalobra.model.insumo.ClasseInsumos;
 import br.com.grupopibb.portalobra.model.insumo.GrupoInsumos;
-import br.com.grupopibb.portalobra.model.insumo.Insumo;
+import br.com.grupopibb.portalobra.model.insumo.InsumoSub;
 import br.com.grupopibb.portalobra.model.pagamento.TituloAPagar;
 import br.com.grupopibb.portalobra.model.pedido.PedidoItem;
 import br.com.grupopibb.portalobra.model.tipos.EnumImposto;
@@ -108,7 +108,7 @@ public class DocumentoEntradaController extends EntityController<DocumentoEntrad
     private CaracterizacaoInsumos caracterizacaoInsumo;
     private Integer itemNumero;
     private String itemItem;
-    private Insumo insumo;
+    private InsumoSub insumoSub;
     private Float quantidadeE;
     private Float precoUnitarioE;
     private Float totalItem;
@@ -341,7 +341,7 @@ public class DocumentoEntradaController extends EntityController<DocumentoEntrad
     public void preencheNovoItem(PedidoItem item) {
         itemNumero = 1;
         itemItem = "001";
-        insumo = item.getSolicitacaoCompraItem().getInsumo();
+        insumoSub = item.getSolicitacaoCompraItem().getInsumoSub();
         //ENTREGUE
         if (item.getDocumentoEntradaItem() == null || item.getDocumentoEntradaItem().getQuantidadeRecebida() == null) {
             quantidadeE = item.getQuantidade();
@@ -365,9 +365,9 @@ public class DocumentoEntradaController extends EntityController<DocumentoEntrad
         totalItemComIPIR = totalItemR;
         totalItemRp = 0F;
         assuntoOrigem = "SUP";
-        assuntoCod = insumo.getClasseCod();
-        grupoOrcCod = insumo.getClasseCod() + insumo.getGrupoCod();
-        subGrupoOrcCod = "000" + insumo.getCaracterizacaoCod();
+        assuntoCod = insumoSub.getInsumo().getClasseCod();
+        grupoOrcCod = insumoSub.getInsumo().getClasseCod() + insumoSub.getInsumo().getGrupoCod();
+        subGrupoOrcCod = "000" + insumoSub.getInsumo().getCaracterizacaoCod();
         acrescimoSDoc = 0F;
         descontoSDoc = 0F;
     }
@@ -378,7 +378,7 @@ public class DocumentoEntradaController extends EntityController<DocumentoEntrad
     public void limpaNovoItem() {
         itemNumero = null;
         itemItem = null;
-        insumo = null;
+        insumoSub = null;
         //ENTREGUE
         quantidadeE = null;
         precoUnitarioE = null;

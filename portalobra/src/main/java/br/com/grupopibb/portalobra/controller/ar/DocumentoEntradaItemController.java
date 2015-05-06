@@ -70,6 +70,7 @@ public class DocumentoEntradaItemController extends EntityController<DocumentoEn
         return documentoEntradaItemFacade;
     }
 
+    @Override
     public void pesquisar() {
         recreateTable();
     }
