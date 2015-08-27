@@ -39,5 +39,5 @@ public class UtilBeans {
      * Define a Senha para conexão com o banco de dados. Senha referente ao
      * DATABASE_USER.
      */ 
-    public static final String DATABASE_PASS = "Mn160391";
+    public static final String DATABASE_PASS = "KD O DEVMEDIA";
 }
