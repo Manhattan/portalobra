@@ -18,23 +18,23 @@ public class UtilBeans {
     /**
      * Define qual Unidade de Persistência a aplicação está utilizando.
      */
-    public static final String PERSISTENCE_UNIT = "portalobraPU";
+    public static final String PERSISTENCE_UNIT = "portalPU";
     /**
      * Define qual Banco de Dados aplicação está utilizando.
      */
-    public static final String DATABASE_NAME = "dbMANsup";
+    public static final String DATABASE_NAME = "DATA";
     /**
      * Define qual o nome do servidor de Banco de Dados a aplicação está utilizando.
      */
-    public static final String SERVER_NAME = "10.1.1.65";
+    public static final String SERVER_NAME = "ONLINE";
     /**
      * Define qual Usuário tem acesso ao banco de dados.
      */
-    public static final String DATABASE_USER = "tone.lima";
+    public static final String DATABASE_USER = "EU";
     /**
      * Define qual a porta de conexão do Banco de Dados.
      */
-    public static final String PORT = "1433";
+    public static final String PORT = "DOS FUNDOS";
     /**
      * Define a Senha para conexão com o banco de dados. Senha referente ao
      * DATABASE_USER.
